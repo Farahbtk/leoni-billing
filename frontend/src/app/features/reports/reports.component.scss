@@ -1,0 +1,25 @@
+.reports-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+
+  @media (max-width: 1000px) { grid-template-columns: 1fr; }
+
+  .kpi-section { grid-column: 1 / -1; }
+}
+
+.kpi-status {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 0.78rem;
+  font-weight: 600;
+  padding: 3px 8px;
+  border-radius: 6px;
+
+  mat-icon { font-size: 14px; width: 14px; height: 14px; }
+
+  &.on-track  { color: #065f46; background: #d1fae5; }
+  &.at-risk   { color: #92400e; background: #fef3c7; }
+  &.off-track { color: #991b1b; background: #fee2e2; }
+}

@@ -1,0 +1,258 @@
+/* ============================================================
+   LEONI Billing — Global Styles
+   ============================================================ */
+
+@use '@angular/material' as mat;
+
+/* Google Fonts */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+
+/* ── CSS Variables ── */
+:root {
+  --sidebar-bg: #1e2a4a;
+  --sidebar-hover: #29387a;
+  --sidebar-active: #3d52a0;
+  --sidebar-text: #a8b8d8;
+  --sidebar-text-active: #ffffff;
+  --sidebar-width: 260px;
+
+  --primary: #3d52a0;
+  --primary-light: #7091e6;
+  --accent: #6c63ff;
+  --success: #10b981;
+  --warning: #f59e0b;
+  --danger: #ef4444;
+  --info: #3b82f6;
+
+  --bg-main: #f0f4fc;
+  --bg-card: #ffffff;
+  --text-primary: #1e293b;
+  --text-secondary: #64748b;
+  --border: #e2e8f0;
+  --shadow-card: 0 2px 12px rgba(61, 82, 160, 0.08);
+  --shadow-hover: 0 8px 24px rgba(61, 82, 160, 0.15);
+  --radius: 12px;
+  --radius-sm: 8px;
+}
+
+/* ── Base Reset ── */
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html, body {
+  height: 100%;
+  font-family: 'Inter', 'Segoe UI', sans-serif;
+  font-size: 14px;
+  background: var(--bg-main);
+  color: var(--text-primary);
+  -webkit-font-smoothing: antialiased;
+}
+
+/* ── Scrollbar ── */
+::-webkit-scrollbar { width: 6px; height: 6px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: #c1cde0; border-radius: 3px; }
+::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
+
+/* ── Typography ── */
+h1, h2, h3, h4, h5 { font-weight: 600; color: var(--text-primary); }
+h1 { font-size: 1.75rem; }
+h2 { font-size: 1.4rem; }
+h3 { font-size: 1.15rem; }
+
+/* ── Angular Material Overrides ── */
+.mat-mdc-card {
+  border-radius: var(--radius) !important;
+  box-shadow: var(--shadow-card) !important;
+  border: 1px solid var(--border) !important;
+}
+
+.mat-mdc-table {
+  background: var(--bg-card) !important;
+  border-radius: var(--radius) !important;
+  overflow: hidden;
+}
+
+.mat-mdc-header-row {
+  background: #f8faff !important;
+}
+
+.mat-mdc-header-cell {
+  font-weight: 600 !important;
+  color: var(--text-secondary) !important;
+  font-size: 0.75rem !important;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  border-bottom: 1px solid var(--border) !important;
+}
+
+.mat-mdc-row:hover {
+  background: #f8faff !important;
+}
+
+.mat-mdc-raised-button.mat-primary {
+  background-color: var(--primary) !important;
+}
+
+/* ── Status Chips ── */
+.status-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 4px 10px;
+  border-radius: 20px;
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0.3px;
+  text-transform: uppercase;
+
+  &.paid {
+    background: #d1fae5;
+    color: #065f46;
+  }
+  &.overdue {
+    background: #fee2e2;
+    color: #991b1b;
+  }
+  &.pending {
+    background: #fef3c7;
+    color: #92400e;
+  }
+}
+
+/* ── Risk Badge ── */
+.risk-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 3px 8px;
+  border-radius: 6px;
+  font-size: 0.72rem;
+  font-weight: 700;
+
+  &.low    { background: #d1fae5; color: #065f46; }
+  &.medium { background: #fef3c7; color: #92400e; }
+  &.high   { background: #fee2e2; color: #991b1b; }
+}
+
+/* ── Page Layout ── */
+.page-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 24px;
+
+  .page-title {
+    h2 { margin-bottom: 2px; }
+    p  { color: var(--text-secondary); font-size: 0.85rem; margin: 0; }
+  }
+}
+
+/* ── KPI Card ── */
+.kpi-card {
+  background: var(--bg-card);
+  border-radius: var(--radius);
+  padding: 20px 24px;
+  box-shadow: var(--shadow-card);
+  border: 1px solid var(--border);
+  transition: box-shadow 0.2s, transform 0.2s;
+  display: flex;
+  align-items: flex-start;
+  gap: 16px;
+
+  &:hover {
+    box-shadow: var(--shadow-hover);
+    transform: translateY(-2px);
+  }
+
+  .kpi-icon {
+    width: 48px;
+    height: 48px;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    mat-icon { font-size: 22px; width: 22px; height: 22px; color: #fff; }
+  }
+
+  .kpi-content {
+    flex: 1;
+    .kpi-label { font-size: 0.75rem; font-weight: 600; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 4px; }
+    .kpi-value { font-size: 1.75rem; font-weight: 700; color: var(--text-primary); line-height: 1; margin-bottom: 4px; }
+    .kpi-trend { font-size: 0.78rem; color: var(--text-secondary); }
+    .trend-up   { color: var(--success); }
+    .trend-down { color: var(--danger); }
+  }
+}
+
+/* ── Search/Filter Bar ── */
+.filter-bar {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 16px 20px;
+  background: var(--bg-card);
+  border-radius: var(--radius);
+  border: 1px solid var(--border);
+  margin-bottom: 16px;
+  flex-wrap: wrap;
+
+  mat-form-field { flex: 1; min-width: 200px; }
+}
+
+/* ── Table Container ── */
+.table-container {
+  background: var(--bg-card);
+  border-radius: var(--radius);
+  border: 1px solid var(--border);
+  overflow: hidden;
+  box-shadow: var(--shadow-card);
+
+  .table-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 16px 20px;
+    border-bottom: 1px solid var(--border);
+
+    h3 { margin: 0; }
+  }
+
+  table { width: 100%; }
+}
+
+/* ── Chart Card ── */
+.chart-card {
+  background: var(--bg-card);
+  border-radius: var(--radius);
+  padding: 20px 24px;
+  box-shadow: var(--shadow-card);
+  border: 1px solid var(--border);
+
+  .chart-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 16px;
+
+    h3 { margin: 0; font-size: 1rem; }
+    .chart-legend { display: flex; gap: 12px; }
+  }
+}
+
+/* ── Utilities ── */
+.text-success { color: var(--success) !important; }
+.text-warning { color: var(--warning) !important; }
+.text-danger  { color: var(--danger)  !important; }
+.text-info    { color: var(--info)    !important; }
+.text-muted   { color: var(--text-secondary) !important; }
+.fw-600       { font-weight: 600 !important; }
+.mt-4         { margin-top: 16px !important; }
+.mb-4         { margin-bottom: 16px !important; }
+.gap-16       { gap: 16px; }
+.grid-2       { display: grid; grid-template-columns: repeat(2, 1fr); gap: 16px; }
+.grid-4       { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; }

@@ -1,0 +1,93 @@
+:host { display: block; height: 100%; }
+
+.clients-container { padding: 32px; max-width: 1100px; margin: 0 auto; }
+
+// ── Header ────────────────────────────────────────────────────────────────────
+.page-header {
+  display: flex; align-items: flex-start; justify-content: space-between;
+  margin-bottom: 28px; gap: 16px; flex-wrap: wrap;
+  h1 { margin: 0 0 4px; font-size: 1.75rem; font-weight: 700; color: #1a2035; }
+  p  { margin: 0; font-size: 0.875rem; color: #64748b; }
+}
+
+// ── Toolbar ───────────────────────────────────────────────────────────────────
+.toolbar {
+  display: flex; align-items: center; gap: 12px; margin-bottom: 20px;
+  .search-field { flex: 1; max-width: 380px; }
+  .spacer { flex: 1; }
+  .result-count { font-size: 0.8125rem; color: #94a3b8; white-space: nowrap; }
+}
+
+// ── Loading ───────────────────────────────────────────────────────────────────
+.loading-state {
+  display: flex; flex-direction: column; align-items: center;
+  padding: 80px 0; gap: 16px; color: #64748b;
+}
+
+// ── Table ─────────────────────────────────────────────────────────────────────
+.table-wrapper {
+  background: #fff; border-radius: 12px;
+  box-shadow: 0 1px 3px rgba(0,0,0,.08), 0 4px 16px rgba(0,0,0,.04);
+  overflow: hidden;
+}
+
+.clients-table {
+  width: 100%;
+  th.mat-header-cell {
+    font-size: 0.75rem; font-weight: 700; text-transform: uppercase;
+    letter-spacing: 0.6px; color: #94a3b8; background: #f8fafc;
+    padding: 14px 16px; border-bottom: 1px solid #e2e8f0;
+  }
+  td.mat-cell {
+    padding: 14px 16px; font-size: 0.875rem; color: #334155;
+    border-bottom: 1px solid #f1f5f9; vertical-align: middle;
+  }
+  .table-row {
+    transition: background 0.15s;
+    &:hover { background: #f8fafc; }
+    &:last-child td { border-bottom: none; }
+  }
+}
+
+// ── Client cell ───────────────────────────────────────────────────────────────
+.client-cell {
+  display: flex; align-items: center; gap: 12px;
+  .client-avatar {
+    width: 38px; height: 38px; border-radius: 10px; flex-shrink: 0;
+    background: linear-gradient(135deg, #1a2e5c, #3b5998);
+    color: #fff; display: flex; align-items: center; justify-content: center;
+    font-size: 1rem; font-weight: 700;
+  }
+  .client-name { font-weight: 600; color: #1e293b; }
+  .client-code { font-size: 0.75rem; color: #94a3b8; font-family: monospace; }
+}
+
+.country-cell { color: #475569; }
+.muted { color: #cbd5e1; }
+
+// ── Status chips ──────────────────────────────────────────────────────────────
+.status-chip {
+  display: inline-flex; align-items: center; gap: 5px;
+  padding: 3px 10px; border-radius: 999px;
+  font-size: 0.75rem; font-weight: 600;
+
+  .dot { width: 6px; height: 6px; border-radius: 50%; background: currentColor; }
+
+  &.chip-active   { background: #dcfce7; color: #15803d; }
+  &.chip-inactive { background: #fee2e2; color: #b91c1c; }
+  &.chip-warn     { background: #fef9c3; color: #a16207; }
+}
+
+// ── Actions ───────────────────────────────────────────────────────────────────
+.actions-header, .actions-cell { text-align: right !important; padding-right: 8px !important; }
+.actions-cell button { opacity: 0.6; &:hover { opacity: 1; } }
+
+// ── Empty state ───────────────────────────────────────────────────────────────
+.empty-cell { padding: 0 !important; }
+.empty-state {
+  display: flex; flex-direction: column; align-items: center;
+  padding: 64px 24px; color: #94a3b8; gap: 8px;
+  mat-icon { font-size: 48px; width: 48px; height: 48px; opacity: 0.35; }
+  p { margin: 0; font-size: 1rem; font-weight: 600; color: #64748b; }
+  span { font-size: 0.8125rem; }
+}

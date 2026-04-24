@@ -1,0 +1,161 @@
+<div class="alerts-container">
+
+  <!-- Header -->
+  <div class="page-header">
+    <div class="page-title">
+      <h1>Risk Alerts</h1>
+      <p>Run the ML prediction engine to identify high-risk invoices</p>
+    </div>
+    <button mat-flat-button color="warn" (click)="runPrediction()" [disabled]="running" class="run-btn">
+      <mat-spinner *ngIf="running" diameter="20" class="btn-spinner"></mat-spinner>
+      <mat-icon *ngIf="!running">psychology</mat-icon>
+      <span>{{ running ? 'Analyzing invoices…' : 'Run Risk Prediction' }}</span>
+    </button>
+  </div>
+
+  <!-- Initial state: not yet run -->
+  <div class="initial-state" *ngIf="!hasRun && !running">
+    <div class="initial-icon">
+      <mat-icon>analytics</mat-icon>
+    </div>
+    <h3>Run Prediction to See Alerts</h3>
+    <p>Click "Run Risk Prediction" to analyze all invoices using the ML model and identify payment risks.</p>
+  </div>
+
+  <!-- Running state -->
+  <div class="initial-state" *ngIf="running">
+    <mat-spinner diameter="56"></mat-spinner>
+    <h3>Analyzing invoices…</h3>
+    <p>Running risk scoring model on all active invoices. This may take a moment.</p>
+  </div>
+
+  <!-- Results -->
+  <ng-container *ngIf="hasRun && !running">
+
+    <!-- Success: no high risk -->
+    <div class="success-banner" *ngIf="highRiskInvoices.length === 0">
+      <mat-icon>check_circle</mat-icon>
+      <div>
+        <strong>No High Risk Invoices Detected</strong>
+        <p>All invoices are within acceptable risk thresholds.</p>
+      </div>
+    </div>
+
+    <!-- Summary cards -->
+    <div class="summary-cards" *ngIf="highRiskInvoices.length > 0">
+      <div class="summary-card card-danger">
+        <div class="card-value">{{ highRiskInvoices.length }}</div>
+        <div class="card-label">Total High Risk</div>
+        <mat-icon>warning</mat-icon>
+      </div>
+      <div class="summary-card card-amount">
+        <div class="card-value">{{ totalAmount | currency:'EUR':'symbol':'1.0-0' }}</div>
+        <div class="card-label">Total Amount at Risk</div>
+        <mat-icon>payments</mat-icon>
+      </div>
+      <div class="summary-card card-score">
+        <div class="card-value">{{ avgRiskScore }}%</div>
+        <div class="card-label">Average Risk Score</div>
+        <mat-icon>speed</mat-icon>
+      </div>
+      <div class="summary-card card-pending">
+        <div class="card-value">{{ pendingReviewCount }}</div>
+        <div class="card-label">Pending Review</div>
+        <mat-icon>pending_actions</mat-icon>
+      </div>
+    </div>
+
+    <!-- High-risk table -->
+    <div class="table-wrapper" *ngIf="highRiskInvoices.length > 0">
+      <div class="table-title">
+        <mat-icon>report_problem</mat-icon>
+        High Risk Invoices (risk score &gt; 70%)
+      </div>
+
+      <table mat-table [dataSource]="highRiskInvoices" class="alerts-table">
+
+        <!-- Invoice # -->
+        <ng-container matColumnDef="invoiceNumber">
+          <th mat-header-cell *matHeaderCellDef>Invoice #</th>
+          <td mat-cell *matCellDef="let i">
+            <span class="invoice-number">{{ i.invoiceNumber }}</span>
+          </td>
+        </ng-container>
+
+        <!-- Client -->
+        <ng-container matColumnDef="clientName">
+          <th mat-header-cell *matHeaderCellDef>Client</th>
+          <td mat-cell *matCellDef="let i">
+            <div class="client-cell">
+              <div class="client-avatar">{{ i.clientName?.[0] }}</div>
+              {{ i.clientName }}
+            </div>
+          </td>
+        </ng-container>
+
+        <!-- Amount -->
+        <ng-container matColumnDef="amount">
+          <th mat-header-cell *matHeaderCellDef>Amount</th>
+          <td mat-cell *matCellDef="let i" class="amount-cell">
+            {{ i.amount | currency:'EUR':'symbol':'1.0-0' }}
+          </td>
+        </ng-container>
+
+        <!-- Due Date -->
+        <ng-container matColumnDef="dueDate">
+          <th mat-header-cell *matHeaderCellDef>Due Date</th>
+          <td mat-cell *matCellDef="let i">
+            <span [class.overdue-date]="i.status === 'OVERDUE'">
+              {{ i.dueDate | date:'dd MMM yyyy' }}
+            </span>
+          </td>
+        </ng-container>
+
+        <!-- Risk Score -->
+        <ng-container matColumnDef="riskScore">
+          <th mat-header-cell *matHeaderCellDef>Risk Score</th>
+          <td mat-cell *matCellDef="let i">
+            <div class="risk-badge-cell">
+              <div class="risk-bar">
+                <div class="risk-fill" [ngClass]="riskClass(i.riskScore ?? 0)"
+                     [style.width.%]="i.riskScore ?? 0"></div>
+              </div>
+              <span class="risk-badge" [ngClass]="riskClass(i.riskScore ?? 0)">
+                {{ i.riskScore }}%
+              </span>
+            </div>
+          </td>
+        </ng-container>
+
+        <!-- Days Overdue -->
+        <ng-container matColumnDef="daysOverdue">
+          <th mat-header-cell *matHeaderCellDef>Days Overdue</th>
+          <td mat-cell *matCellDef="let i">
+            <span *ngIf="i.daysOverdue" class="days-overdue">+{{ i.daysOverdue }}d</span>
+            <span *ngIf="!i.daysOverdue" class="muted">—</span>
+          </td>
+        </ng-container>
+
+        <!-- Action -->
+        <ng-container matColumnDef="action">
+          <th mat-header-cell *matHeaderCellDef class="action-header">Action</th>
+          <td mat-cell *matCellDef="let i" class="action-cell">
+            <button *ngIf="!isReviewed(i)" mat-stroked-button color="primary"
+                    (click)="markReviewed(i)" class="review-btn">
+              <mat-icon>task_alt</mat-icon> Mark Reviewed
+            </button>
+            <span *ngIf="isReviewed(i)" class="reviewed-badge">
+              <mat-icon>check_circle</mat-icon> Reviewed
+            </span>
+          </td>
+        </ng-container>
+
+        <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+        <tr mat-row *matRowDef="let row; columns: displayedColumns;"
+            [class.reviewed-row]="isReviewed(row)"></tr>
+      </table>
+    </div>
+
+  </ng-container>
+
+</div>

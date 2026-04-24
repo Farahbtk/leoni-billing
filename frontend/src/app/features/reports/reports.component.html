@@ -1,0 +1,63 @@
+<div class="page-header">
+  <div class="page-title">
+    <h2>Financial Reports</h2>
+    <p>KPI summary and billing performance metrics</p>
+  </div>
+  <div style="display:flex;gap:10px;align-items:center">
+    <mat-select [(ngModel)]="selectedPeriod" style="width:140px">
+      <mat-option value="Q1-2024">Q1 2024</mat-option>
+      <mat-option value="Q4-2023">Q4 2023</mat-option>
+      <mat-option value="Q3-2023">Q3 2023</mat-option>
+    </mat-select>
+    <button mat-stroked-button>
+      <mat-icon>download</mat-icon> Export Excel
+    </button>
+    <button mat-raised-button color="primary">
+      <mat-icon>picture_as_pdf</mat-icon> Export PDF
+    </button>
+  </div>
+</div>
+
+<div class="reports-grid">
+  <!-- KPI Table -->
+  <div class="table-container kpi-section">
+    <div class="table-header">
+      <h3>KPI Summary — {{ selectedPeriod }}</h3>
+    </div>
+    <mat-table [dataSource]="kpiData">
+      <ng-container matColumnDef="metric">
+        <mat-header-cell *matHeaderCellDef>Metric</mat-header-cell>
+        <mat-cell *matCellDef="let row" class="fw-600">{{ row.metric }}</mat-cell>
+      </ng-container>
+      <ng-container matColumnDef="value">
+        <mat-header-cell *matHeaderCellDef>Actual</mat-header-cell>
+        <mat-cell *matCellDef="let row" class="fw-600">{{ row.value }}</mat-cell>
+      </ng-container>
+      <ng-container matColumnDef="target">
+        <mat-header-cell *matHeaderCellDef>Target</mat-header-cell>
+        <mat-cell *matCellDef="let row" class="text-muted">{{ row.target }}</mat-cell>
+      </ng-container>
+      <ng-container matColumnDef="status">
+        <mat-header-cell *matHeaderCellDef>Status</mat-header-cell>
+        <mat-cell *matCellDef="let row">
+          <span class="kpi-status" [class]="row.status">
+            <mat-icon>{{ row.status === 'on-track' ? 'check_circle' : row.status === 'at-risk' ? 'info' : 'cancel' }}</mat-icon>
+            {{ row.status | titlecase }}
+          </span>
+        </mat-cell>
+      </ng-container>
+      <mat-header-row *matHeaderRowDef="kpiColumns"></mat-header-row>
+      <mat-row *matRowDef="let row; columns: kpiColumns;"></mat-row>
+    </mat-table>
+  </div>
+
+  <!-- DSO Trend Chart -->
+  <div class="chart-card">
+    <div class="chart-header">
+      <h3>DSO Trend vs Target</h3>
+    </div>
+    <div style="height:260px">
+      <canvas baseChart [data]="lineChartData" [options]="lineChartOptions" type="line"></canvas>
+    </div>
+  </div>
+</div>

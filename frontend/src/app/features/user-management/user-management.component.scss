@@ -1,0 +1,223 @@
+:host {
+  display: block;
+  height: 100%;
+}
+
+.um-container {
+  padding: 32px;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+// ── Header ──────────────────────────────────────────────────────────────────
+
+.um-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  margin-bottom: 28px;
+  gap: 16px;
+  flex-wrap: wrap;
+
+  h1 {
+    margin: 0 0 4px;
+    font-size: 1.75rem;
+    font-weight: 700;
+    color: #1a2035;
+    letter-spacing: -0.3px;
+  }
+
+  .um-subtitle {
+    margin: 0;
+    font-size: 0.875rem;
+    color: #64748b;
+  }
+
+  button {
+    mat-icon { margin-right: 6px; }
+    white-space: nowrap;
+  }
+}
+
+// ── Toolbar ──────────────────────────────────────────────────────────────────
+
+.um-toolbar {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 20px;
+  flex-wrap: wrap;
+
+  .search-field {
+    flex: 1;
+    min-width: 220px;
+    max-width: 400px;
+  }
+
+  .status-filter {
+    width: 140px;
+  }
+
+  .spacer { flex: 1; }
+
+  .result-count {
+    font-size: 0.8125rem;
+    color: #94a3b8;
+    white-space: nowrap;
+  }
+}
+
+// ── Loading ──────────────────────────────────────────────────────────────────
+
+.um-loading {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 80px 0;
+  gap: 16px;
+  color: #64748b;
+  font-size: 0.9rem;
+}
+
+// ── Table ────────────────────────────────────────────────────────────────────
+
+.um-table-wrapper {
+  background: #fff;
+  border-radius: 12px;
+  box-shadow: 0 1px 3px rgba(0,0,0,.08), 0 4px 16px rgba(0,0,0,.04);
+  overflow: hidden;
+}
+
+.um-table {
+  width: 100%;
+
+  th.mat-header-cell {
+    font-size: 0.75rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.6px;
+    color: #94a3b8;
+    background: #f8fafc;
+    padding: 14px 16px;
+    border-bottom: 1px solid #e2e8f0;
+  }
+
+  td.mat-cell {
+    padding: 14px 16px;
+    font-size: 0.875rem;
+    color: #334155;
+    border-bottom: 1px solid #f1f5f9;
+    vertical-align: middle;
+  }
+
+  .um-row {
+    transition: background 0.15s ease;
+
+    &:hover { background: #f8fafc; }
+    &:last-child td { border-bottom: none; }
+  }
+}
+
+.email-cell {
+  font-family: monospace;
+  font-size: 0.8125rem;
+  color: #475569;
+}
+
+.muted {
+  color: #cbd5e1;
+}
+
+// ── Status chips ─────────────────────────────────────────────────────────────
+
+mat-chip {
+  font-size: 0.75rem !important;
+  font-weight: 600 !important;
+  height: 26px !important;
+  padding: 0 10px !important;
+  border-radius: 13px !important;
+
+  mat-icon[matChipAvatar] {
+    font-size: 14px !important;
+    width: 14px !important;
+    height: 14px !important;
+    margin-right: 4px !important;
+  }
+
+  &.chip-active {
+    background: #dcfce7 !important;
+    color: #15803d !important;
+  }
+
+  &.chip-inactive {
+    background: #fee2e2 !important;
+    color: #b91c1c !important;
+  }
+}
+
+// ── Actions column ────────────────────────────────────────────────────────────
+
+.actions-header,
+.actions-cell {
+  text-align: right !important;
+  padding-right: 8px !important;
+}
+
+.actions-cell {
+  white-space: nowrap;
+
+  button {
+    opacity: 0.6;
+    transition: opacity 0.15s;
+
+    &:hover { opacity: 1; }
+  }
+}
+
+// ── Empty state ───────────────────────────────────────────────────────────────
+
+.empty-cell {
+  padding: 0 !important;
+}
+
+.empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 64px 24px;
+  color: #94a3b8;
+  gap: 8px;
+
+  mat-icon {
+    font-size: 48px;
+    width: 48px;
+    height: 48px;
+    opacity: 0.4;
+  }
+
+  p {
+    margin: 0;
+    font-size: 1rem;
+    font-weight: 600;
+    color: #64748b;
+  }
+
+  span {
+    font-size: 0.8125rem;
+  }
+}
+
+// ── Responsive ────────────────────────────────────────────────────────────────
+
+@media (max-width: 768px) {
+  .um-container { padding: 16px; }
+
+  .um-header {
+    h1 { font-size: 1.375rem; }
+  }
+
+  .um-toolbar {
+    .search-field { max-width: 100%; }
+  }
+}

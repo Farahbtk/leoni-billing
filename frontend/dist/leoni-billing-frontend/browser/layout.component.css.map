@@ -1,0 +1,7 @@
+{
+  "version": 3,
+  "sources": ["src/app/shared/layout/layout.component.scss"],
+  "sourcesContent": [".app-shell {\n  display: flex;\n  min-height: 100vh;\n\n  .main-content {\n    flex: 1;\n    margin-left: 260px;\n    padding: 28px 32px;\n    min-height: 100vh;\n    background: var(--bg-main);\n    transition: margin-left 0.25s cubic-bezier(0.4, 0, 0.2, 1);\n    min-width: 0;\n  }\n\n  &.collapsed .main-content {\n    margin-left: 72px;\n  }\n}\n\n@media (max-width: 768px) {\n  .app-shell .main-content {\n    margin-left: 0;\n    padding: 16px;\n  }\n}\n"],
+  "mappings": ";AAAA,CAAA;AACE,WAAA;AACA,cAAA;;AAEA,CAJF,UAIE,CAAA;AACE,QAAA;AACA,eAAA;AACA,WAAA,KAAA;AACA,cAAA;AACA,cAAA,IAAA;AACA,cAAA,YAAA,MAAA,aAAA,GAAA,EAAA,CAAA,EAAA,GAAA,EAAA;AACA,aAAA;;AAGF,CAdF,SAcE,CAAA,UAAA,CAVA;AAWE,eAAA;;AAIJ,OAAA,CAAA,SAAA,EAAA;AACE,GApBF,UAoBE,CAhBA;AAiBE,iBAAA;AACA,aAAA;;;",
+  "names": []
+}

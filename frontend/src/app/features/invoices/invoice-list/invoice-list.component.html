@@ -1,0 +1,204 @@
+<!-- Page Header -->
+<div class="page-header">
+  <div class="page-title">
+    <h2>Invoices</h2>
+    <p>Manage and track all customer invoices</p>
+  </div>
+  <div style="display:flex;gap:10px;align-items:center">
+    <button mat-stroked-button [disabled]="!selection.hasValue() || predicting" (click)="runPrediction()">
+      <mat-icon>psychology</mat-icon>
+      <span *ngIf="!predicting">Run AI Prediction ({{ selection.selected.length }})</span>
+      <span *ngIf="predicting">Predicting...</span>
+    </button>
+    <button mat-raised-button color="primary">
+      <mat-icon>add</mat-icon> New Invoice
+    </button>
+  </div>
+</div>
+
+<!-- Filter Bar -->
+<div class="filter-bar" [formGroup]="filterForm">
+  <mat-form-field appearance="outline">
+    <mat-label>Search invoices</mat-label>
+    <mat-icon matPrefix>search</mat-icon>
+    <input matInput formControlName="search" placeholder="Invoice #, client...">
+    <button *ngIf="filterForm.get('search')?.value" mat-icon-button matSuffix (click)="filterForm.get('search')?.reset()">
+      <mat-icon>close</mat-icon>
+    </button>
+  </mat-form-field>
+
+  <mat-form-field appearance="outline" style="width:160px;flex:none">
+    <mat-label>Status</mat-label>
+    <mat-select formControlName="status">
+      <mat-option value="">All Statuses</mat-option>
+      <mat-option *ngFor="let s of statusOptions" [value]="s">{{ s }}</mat-option>
+    </mat-select>
+  </mat-form-field>
+
+  <mat-form-field appearance="outline" style="width:160px;flex:none">
+    <mat-label>Risk Level</mat-label>
+    <mat-select formControlName="riskLevel">
+      <mat-option value="">All Risks</mat-option>
+      <mat-option value="LOW">Low</mat-option>
+      <mat-option value="MEDIUM">Medium</mat-option>
+      <mat-option value="HIGH">High</mat-option>
+    </mat-select>
+  </mat-form-field>
+
+  <mat-form-field appearance="outline" style="width:160px;flex:none">
+    <mat-label>From</mat-label>
+    <input matInput type="date" formControlName="dateFrom">
+  </mat-form-field>
+
+  <mat-form-field appearance="outline" style="width:160px;flex:none">
+    <mat-label>To</mat-label>
+    <input matInput type="date" formControlName="dateTo">
+  </mat-form-field>
+
+  <button mat-icon-button matTooltip="Clear filters" (click)="clearFilters()">
+    <mat-icon>filter_list_off</mat-icon>
+  </button>
+</div>
+
+<!-- Table -->
+<div class="table-container">
+  <div class="table-header">
+    <h3>
+      {{ totalElements }} invoice{{ totalElements !== 1 ? 's' : '' }}
+      <span *ngIf="selection.hasValue()" class="selection-info">
+        — {{ selection.selected.length }} selected
+      </span>
+    </h3>
+    <mat-spinner *ngIf="loading" diameter="20"></mat-spinner>
+  </div>
+
+  <mat-table [dataSource]="dataSource" matSort>
+
+    <!-- Checkbox Column -->
+    <ng-container matColumnDef="select">
+      <mat-header-cell *matHeaderCellDef>
+        <mat-checkbox (change)="$event ? toggleAllRows() : null"
+          [checked]="selection.hasValue() && isAllSelected()"
+          [indeterminate]="selection.hasValue() && !isAllSelected()">
+        </mat-checkbox>
+      </mat-header-cell>
+      <mat-cell *matCellDef="let row">
+        <mat-checkbox (click)="$event.stopPropagation()"
+          (change)="$event ? selection.toggle(row) : null"
+          [checked]="selection.isSelected(row)">
+        </mat-checkbox>
+      </mat-cell>
+    </ng-container>
+
+    <!-- Invoice # -->
+    <ng-container matColumnDef="invoiceNumber">
+      <mat-header-cell *matHeaderCellDef mat-sort-header>Invoice #</mat-header-cell>
+      <mat-cell *matCellDef="let row">
+        <a [routerLink]="['/invoices', row.id]" class="invoice-link">{{ row.invoiceNumber }}</a>
+      </mat-cell>
+    </ng-container>
+
+    <!-- Client -->
+    <ng-container matColumnDef="clientName">
+      <mat-header-cell *matHeaderCellDef mat-sort-header>Client</mat-header-cell>
+      <mat-cell *matCellDef="let row">
+        <div class="client-cell">
+          <div class="client-avatar">{{ row.clientName[0] }}</div>
+          {{ row.clientName }}
+        </div>
+      </mat-cell>
+    </ng-container>
+
+    <!-- Amount -->
+    <ng-container matColumnDef="amount">
+      <mat-header-cell *matHeaderCellDef mat-sort-header>Amount</mat-header-cell>
+      <mat-cell *matCellDef="let row" class="fw-600">
+        {{ row.amount | currency:'EUR':'symbol':'1.0-0' }}
+      </mat-cell>
+    </ng-container>
+
+    <!-- Issue Date -->
+    <ng-container matColumnDef="issueDate">
+      <mat-header-cell *matHeaderCellDef mat-sort-header>Issue Date</mat-header-cell>
+      <mat-cell *matCellDef="let row">{{ row.issueDate | date:'MMM d, yyyy' }}</mat-cell>
+    </ng-container>
+
+    <!-- Due Date -->
+    <ng-container matColumnDef="dueDate">
+      <mat-header-cell *matHeaderCellDef mat-sort-header>Due Date</mat-header-cell>
+      <mat-cell *matCellDef="let row">
+        <span [class.text-danger]="row.status === 'OVERDUE'">
+          {{ row.dueDate | date:'MMM d, yyyy' }}
+          <span *ngIf="row.daysOverdue" style="font-size:0.72rem;font-weight:600">
+            (+{{ row.daysOverdue }}d)
+          </span>
+        </span>
+      </mat-cell>
+    </ng-container>
+
+    <!-- Status -->
+    <ng-container matColumnDef="status">
+      <mat-header-cell *matHeaderCellDef mat-sort-header>Status</mat-header-cell>
+      <mat-cell *matCellDef="let row">
+        <span class="status-chip" [class]="getStatusClass(row.status)">{{ row.status }}</span>
+      </mat-cell>
+    </ng-container>
+
+    <!-- Risk Score -->
+    <ng-container matColumnDef="riskScore">
+      <mat-header-cell *matHeaderCellDef mat-sort-header>Risk Score</mat-header-cell>
+      <mat-cell *matCellDef="let row">
+        <div class="risk-score-cell" *ngIf="row.riskScore !== undefined; else noScore">
+          <div class="risk-bar">
+            <div class="risk-fill" [class]="getRiskClass(row.riskScore)"
+              [style.width.%]="row.riskScore"></div>
+          </div>
+          <span class="risk-badge" [class]="getRiskClass(row.riskScore)">{{ row.riskScore }}%</span>
+        </div>
+        <ng-template #noScore>
+          <span class="text-muted" style="font-size:0.8rem">—</span>
+        </ng-template>
+      </mat-cell>
+    </ng-container>
+
+    <!-- Actions -->
+    <ng-container matColumnDef="actions">
+      <mat-header-cell *matHeaderCellDef></mat-header-cell>
+      <mat-cell *matCellDef="let row">
+        <button mat-icon-button [matMenuTriggerFor]="menu" (click)="$event.stopPropagation()">
+          <mat-icon>more_vert</mat-icon>
+        </button>
+        <mat-menu #menu="matMenu">
+          <button mat-menu-item [routerLink]="['/invoices', row.id]">
+            <mat-icon>visibility</mat-icon> View Details
+          </button>
+          <button mat-menu-item>
+            <mat-icon>edit</mat-icon> Edit
+          </button>
+          <button mat-menu-item (click)="runPrediction()">
+            <mat-icon>psychology</mat-icon> Run Prediction
+          </button>
+          <mat-divider></mat-divider>
+          <button mat-menu-item class="text-danger">
+            <mat-icon>delete</mat-icon> Delete
+          </button>
+        </mat-menu>
+      </mat-cell>
+    </ng-container>
+
+    <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
+    <mat-row *matRowDef="let row; columns: displayedColumns;"
+      [class.selected-row]="selection.isSelected(row)"
+      (click)="selection.toggle(row)">
+    </mat-row>
+
+    <tr class="mat-row" *matNoDataRow>
+      <td class="mat-cell no-data-cell" [attr.colspan]="displayedColumns.length">
+        <mat-icon>inbox</mat-icon>
+        <p>No invoices found</p>
+      </td>
+    </tr>
+  </mat-table>
+
+  <mat-paginator [pageSizeOptions]="[10, 20, 50]" showFirstLastButtons></mat-paginator>
+</div>

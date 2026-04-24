@@ -1,0 +1,24 @@
+{
+  "properties": [
+    {
+      "name": "app.jwt.secret",
+      "type": "java.lang.String",
+      "description": "HMAC secret key used to sign JWT tokens."
+    },
+    {
+      "name": "app.jwt.expiration-ms",
+      "type": "java.lang.Long",
+      "description": "JWT token validity in milliseconds."
+    },
+    {
+      "name": "app.ml.url",
+      "type": "java.lang.String",
+      "description": "Base URL of the Flask ML prediction service."
+    },
+    {
+      "name": "app.cors.allowed-origins",
+      "type": "java.lang.String",
+      "description": "Comma-separated list of allowed CORS origins."
+    }
+  ]
+}

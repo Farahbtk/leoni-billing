@@ -1,0 +1,152 @@
+<div *ngIf="!loading && invoice">
+  <!-- Header -->
+  <div class="page-header">
+    <div class="page-title" style="display:flex;align-items:center;gap:12px">
+      <button mat-icon-button routerLink="/invoices">
+        <mat-icon>arrow_back</mat-icon>
+      </button>
+      <div>
+        <h2>{{ invoice.invoiceNumber }}</h2>
+        <p>{{ invoice.clientName }} &mdash; Invoice Detail</p>
+      </div>
+    </div>
+    <div style="display:flex;gap:10px">
+      <button mat-stroked-button>
+        <mat-icon>picture_as_pdf</mat-icon> Export PDF
+      </button>
+      <button mat-raised-button color="primary" [disabled]="predicting" (click)="runPrediction()">
+        <mat-icon>psychology</mat-icon>
+        {{ predicting ? 'Running...' : 'Run Prediction' }}
+      </button>
+    </div>
+  </div>
+
+  <div class="detail-grid">
+    <!-- Invoice Info Card -->
+    <div class="info-card">
+      <div class="card-header">
+        <h3>Invoice Information</h3>
+        <span class="status-chip" [class]="invoice.status.toLowerCase()">{{ invoice.status }}</span>
+      </div>
+      <mat-divider></mat-divider>
+
+      <div class="info-grid">
+        <div class="info-item">
+          <span class="info-label">Invoice Number</span>
+          <span class="info-value fw-600">{{ invoice.invoiceNumber }}</span>
+        </div>
+        <div class="info-item">
+          <span class="info-label">Client</span>
+          <span class="info-value fw-600">{{ invoice.clientName }}</span>
+        </div>
+        <div class="info-item">
+          <span class="info-label">Amount</span>
+          <span class="info-value fw-600 amount">{{ invoice.amount | currency:'EUR':'symbol':'1.0-0' }}</span>
+        </div>
+        <div class="info-item">
+          <span class="info-label">Currency</span>
+          <span class="info-value">{{ invoice.currency }}</span>
+        </div>
+        <div class="info-item">
+          <span class="info-label">Issue Date</span>
+          <span class="info-value">{{ invoice.issueDate | date:'MMMM d, yyyy' }}</span>
+        </div>
+        <div class="info-item">
+          <span class="info-label">Due Date</span>
+          <span class="info-value" [class.text-danger]="invoice.status === 'OVERDUE'">
+            {{ invoice.dueDate | date:'MMMM d, yyyy' }}
+          </span>
+        </div>
+        <div class="info-item">
+          <span class="info-label">Payment Terms</span>
+          <span class="info-value">{{ invoice.paymentTerms }} days</span>
+        </div>
+        <div class="info-item" *ngIf="invoice.daysOverdue">
+          <span class="info-label">Days Overdue</span>
+          <span class="info-value text-danger fw-600">{{ invoice.daysOverdue }} days</span>
+        </div>
+      </div>
+
+      <mat-divider style="margin:16px 0"></mat-divider>
+      <div class="info-item" *ngIf="invoice.description">
+        <span class="info-label">Description</span>
+        <span class="info-value">{{ invoice.description }}</span>
+      </div>
+    </div>
+
+    <!-- Risk Score Card -->
+    <div class="risk-card">
+      <div class="card-header">
+        <h3>AI Risk Assessment</h3>
+        <mat-icon style="color:var(--primary)">psychology</mat-icon>
+      </div>
+      <mat-divider></mat-divider>
+
+      <div *ngIf="invoice.riskScore !== undefined; else noRisk" class="risk-content">
+        <div class="risk-gauge">
+          <div class="gauge-value" [class]="getRiskClass(invoice.riskScore)">
+            {{ invoice.riskScore }}%
+          </div>
+          <div class="gauge-label">Payment Delay Risk</div>
+          <mat-progress-bar
+            [mode]="'determinate'"
+            [value]="invoice.riskScore"
+            [color]="invoice.riskScore >= 70 ? 'warn' : 'primary'"
+            style="height:8px;border-radius:4px;margin-top:12px">
+          </mat-progress-bar>
+          <div class="gauge-scale">
+            <span>Low (0%)</span>
+            <span>High (100%)</span>
+          </div>
+        </div>
+
+        <div class="risk-level-badge" [class]="getRiskClass(invoice.riskScore)">
+          <mat-icon>{{ invoice.riskScore >= 70 ? 'warning' : invoice.riskScore >= 40 ? 'info' : 'check_circle' }}</mat-icon>
+          <span>{{ invoice.riskLevel }} RISK</span>
+        </div>
+
+        <p class="risk-message" *ngIf="invoice.riskScore >= 70">
+          This invoice has a high probability of late payment. Immediate follow-up is recommended.
+        </p>
+        <p class="risk-message medium" *ngIf="invoice.riskScore >= 40 && invoice.riskScore < 70">
+          Moderate risk detected. Monitor closely and consider early reminder.
+        </p>
+        <p class="risk-message low" *ngIf="invoice.riskScore < 40">
+          Low risk of payment delay. No action required.
+        </p>
+      </div>
+
+      <ng-template #noRisk>
+        <div class="no-prediction">
+          <mat-icon>psychology</mat-icon>
+          <p>No prediction yet. Click "Run Prediction" to assess risk.</p>
+          <button mat-raised-button color="primary" (click)="runPrediction()">Run Prediction</button>
+        </div>
+      </ng-template>
+    </div>
+
+    <!-- SHAP Chart Card -->
+    <div class="shap-card" *ngIf="invoice.shapExplanation || invoice.riskScore !== undefined">
+      <div class="card-header">
+        <h3>Risk Factor Explanation (SHAP)</h3>
+        <span class="text-muted" style="font-size:0.78rem">XGBoost feature contributions</span>
+      </div>
+      <mat-divider></mat-divider>
+      <div class="shap-chart">
+        <canvas baseChart
+          [data]="shapChartData"
+          [options]="shapChartOptions"
+          type="bar">
+        </canvas>
+      </div>
+      <div class="shap-legend">
+        <div class="legend-item"><span class="dot red"></span> Increases risk</div>
+        <div class="legend-item"><span class="dot green"></span> Decreases risk</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div *ngIf="loading" style="display:flex;justify-content:center;padding:80px">
+  <mat-progress-bar mode="indeterminate" style="width:200px"></mat-progress-bar>
+</div>

@@ -1,0 +1,201 @@
+<!-- Page Header -->
+<div class="page-header">
+  <div class="page-title">
+    <h2>Dashboard</h2>
+    <p>Overview of Customer Billing — LEONI SSC Tunisia</p>
+  </div>
+  <div class="header-actions">
+    <span class="last-updated">Last updated: {{ today | date:'MMM d, yyyy HH:mm' }}</span>
+    <button mat-raised-button color="primary" routerLink="/invoices">
+      <mat-icon>add</mat-icon> New Invoice
+    </button>
+  </div>
+</div>
+
+<!-- KPI Grid -->
+<div class="kpi-grid" *ngIf="!loading">
+  <div class="kpi-card">
+    <div class="kpi-icon" style="background: linear-gradient(135deg,#3d52a0,#6c63ff)">
+      <mat-icon>receipt_long</mat-icon>
+    </div>
+    <div class="kpi-content">
+      <div class="kpi-label">Total Invoices</div>
+      <div class="kpi-value">{{ kpis.totalInvoices }}</div>
+      <div class="kpi-trend"><span class="trend-up">+12%</span> vs last month</div>
+    </div>
+  </div>
+
+  <div class="kpi-card">
+    <div class="kpi-icon" style="background: linear-gradient(135deg,#10b981,#059669)">
+      <mat-icon>euro</mat-icon>
+    </div>
+    <div class="kpi-content">
+      <div class="kpi-label">Total Revenue</div>
+      <div class="kpi-value">{{ kpis.totalRevenue | currency:'EUR':'symbol':'1.0-0' }}</div>
+      <div class="kpi-trend"><span class="trend-up">+8.4%</span> vs last month</div>
+    </div>
+  </div>
+
+  <div class="kpi-card">
+    <div class="kpi-icon" style="background: linear-gradient(135deg,#ef4444,#dc2626)">
+      <mat-icon>warning</mat-icon>
+    </div>
+    <div class="kpi-content">
+      <div class="kpi-label">Overdue Invoices</div>
+      <div class="kpi-value">{{ kpis.overdueInvoices }}</div>
+      <div class="kpi-trend text-danger">{{ kpis.overdueAmount | currency:'EUR':'symbol':'1.0-0' }} outstanding</div>
+    </div>
+  </div>
+
+  <div class="kpi-card">
+    <div class="kpi-icon" style="background: linear-gradient(135deg,#f59e0b,#d97706)">
+      <mat-icon>schedule</mat-icon>
+    </div>
+    <div class="kpi-content">
+      <div class="kpi-label">Average DSO</div>
+      <div class="kpi-value">{{ kpis.averageDso }} <small>days</small></div>
+      <div class="kpi-trend"><span class="trend-down">+3 days</span> vs target 39d</div>
+    </div>
+  </div>
+
+  <div class="kpi-card">
+    <div class="kpi-icon" style="background: linear-gradient(135deg,#3b82f6,#2563eb)">
+      <mat-icon>trending_up</mat-icon>
+    </div>
+    <div class="kpi-content">
+      <div class="kpi-label">Collection Rate</div>
+      <div class="kpi-value">{{ kpis.collectionRate | number:'1.1-1' }}%</div>
+      <div class="kpi-trend"><span class="trend-up">+1.2%</span> vs last month</div>
+    </div>
+  </div>
+
+  <div class="kpi-card">
+    <div class="kpi-icon" style="background: linear-gradient(135deg,#8b5cf6,#7c3aed)">
+      <mat-icon>psychology</mat-icon>
+    </div>
+    <div class="kpi-content">
+      <div class="kpi-label">High Risk Invoices</div>
+      <div class="kpi-value">{{ kpis.highRiskCount }}</div>
+      <div class="kpi-trend text-danger">Requires attention</div>
+    </div>
+  </div>
+</div>
+
+<!-- Charts Row -->
+<div class="charts-row">
+  <!-- Bar Chart -->
+  <div class="chart-card chart-bar">
+    <div class="chart-header">
+      <div>
+        <h3>Invoiced vs Collected</h3>
+        <p class="text-muted" style="font-size:0.8rem; margin:0">Monthly comparison (EUR)</p>
+      </div>
+      <mat-chip-set>
+        <mat-chip selected style="background:#3d52a0;color:#fff">Monthly</mat-chip>
+      </mat-chip-set>
+    </div>
+    <div class="chart-body">
+      <canvas baseChart
+        [data]="barChartData"
+        [options]="barChartOptions"
+        type="bar">
+      </canvas>
+    </div>
+  </div>
+
+  <!-- Doughnut Chart -->
+  <div class="chart-card chart-donut">
+    <div class="chart-header">
+      <div>
+        <h3>Invoice Status</h3>
+        <p class="text-muted" style="font-size:0.8rem; margin:0">Current period</p>
+      </div>
+    </div>
+    <div class="chart-body donut-body">
+      <canvas baseChart
+        [data]="doughnutChartData"
+        [options]="doughnutOptions"
+        type="doughnut">
+      </canvas>
+    </div>
+  </div>
+</div>
+
+<!-- Bottom Row -->
+<div class="bottom-row">
+  <!-- Recent Invoices -->
+  <div class="table-container recent-table">
+    <div class="table-header">
+      <h3>Recent Invoices</h3>
+      <button mat-button color="primary" routerLink="/invoices">View All</button>
+    </div>
+    <table>
+      <thead>
+        <tr>
+          <th>Invoice #</th>
+          <th>Client</th>
+          <th>Amount</th>
+          <th>Due Date</th>
+          <th>Status</th>
+          <th>Risk</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let inv of recentInvoices">
+          <td class="fw-600">{{ inv.invoiceNumber }}</td>
+          <td>{{ inv.clientName }}</td>
+          <td class="fw-600">{{ inv.amount | currency:'EUR':'symbol':'1.0-0' }}</td>
+          <td>{{ inv.dueDate | date:'MMM d, yyyy' }}</td>
+          <td>
+            <span class="status-chip" [class]="inv.status.toLowerCase()">
+              {{ inv.status }}
+            </span>
+          </td>
+          <td>
+            <div class="risk-cell">
+              <span class="risk-badge" [class]="getRiskClass(inv.riskScore ?? 0)">
+                {{ inv.riskScore }}%
+              </span>
+            </div>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- High Risk Alerts -->
+  <div class="alerts-panel">
+    <div class="table-header">
+      <h3>
+        <mat-icon style="color:var(--danger);font-size:18px;vertical-align:middle">warning</mat-icon>
+        Risk Alerts
+      </h3>
+      <button mat-button color="primary" routerLink="/alerts">View All</button>
+    </div>
+
+    <div class="alert-item" *ngFor="let inv of highRiskInvoices">
+      <div class="alert-icon high">
+        <mat-icon>warning</mat-icon>
+      </div>
+      <div class="alert-body">
+        <div class="alert-title">{{ inv.invoiceNumber }} — {{ inv.clientName }}</div>
+        <div class="alert-detail">
+          {{ inv.amount | currency:'EUR':'symbol':'1.0-0' }}
+          <span *ngIf="inv.daysOverdue"> · {{ inv.daysOverdue }} days overdue</span>
+        </div>
+      </div>
+      <span class="risk-badge high">{{ inv.riskScore }}%</span>
+    </div>
+
+    <div *ngIf="highRiskInvoices.length === 0" class="empty-alerts">
+      <mat-icon>check_circle</mat-icon>
+      <p>No high-risk alerts</p>
+    </div>
+  </div>
+</div>
+
+<ng-container *ngIf="loading">
+  <div class="loading-overlay">
+    <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+  </div>
+</ng-container>
