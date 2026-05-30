@@ -36,6 +36,8 @@ public class User {
     private Status status = Status.ACTIVE;
 
     private String department;
+    private String jobTitle;
+    private String phone;
 
     @Column(nullable = false, updatable = false, columnDefinition = "DATETIME(6) NOT NULL DEFAULT CURRENT_TIMESTAMP(6)")
     private LocalDateTime createdAt;

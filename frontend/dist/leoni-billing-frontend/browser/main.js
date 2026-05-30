@@ -1,11 +1,9 @@
 import {
-  AuthService
-} from "./chunk-VI4JGZMU.js";
+  ThemeService
+} from "./chunk-7RNVM5YD.js";
 import {
-  MatTooltip,
-  MatTooltipModule
-} from "./chunk-TW5PKVOR.js";
-import "./chunk-QKNRMUAZ.js";
+  AuthService
+} from "./chunk-MVY7NJAQ.js";
 import {
   Router,
   RouterLink,
@@ -13,43 +11,41 @@ import {
   RouterModule,
   RouterOutlet,
   provideRouter
-} from "./chunk-YSSCNL4Y.js";
-import "./chunk-PYIK4VV4.js";
+} from "./chunk-U3DLQZFR.js";
+import {
+  MatTooltip,
+  MatTooltipModule
+} from "./chunk-EOJBJDFG.js";
 import "./chunk-32VODOFB.js";
 import {
-  DomRendererFactory2,
   MatButtonModule,
-  MatCommonModule,
   MatIcon,
+  MatIconButton,
   MatIconModule,
   MatRipple,
-  MatRippleModule,
-  Platform,
+  MatRippleModule
+} from "./chunk-7F5FDPEU.js";
+import "./chunk-N625QWFE.js";
+import {
+  DomRendererFactory2,
   bootstrapApplication,
   provideHttpClient,
   withInterceptors
-} from "./chunk-SWEXKP5I.js";
+} from "./chunk-LMCEUH37.js";
+import {
+  CommonModule,
+  DOCUMENT,
+  NgForOf,
+  NgIf
+} from "./chunk-E6MJ6NZN.js";
 import {
   ANIMATION_MODULE_TYPE,
   ChangeDetectionScheduler,
-  ChangeDetectionStrategy,
-  CommonModule,
-  Component,
-  ContentChildren,
-  DOCUMENT,
-  Directive,
-  ElementRef,
   EventEmitter,
-  Inject,
   Injectable,
-  Input,
-  NgForOf,
-  NgIf,
-  NgModule,
   NgZone,
   RendererFactory2,
   RuntimeError,
-  ViewEncapsulation$1,
   inject,
   makeEnvironmentProviders,
   performanceMarkFeature,
@@ -58,30 +54,21 @@ import {
   ɵsetClassDebugInfo,
   ɵɵStandaloneFeature,
   ɵɵadvance,
-  ɵɵclassMap,
   ɵɵclassProp,
-  ɵɵcontentQuery,
   ɵɵdefineComponent,
-  ɵɵdefineDirective,
   ɵɵdefineInjectable,
-  ɵɵdefineInjector,
-  ɵɵdefineNgModule,
   ɵɵdirectiveInject,
   ɵɵelement,
   ɵɵelementEnd,
   ɵɵelementStart,
   ɵɵinvalidFactory,
   ɵɵlistener,
-  ɵɵloadQuery,
   ɵɵnextContext,
-  ɵɵprojection,
-  ɵɵprojectionDef,
   ɵɵproperty,
-  ɵɵqueryRefresh,
   ɵɵtemplate,
   ɵɵtext,
   ɵɵtextInterpolate
-} from "./chunk-II2NPOOE.js";
+} from "./chunk-UIKDKAPR.js";
 
 // node_modules/@angular/platform-browser/fesm2022/animations/async.mjs
 var ANIMATION_PREFIX = "@";
@@ -109,7 +96,7 @@ var AsyncAnimationRendererFactory = class _AsyncAnimationRendererFactory {
    * @internal
    */
   loadImpl() {
-    const moduleImpl = this.moduleImpl ?? import("./chunk-FGA2X7N6.js");
+    const moduleImpl = this.moduleImpl ?? import("./chunk-4JSC2DLD.js");
     return moduleImpl.catch((e) => {
       throw new RuntimeError(5300, (typeof ngDevMode === "undefined" || ngDevMode) && "Async loading for animations package was enabled, but loading failed. Angular falls back to using regular rendering. No animations will be displayed and their styles won't be applied.");
     }).then(({
@@ -312,200 +299,27 @@ var adminGuard = () => {
   return router.createUrlTree(["/dashboard"]);
 };
 
-// node_modules/@angular/material/fesm2022/toolbar.mjs
-var _c0 = ["*", [["mat-toolbar-row"]]];
-var _c1 = ["*", "mat-toolbar-row"];
-var MatToolbarRow = class _MatToolbarRow {
-  static {
-    this.\u0275fac = function MatToolbarRow_Factory(t) {
-      return new (t || _MatToolbarRow)();
-    };
-  }
-  static {
-    this.\u0275dir = /* @__PURE__ */ \u0275\u0275defineDirective({
-      type: _MatToolbarRow,
-      selectors: [["mat-toolbar-row"]],
-      hostAttrs: [1, "mat-toolbar-row"],
-      exportAs: ["matToolbarRow"],
-      standalone: true
-    });
-  }
-};
-(() => {
-  (typeof ngDevMode === "undefined" || ngDevMode) && setClassMetadata(MatToolbarRow, [{
-    type: Directive,
-    args: [{
-      selector: "mat-toolbar-row",
-      exportAs: "matToolbarRow",
-      host: {
-        "class": "mat-toolbar-row"
-      },
-      standalone: true
-    }]
-  }], null, null);
-})();
-var MatToolbar = class _MatToolbar {
-  constructor(_elementRef, _platform, document) {
-    this._elementRef = _elementRef;
-    this._platform = _platform;
-    this._document = document;
-  }
-  ngAfterViewInit() {
-    if (this._platform.isBrowser) {
-      this._checkToolbarMixedModes();
-      this._toolbarRows.changes.subscribe(() => this._checkToolbarMixedModes());
-    }
-  }
-  /**
-   * Throws an exception when developers are attempting to combine the different toolbar row modes.
-   */
-  _checkToolbarMixedModes() {
-    if (this._toolbarRows.length && (typeof ngDevMode === "undefined" || ngDevMode)) {
-      const isCombinedUsage = Array.from(this._elementRef.nativeElement.childNodes).filter((node) => !(node.classList && node.classList.contains("mat-toolbar-row"))).filter((node) => node.nodeType !== (this._document ? this._document.COMMENT_NODE : 8)).some((node) => !!(node.textContent && node.textContent.trim()));
-      if (isCombinedUsage) {
-        throwToolbarMixedModesError();
-      }
-    }
-  }
-  static {
-    this.\u0275fac = function MatToolbar_Factory(t) {
-      return new (t || _MatToolbar)(\u0275\u0275directiveInject(ElementRef), \u0275\u0275directiveInject(Platform), \u0275\u0275directiveInject(DOCUMENT));
-    };
-  }
-  static {
-    this.\u0275cmp = /* @__PURE__ */ \u0275\u0275defineComponent({
-      type: _MatToolbar,
-      selectors: [["mat-toolbar"]],
-      contentQueries: function MatToolbar_ContentQueries(rf, ctx, dirIndex) {
-        if (rf & 1) {
-          \u0275\u0275contentQuery(dirIndex, MatToolbarRow, 5);
-        }
-        if (rf & 2) {
-          let _t;
-          \u0275\u0275queryRefresh(_t = \u0275\u0275loadQuery()) && (ctx._toolbarRows = _t);
-        }
-      },
-      hostAttrs: [1, "mat-toolbar"],
-      hostVars: 6,
-      hostBindings: function MatToolbar_HostBindings(rf, ctx) {
-        if (rf & 2) {
-          \u0275\u0275classMap(ctx.color ? "mat-" + ctx.color : "");
-          \u0275\u0275classProp("mat-toolbar-multiple-rows", ctx._toolbarRows.length > 0)("mat-toolbar-single-row", ctx._toolbarRows.length === 0);
-        }
-      },
-      inputs: {
-        color: "color"
-      },
-      exportAs: ["matToolbar"],
-      standalone: true,
-      features: [\u0275\u0275StandaloneFeature],
-      ngContentSelectors: _c1,
-      decls: 2,
-      vars: 0,
-      template: function MatToolbar_Template(rf, ctx) {
-        if (rf & 1) {
-          \u0275\u0275projectionDef(_c0);
-          \u0275\u0275projection(0);
-          \u0275\u0275projection(1, 1);
-        }
-      },
-      styles: [".mat-toolbar{background:var(--mat-toolbar-container-background-color);color:var(--mat-toolbar-container-text-color)}.mat-toolbar,.mat-toolbar h1,.mat-toolbar h2,.mat-toolbar h3,.mat-toolbar h4,.mat-toolbar h5,.mat-toolbar h6{font-family:var(--mat-toolbar-title-text-font);font-size:var(--mat-toolbar-title-text-size);line-height:var(--mat-toolbar-title-text-line-height);font-weight:var(--mat-toolbar-title-text-weight);letter-spacing:var(--mat-toolbar-title-text-tracking);margin:0}.cdk-high-contrast-active .mat-toolbar{outline:solid 1px}.mat-toolbar .mat-form-field-underline,.mat-toolbar .mat-form-field-ripple,.mat-toolbar .mat-focused .mat-form-field-ripple{background-color:currentColor}.mat-toolbar .mat-form-field-label,.mat-toolbar .mat-focused .mat-form-field-label,.mat-toolbar .mat-select-value,.mat-toolbar .mat-select-arrow,.mat-toolbar .mat-form-field.mat-focused .mat-select-arrow{color:inherit}.mat-toolbar .mat-input-element{caret-color:currentColor}.mat-toolbar .mat-mdc-button-base.mat-mdc-button-base.mat-unthemed{--mdc-text-button-label-text-color:var(--mat-toolbar-container-text-color);--mdc-outlined-button-label-text-color:var(--mat-toolbar-container-text-color)}.mat-toolbar-row,.mat-toolbar-single-row{display:flex;box-sizing:border-box;padding:0 16px;width:100%;flex-direction:row;align-items:center;white-space:nowrap;height:var(--mat-toolbar-standard-height)}@media(max-width: 599px){.mat-toolbar-row,.mat-toolbar-single-row{height:var(--mat-toolbar-mobile-height)}}.mat-toolbar-multiple-rows{display:flex;box-sizing:border-box;flex-direction:column;width:100%;min-height:var(--mat-toolbar-standard-height)}@media(max-width: 599px){.mat-toolbar-multiple-rows{min-height:var(--mat-toolbar-mobile-height)}}"],
-      encapsulation: 2,
-      changeDetection: 0
-    });
-  }
-};
-(() => {
-  (typeof ngDevMode === "undefined" || ngDevMode) && setClassMetadata(MatToolbar, [{
-    type: Component,
-    args: [{
-      selector: "mat-toolbar",
-      exportAs: "matToolbar",
-      host: {
-        "class": "mat-toolbar",
-        "[class]": 'color ? "mat-" + color : ""',
-        "[class.mat-toolbar-multiple-rows]": "_toolbarRows.length > 0",
-        "[class.mat-toolbar-single-row]": "_toolbarRows.length === 0"
-      },
-      changeDetection: ChangeDetectionStrategy.OnPush,
-      encapsulation: ViewEncapsulation$1.None,
-      standalone: true,
-      template: '<ng-content></ng-content>\n<ng-content select="mat-toolbar-row"></ng-content>\n',
-      styles: [".mat-toolbar{background:var(--mat-toolbar-container-background-color);color:var(--mat-toolbar-container-text-color)}.mat-toolbar,.mat-toolbar h1,.mat-toolbar h2,.mat-toolbar h3,.mat-toolbar h4,.mat-toolbar h5,.mat-toolbar h6{font-family:var(--mat-toolbar-title-text-font);font-size:var(--mat-toolbar-title-text-size);line-height:var(--mat-toolbar-title-text-line-height);font-weight:var(--mat-toolbar-title-text-weight);letter-spacing:var(--mat-toolbar-title-text-tracking);margin:0}.cdk-high-contrast-active .mat-toolbar{outline:solid 1px}.mat-toolbar .mat-form-field-underline,.mat-toolbar .mat-form-field-ripple,.mat-toolbar .mat-focused .mat-form-field-ripple{background-color:currentColor}.mat-toolbar .mat-form-field-label,.mat-toolbar .mat-focused .mat-form-field-label,.mat-toolbar .mat-select-value,.mat-toolbar .mat-select-arrow,.mat-toolbar .mat-form-field.mat-focused .mat-select-arrow{color:inherit}.mat-toolbar .mat-input-element{caret-color:currentColor}.mat-toolbar .mat-mdc-button-base.mat-mdc-button-base.mat-unthemed{--mdc-text-button-label-text-color:var(--mat-toolbar-container-text-color);--mdc-outlined-button-label-text-color:var(--mat-toolbar-container-text-color)}.mat-toolbar-row,.mat-toolbar-single-row{display:flex;box-sizing:border-box;padding:0 16px;width:100%;flex-direction:row;align-items:center;white-space:nowrap;height:var(--mat-toolbar-standard-height)}@media(max-width: 599px){.mat-toolbar-row,.mat-toolbar-single-row{height:var(--mat-toolbar-mobile-height)}}.mat-toolbar-multiple-rows{display:flex;box-sizing:border-box;flex-direction:column;width:100%;min-height:var(--mat-toolbar-standard-height)}@media(max-width: 599px){.mat-toolbar-multiple-rows{min-height:var(--mat-toolbar-mobile-height)}}"]
-    }]
-  }], () => [{
-    type: ElementRef
-  }, {
-    type: Platform
-  }, {
-    type: void 0,
-    decorators: [{
-      type: Inject,
-      args: [DOCUMENT]
-    }]
-  }], {
-    color: [{
-      type: Input
-    }],
-    _toolbarRows: [{
-      type: ContentChildren,
-      args: [MatToolbarRow, {
-        descendants: true
-      }]
-    }]
-  });
-})();
-function throwToolbarMixedModesError() {
-  throw Error("MatToolbar: Attempting to combine different toolbar modes. Either specify multiple `<mat-toolbar-row>` elements explicitly or just place content inside of a `<mat-toolbar>` for a single row.");
-}
-var MatToolbarModule = class _MatToolbarModule {
-  static {
-    this.\u0275fac = function MatToolbarModule_Factory(t) {
-      return new (t || _MatToolbarModule)();
-    };
-  }
-  static {
-    this.\u0275mod = /* @__PURE__ */ \u0275\u0275defineNgModule({
-      type: _MatToolbarModule
-    });
-  }
-  static {
-    this.\u0275inj = /* @__PURE__ */ \u0275\u0275defineInjector({
-      imports: [MatCommonModule, MatCommonModule]
-    });
-  }
-};
-(() => {
-  (typeof ngDevMode === "undefined" || ngDevMode) && setClassMetadata(MatToolbarModule, [{
-    type: NgModule,
-    args: [{
-      imports: [MatCommonModule, MatToolbar, MatToolbarRow],
-      exports: [MatToolbar, MatToolbarRow, MatCommonModule]
-    }]
-  }], null, null);
-})();
-
 // src/app/shared/sidebar/sidebar.component.ts
 function SidebarComponent_div_5_Template(rf, ctx) {
   if (rf & 1) {
-    \u0275\u0275elementStart(0, "div", 13)(1, "span", 14);
+    \u0275\u0275elementStart(0, "div", 15)(1, "span", 16);
     \u0275\u0275text(2, "LEONI");
     \u0275\u0275elementEnd();
-    \u0275\u0275elementStart(3, "span", 15);
+    \u0275\u0275elementStart(3, "span", 17);
     \u0275\u0275text(4, "Billing Dashboard");
     \u0275\u0275elementEnd()();
   }
 }
 function SidebarComponent_div_9_Template(rf, ctx) {
   if (rf & 1) {
-    \u0275\u0275elementStart(0, "div", 16);
+    \u0275\u0275elementStart(0, "div", 18);
     \u0275\u0275text(1, "MAIN MENU");
     \u0275\u0275elementEnd();
   }
 }
 function SidebarComponent_li_11_span_4_Template(rf, ctx) {
   if (rf & 1) {
-    \u0275\u0275elementStart(0, "span", 20);
+    \u0275\u0275elementStart(0, "span", 22);
     \u0275\u0275text(1);
     \u0275\u0275elementEnd();
   }
@@ -517,7 +331,7 @@ function SidebarComponent_li_11_span_4_Template(rf, ctx) {
 }
 function SidebarComponent_li_11_span_5_Template(rf, ctx) {
   if (rf & 1) {
-    \u0275\u0275elementStart(0, "span", 21);
+    \u0275\u0275elementStart(0, "span", 23);
     \u0275\u0275text(1);
     \u0275\u0275elementEnd();
   }
@@ -529,15 +343,15 @@ function SidebarComponent_li_11_span_5_Template(rf, ctx) {
 }
 function SidebarComponent_li_11_span_6_Template(rf, ctx) {
   if (rf & 1) {
-    \u0275\u0275element(0, "span", 22);
+    \u0275\u0275element(0, "span", 24);
   }
 }
 function SidebarComponent_li_11_Template(rf, ctx) {
   if (rf & 1) {
-    \u0275\u0275elementStart(0, "li")(1, "a", 17)(2, "mat-icon", 11);
+    \u0275\u0275elementStart(0, "li")(1, "a", 19)(2, "mat-icon", 10);
     \u0275\u0275text(3);
     \u0275\u0275elementEnd();
-    \u0275\u0275template(4, SidebarComponent_li_11_span_4_Template, 2, 1, "span", 12)(5, SidebarComponent_li_11_span_5_Template, 2, 1, "span", 18)(6, SidebarComponent_li_11_span_6_Template, 1, 0, "span", 19);
+    \u0275\u0275template(4, SidebarComponent_li_11_span_4_Template, 2, 1, "span", 11)(5, SidebarComponent_li_11_span_5_Template, 2, 1, "span", 20)(6, SidebarComponent_li_11_span_6_Template, 1, 0, "span", 21);
     \u0275\u0275elementEnd()();
   }
   if (rf & 2) {
@@ -555,22 +369,29 @@ function SidebarComponent_li_11_Template(rf, ctx) {
     \u0275\u0275property("ngIf", item_r1.badge && ctx_r1.collapsed);
   }
 }
-function SidebarComponent_div_13_Template(rf, ctx) {
+function SidebarComponent_span_16_Template(rf, ctx) {
   if (rf & 1) {
-    \u0275\u0275elementStart(0, "div", 16);
+    \u0275\u0275elementStart(0, "span", 22);
+    \u0275\u0275text(1, "Settings");
+    \u0275\u0275elementEnd();
+  }
+}
+function SidebarComponent_div_18_Template(rf, ctx) {
+  if (rf & 1) {
+    \u0275\u0275elementStart(0, "div", 18);
     \u0275\u0275text(1, "ACCOUNT");
     \u0275\u0275elementEnd();
   }
 }
-function SidebarComponent_div_14_Template(rf, ctx) {
+function SidebarComponent_div_19_Template(rf, ctx) {
   if (rf & 1) {
-    \u0275\u0275elementStart(0, "div", 23)(1, "div", 24);
+    \u0275\u0275elementStart(0, "div", 25)(1, "div", 26);
     \u0275\u0275text(2);
     \u0275\u0275elementEnd();
-    \u0275\u0275elementStart(3, "div", 25)(4, "span", 26);
+    \u0275\u0275elementStart(3, "div", 27)(4, "span", 28);
     \u0275\u0275text(5);
     \u0275\u0275elementEnd();
-    \u0275\u0275elementStart(6, "span", 27);
+    \u0275\u0275elementStart(6, "span", 29);
     \u0275\u0275text(7);
     \u0275\u0275elementEnd()()();
   }
@@ -584,9 +405,9 @@ function SidebarComponent_div_14_Template(rf, ctx) {
     \u0275\u0275textInterpolate(ctx_r1.roleLabel);
   }
 }
-function SidebarComponent_span_18_Template(rf, ctx) {
+function SidebarComponent_span_23_Template(rf, ctx) {
   if (rf & 1) {
-    \u0275\u0275elementStart(0, "span", 20);
+    \u0275\u0275elementStart(0, "span", 22);
     \u0275\u0275text(1, "Logout");
     \u0275\u0275elementEnd();
   }
@@ -623,7 +444,7 @@ var SidebarComponent = class _SidebarComponent {
     };
   }
   static {
-    this.\u0275cmp = /* @__PURE__ */ \u0275\u0275defineComponent({ type: _SidebarComponent, selectors: [["app-sidebar"]], inputs: { collapsed: "collapsed" }, outputs: { collapseToggle: "collapseToggle" }, standalone: true, features: [\u0275\u0275StandaloneFeature], decls: 19, vars: 11, consts: [[1, "sidebar"], [1, "sidebar-logo"], [1, "logo-icon"], ["class", "logo-text", 4, "ngIf"], [1, "collapse-btn", 3, "click", "matTooltip"], ["class", "nav-section-label", 4, "ngIf"], [1, "nav-list"], [4, "ngFor", "ngForOf"], [1, "sidebar-bottom"], ["class", "user-info", 4, "ngIf"], ["matRipple", "", "matTooltipPosition", "right", 1, "nav-item", "logout-btn", 3, "click", "matTooltip"], [1, "nav-icon"], ["class", "nav-label", 4, "ngIf"], [1, "logo-text"], [1, "logo-name"], [1, "logo-sub"], [1, "nav-section-label"], ["routerLinkActive", "active", "matRipple", "", "matTooltipPosition", "right", 1, "nav-item", 3, "routerLink", "matRippleColor", "matTooltip"], ["class", "nav-badge", 4, "ngIf"], ["class", "nav-badge-dot", 4, "ngIf"], [1, "nav-label"], [1, "nav-badge"], [1, "nav-badge-dot"], [1, "user-info"], [1, "user-avatar"], [1, "user-details"], [1, "user-name"], [1, "user-role"]], template: function SidebarComponent_Template(rf, ctx) {
+    this.\u0275cmp = /* @__PURE__ */ \u0275\u0275defineComponent({ type: _SidebarComponent, selectors: [["app-sidebar"]], inputs: { collapsed: "collapsed" }, outputs: { collapseToggle: "collapseToggle" }, standalone: true, features: [\u0275\u0275StandaloneFeature], decls: 24, vars: 15, consts: [[1, "sidebar"], [1, "sidebar-logo"], [1, "logo-icon"], ["class", "logo-text", 4, "ngIf"], [1, "collapse-btn", 3, "click", "matTooltip"], ["class", "nav-section-label", 4, "ngIf"], [1, "nav-list"], [4, "ngFor", "ngForOf"], [1, "sidebar-bottom"], ["routerLinkActive", "active", "matRipple", "", "matTooltipPosition", "right", 1, "nav-item", "settings-item", 3, "routerLink", "matRippleColor", "matTooltip"], [1, "nav-icon"], ["class", "nav-label", 4, "ngIf"], [1, "sidebar-divider"], ["class", "user-info", 4, "ngIf"], ["matRipple", "", "matTooltipPosition", "right", 1, "nav-item", "logout-btn", 3, "click", "matTooltip"], [1, "logo-text"], [1, "logo-name"], [1, "logo-sub"], [1, "nav-section-label"], ["routerLinkActive", "active", "matRipple", "", "matTooltipPosition", "right", 1, "nav-item", 3, "routerLink", "matRippleColor", "matTooltip"], ["class", "nav-badge", 4, "ngIf"], ["class", "nav-badge-dot", 4, "ngIf"], [1, "nav-label"], [1, "nav-badge"], [1, "nav-badge-dot"], [1, "user-info"], [1, "user-avatar"], [1, "user-details"], [1, "user-name"], [1, "user-role"]], template: function SidebarComponent_Template(rf, ctx) {
       if (rf & 1) {
         \u0275\u0275elementStart(0, "nav", 0)(1, "div", 1)(2, "div", 2)(3, "mat-icon");
         \u0275\u0275text(4, "electric_bolt");
@@ -640,16 +461,21 @@ var SidebarComponent = class _SidebarComponent {
         \u0275\u0275elementStart(10, "ul", 6);
         \u0275\u0275template(11, SidebarComponent_li_11_Template, 7, 7, "li", 7);
         \u0275\u0275elementEnd();
-        \u0275\u0275elementStart(12, "div", 8);
-        \u0275\u0275template(13, SidebarComponent_div_13_Template, 2, 0, "div", 5)(14, SidebarComponent_div_14_Template, 8, 3, "div", 9);
-        \u0275\u0275elementStart(15, "button", 10);
-        \u0275\u0275listener("click", function SidebarComponent_Template_button_click_15_listener() {
+        \u0275\u0275elementStart(12, "div", 8)(13, "a", 9)(14, "mat-icon", 10);
+        \u0275\u0275text(15, "settings");
+        \u0275\u0275elementEnd();
+        \u0275\u0275template(16, SidebarComponent_span_16_Template, 2, 0, "span", 11);
+        \u0275\u0275elementEnd();
+        \u0275\u0275element(17, "div", 12);
+        \u0275\u0275template(18, SidebarComponent_div_18_Template, 2, 0, "div", 5)(19, SidebarComponent_div_19_Template, 8, 3, "div", 13);
+        \u0275\u0275elementStart(20, "button", 14);
+        \u0275\u0275listener("click", function SidebarComponent_Template_button_click_20_listener() {
           return ctx.logout();
         });
-        \u0275\u0275elementStart(16, "mat-icon", 11);
-        \u0275\u0275text(17, "logout");
+        \u0275\u0275elementStart(21, "mat-icon", 10);
+        \u0275\u0275text(22, "logout");
         \u0275\u0275elementEnd();
-        \u0275\u0275template(18, SidebarComponent_span_18_Template, 2, 0, "span", 12);
+        \u0275\u0275template(23, SidebarComponent_span_23_Template, 2, 0, "span", 11);
         \u0275\u0275elementEnd()()();
       }
       if (rf & 2) {
@@ -665,6 +491,10 @@ var SidebarComponent = class _SidebarComponent {
         \u0275\u0275advance(2);
         \u0275\u0275property("ngForOf", ctx.navItems);
         \u0275\u0275advance(2);
+        \u0275\u0275property("routerLink", "/settings")("matRippleColor", "rgba(255,255,255,0.08)")("matTooltip", ctx.collapsed ? "Settings" : "");
+        \u0275\u0275advance(3);
+        \u0275\u0275property("ngIf", !ctx.collapsed);
+        \u0275\u0275advance(2);
         \u0275\u0275property("ngIf", !ctx.collapsed);
         \u0275\u0275advance();
         \u0275\u0275property("ngIf", !ctx.collapsed);
@@ -673,7 +503,7 @@ var SidebarComponent = class _SidebarComponent {
         \u0275\u0275advance(3);
         \u0275\u0275property("ngIf", !ctx.collapsed);
       }
-    }, dependencies: [CommonModule, NgForOf, NgIf, RouterModule, RouterLink, RouterLinkActive, MatIconModule, MatIcon, MatTooltipModule, MatTooltip, MatRippleModule, MatRipple], styles: ['@charset "UTF-8";\n\n\n\n.sidebar[_ngcontent-%COMP%] {\n  width: 260px;\n  min-height: 100vh;\n  background: var(--sidebar-bg);\n  display: flex;\n  flex-direction: column;\n  transition: width 0.25s cubic-bezier(0.4, 0, 0.2, 1);\n  position: fixed;\n  top: 0;\n  left: 0;\n  bottom: 0;\n  z-index: 100;\n  overflow: hidden;\n}\n.sidebar.collapsed[_ngcontent-%COMP%] {\n  width: 72px;\n}\n.sidebar.collapsed[_ngcontent-%COMP%]   .logo-text[_ngcontent-%COMP%], .sidebar.collapsed[_ngcontent-%COMP%]   .nav-label[_ngcontent-%COMP%], .sidebar.collapsed[_ngcontent-%COMP%]   .user-info[_ngcontent-%COMP%], .sidebar.collapsed[_ngcontent-%COMP%]   .nav-badge[_ngcontent-%COMP%] {\n  display: none;\n}\n.sidebar.collapsed[_ngcontent-%COMP%]   .sidebar-logo[_ngcontent-%COMP%] {\n  justify-content: center;\n  padding: 0 16px;\n}\n.sidebar.collapsed[_ngcontent-%COMP%]   .collapse-btn[_ngcontent-%COMP%] {\n  margin-left: 0;\n}\n.sidebar.collapsed[_ngcontent-%COMP%]   .nav-section-label[_ngcontent-%COMP%] {\n  display: none;\n}\n.sidebar-logo[_ngcontent-%COMP%] {\n  display: flex;\n  align-items: center;\n  gap: 12px;\n  padding: 20px 16px 20px 20px;\n  border-bottom: 1px solid rgba(255, 255, 255, 0.08);\n  min-height: 72px;\n}\n.sidebar-logo[_ngcontent-%COMP%]   .logo-icon[_ngcontent-%COMP%] {\n  width: 38px;\n  height: 38px;\n  background: var(--sidebar-active);\n  border-radius: 10px;\n  display: flex;\n  align-items: center;\n  justify-content: center;\n  flex-shrink: 0;\n}\n.sidebar-logo[_ngcontent-%COMP%]   .logo-icon[_ngcontent-%COMP%]   mat-icon[_ngcontent-%COMP%] {\n  color: #fff;\n  font-size: 20px;\n  width: 20px;\n  height: 20px;\n}\n.sidebar-logo[_ngcontent-%COMP%]   .logo-text[_ngcontent-%COMP%] {\n  flex: 1;\n  display: flex;\n  flex-direction: column;\n  line-height: 1.2;\n}\n.sidebar-logo[_ngcontent-%COMP%]   .logo-text[_ngcontent-%COMP%]   .logo-name[_ngcontent-%COMP%] {\n  font-size: 1rem;\n  font-weight: 700;\n  color: #fff;\n  letter-spacing: 1px;\n}\n.sidebar-logo[_ngcontent-%COMP%]   .logo-text[_ngcontent-%COMP%]   .logo-sub[_ngcontent-%COMP%] {\n  font-size: 0.68rem;\n  color: var(--sidebar-text);\n  font-weight: 400;\n}\n.sidebar-logo[_ngcontent-%COMP%]   .collapse-btn[_ngcontent-%COMP%] {\n  background: none;\n  border: none;\n  cursor: pointer;\n  color: var(--sidebar-text);\n  padding: 4px;\n  border-radius: 6px;\n  display: flex;\n  align-items: center;\n  margin-left: auto;\n  flex-shrink: 0;\n  transition: background 0.15s, color 0.15s;\n}\n.sidebar-logo[_ngcontent-%COMP%]   .collapse-btn[_ngcontent-%COMP%]:hover {\n  background: rgba(255, 255, 255, 0.1);\n  color: #fff;\n}\n.sidebar-logo[_ngcontent-%COMP%]   .collapse-btn[_ngcontent-%COMP%]   mat-icon[_ngcontent-%COMP%] {\n  font-size: 18px;\n  width: 18px;\n  height: 18px;\n}\n.nav-section-label[_ngcontent-%COMP%] {\n  font-size: 0.65rem;\n  font-weight: 700;\n  letter-spacing: 1px;\n  color: rgba(168, 184, 216, 0.5);\n  padding: 16px 20px 6px;\n  text-transform: uppercase;\n}\n.nav-list[_ngcontent-%COMP%] {\n  list-style: none;\n  padding: 0 10px;\n  flex: 1;\n}\n.nav-item[_ngcontent-%COMP%] {\n  display: flex;\n  align-items: center;\n  gap: 12px;\n  padding: 10px 14px;\n  border-radius: 10px;\n  color: var(--sidebar-text);\n  text-decoration: none;\n  font-size: 0.875rem;\n  font-weight: 500;\n  transition: background 0.15s, color 0.15s;\n  cursor: pointer;\n  width: 100%;\n  border: none;\n  background: none;\n  margin-bottom: 2px;\n}\n.nav-item[_ngcontent-%COMP%]:hover {\n  background: rgba(255, 255, 255, 0.08);\n  color: #fff;\n}\n.nav-item[_ngcontent-%COMP%]:hover   .nav-icon[_ngcontent-%COMP%] {\n  color: #fff;\n}\n.nav-item.active[_ngcontent-%COMP%] {\n  background: var(--sidebar-active);\n  color: #fff;\n}\n.nav-item.active[_ngcontent-%COMP%]   .nav-icon[_ngcontent-%COMP%] {\n  color: #fff;\n}\n.nav-item[_ngcontent-%COMP%]   .nav-icon[_ngcontent-%COMP%] {\n  font-size: 20px;\n  width: 20px;\n  height: 20px;\n  color: var(--sidebar-text);\n  flex-shrink: 0;\n  transition: color 0.15s;\n}\n.nav-item[_ngcontent-%COMP%]   .nav-label[_ngcontent-%COMP%] {\n  flex: 1;\n  white-space: nowrap;\n}\n.nav-item[_ngcontent-%COMP%]   .nav-badge[_ngcontent-%COMP%] {\n  background: var(--danger);\n  color: #fff;\n  font-size: 0.65rem;\n  font-weight: 700;\n  border-radius: 10px;\n  padding: 1px 6px;\n  min-width: 18px;\n  text-align: center;\n}\n.nav-item[_ngcontent-%COMP%]   .nav-badge-dot[_ngcontent-%COMP%] {\n  width: 8px;\n  height: 8px;\n  background: var(--danger);\n  border-radius: 50%;\n  position: absolute;\n  top: 8px;\n  right: 10px;\n}\n.sidebar-bottom[_ngcontent-%COMP%] {\n  padding: 10px;\n  border-top: 1px solid rgba(255, 255, 255, 0.08);\n}\n.user-info[_ngcontent-%COMP%] {\n  display: flex;\n  align-items: center;\n  gap: 10px;\n  padding: 10px 14px;\n  margin-bottom: 4px;\n}\n.user-info[_ngcontent-%COMP%]   .user-avatar[_ngcontent-%COMP%] {\n  width: 34px;\n  height: 34px;\n  background: var(--sidebar-active);\n  border-radius: 50%;\n  display: flex;\n  align-items: center;\n  justify-content: center;\n  font-size: 0.85rem;\n  font-weight: 700;\n  color: #fff;\n  flex-shrink: 0;\n}\n.user-info[_ngcontent-%COMP%]   .user-details[_ngcontent-%COMP%] {\n  display: flex;\n  flex-direction: column;\n}\n.user-info[_ngcontent-%COMP%]   .user-details[_ngcontent-%COMP%]   .user-name[_ngcontent-%COMP%] {\n  font-size: 0.825rem;\n  font-weight: 600;\n  color: #fff;\n}\n.user-info[_ngcontent-%COMP%]   .user-details[_ngcontent-%COMP%]   .user-role[_ngcontent-%COMP%] {\n  font-size: 0.7rem;\n  color: var(--sidebar-text);\n}\n.logout-btn[_ngcontent-%COMP%] {\n  color: var(--sidebar-text);\n}\n.logout-btn[_ngcontent-%COMP%]:hover {\n  background: rgba(239, 68, 68, 0.15);\n  color: var(--danger);\n}\n.logout-btn[_ngcontent-%COMP%]:hover   .nav-icon[_ngcontent-%COMP%] {\n  color: var(--danger);\n}\n/*# sourceMappingURL=sidebar.component.css.map */'] });
+    }, dependencies: [CommonModule, NgForOf, NgIf, RouterModule, RouterLink, RouterLinkActive, MatIconModule, MatIcon, MatTooltipModule, MatTooltip, MatRippleModule, MatRipple], styles: ['@charset "UTF-8";\n\n\n\n.sidebar[_ngcontent-%COMP%] {\n  width: 260px;\n  min-height: 100vh;\n  background: var(--sidebar-bg);\n  display: flex;\n  flex-direction: column;\n  transition: width 0.25s cubic-bezier(0.4, 0, 0.2, 1);\n  position: fixed;\n  top: 0;\n  left: 0;\n  bottom: 0;\n  z-index: 100;\n  overflow: hidden;\n}\n.sidebar.collapsed[_ngcontent-%COMP%] {\n  width: 72px;\n}\n.sidebar.collapsed[_ngcontent-%COMP%]   .logo-text[_ngcontent-%COMP%], .sidebar.collapsed[_ngcontent-%COMP%]   .nav-label[_ngcontent-%COMP%], .sidebar.collapsed[_ngcontent-%COMP%]   .user-info[_ngcontent-%COMP%], .sidebar.collapsed[_ngcontent-%COMP%]   .nav-badge[_ngcontent-%COMP%] {\n  display: none;\n}\n.sidebar.collapsed[_ngcontent-%COMP%]   .sidebar-logo[_ngcontent-%COMP%] {\n  justify-content: center;\n  padding: 0 16px;\n}\n.sidebar.collapsed[_ngcontent-%COMP%]   .collapse-btn[_ngcontent-%COMP%] {\n  margin-left: 0;\n}\n.sidebar.collapsed[_ngcontent-%COMP%]   .nav-section-label[_ngcontent-%COMP%] {\n  display: none;\n}\n.sidebar-logo[_ngcontent-%COMP%] {\n  display: flex;\n  align-items: center;\n  gap: 12px;\n  padding: 20px 16px 20px 20px;\n  border-bottom: 1px solid rgba(255, 255, 255, 0.08);\n  min-height: 72px;\n}\n.sidebar-logo[_ngcontent-%COMP%]   .logo-icon[_ngcontent-%COMP%] {\n  width: 38px;\n  height: 38px;\n  background: var(--sidebar-active);\n  border-radius: 10px;\n  display: flex;\n  align-items: center;\n  justify-content: center;\n  flex-shrink: 0;\n}\n.sidebar-logo[_ngcontent-%COMP%]   .logo-icon[_ngcontent-%COMP%]   mat-icon[_ngcontent-%COMP%] {\n  color: #fff;\n  font-size: 20px;\n  width: 20px;\n  height: 20px;\n}\n.sidebar-logo[_ngcontent-%COMP%]   .logo-text[_ngcontent-%COMP%] {\n  flex: 1;\n  display: flex;\n  flex-direction: column;\n  line-height: 1.2;\n}\n.sidebar-logo[_ngcontent-%COMP%]   .logo-text[_ngcontent-%COMP%]   .logo-name[_ngcontent-%COMP%] {\n  font-size: 1rem;\n  font-weight: 700;\n  color: #fff;\n  letter-spacing: 1px;\n}\n.sidebar-logo[_ngcontent-%COMP%]   .logo-text[_ngcontent-%COMP%]   .logo-sub[_ngcontent-%COMP%] {\n  font-size: 0.68rem;\n  color: var(--sidebar-text);\n  font-weight: 400;\n}\n.sidebar-logo[_ngcontent-%COMP%]   .collapse-btn[_ngcontent-%COMP%] {\n  background: none;\n  border: none;\n  cursor: pointer;\n  color: var(--sidebar-text);\n  padding: 4px;\n  border-radius: 6px;\n  display: flex;\n  align-items: center;\n  margin-left: auto;\n  flex-shrink: 0;\n  transition: background 0.15s, color 0.15s;\n}\n.sidebar-logo[_ngcontent-%COMP%]   .collapse-btn[_ngcontent-%COMP%]:hover {\n  background: rgba(255, 255, 255, 0.1);\n  color: #fff;\n}\n.sidebar-logo[_ngcontent-%COMP%]   .collapse-btn[_ngcontent-%COMP%]   mat-icon[_ngcontent-%COMP%] {\n  font-size: 18px;\n  width: 18px;\n  height: 18px;\n}\n.nav-section-label[_ngcontent-%COMP%] {\n  font-size: 0.65rem;\n  font-weight: 700;\n  letter-spacing: 1px;\n  color: rgba(168, 184, 216, 0.5);\n  padding: 16px 20px 6px;\n  text-transform: uppercase;\n}\n.nav-list[_ngcontent-%COMP%] {\n  list-style: none;\n  padding: 0 10px;\n  flex: 1;\n}\n.nav-item[_ngcontent-%COMP%] {\n  display: flex;\n  align-items: center;\n  gap: 12px;\n  padding: 10px 14px;\n  border-radius: 10px;\n  color: var(--sidebar-text);\n  text-decoration: none;\n  font-size: 0.875rem;\n  font-weight: 500;\n  transition: background 0.15s, color 0.15s;\n  cursor: pointer;\n  width: 100%;\n  border: none;\n  background: none;\n  margin-bottom: 2px;\n}\n.nav-item[_ngcontent-%COMP%]:hover {\n  background: rgba(255, 255, 255, 0.08);\n  color: #fff;\n}\n.nav-item[_ngcontent-%COMP%]:hover   .nav-icon[_ngcontent-%COMP%] {\n  color: #fff;\n}\n.nav-item.active[_ngcontent-%COMP%] {\n  background: var(--sidebar-active);\n  color: #fff;\n}\n.nav-item.active[_ngcontent-%COMP%]   .nav-icon[_ngcontent-%COMP%] {\n  color: #fff;\n}\n.nav-item[_ngcontent-%COMP%]   .nav-icon[_ngcontent-%COMP%] {\n  font-size: 20px;\n  width: 20px;\n  height: 20px;\n  color: var(--sidebar-text);\n  flex-shrink: 0;\n  transition: color 0.15s;\n}\n.nav-item[_ngcontent-%COMP%]   .nav-label[_ngcontent-%COMP%] {\n  flex: 1;\n  white-space: nowrap;\n}\n.nav-item[_ngcontent-%COMP%]   .nav-badge[_ngcontent-%COMP%] {\n  background: var(--danger);\n  color: #fff;\n  font-size: 0.65rem;\n  font-weight: 700;\n  border-radius: 10px;\n  padding: 1px 6px;\n  min-width: 18px;\n  text-align: center;\n}\n.nav-item[_ngcontent-%COMP%]   .nav-badge-dot[_ngcontent-%COMP%] {\n  width: 8px;\n  height: 8px;\n  background: var(--danger);\n  border-radius: 50%;\n  position: absolute;\n  top: 8px;\n  right: 10px;\n}\n.sidebar-bottom[_ngcontent-%COMP%] {\n  padding: 10px;\n  border-top: 1px solid rgba(255, 255, 255, 0.08);\n}\n.user-info[_ngcontent-%COMP%] {\n  display: flex;\n  align-items: center;\n  gap: 10px;\n  padding: 10px 14px;\n  margin-bottom: 4px;\n}\n.user-info[_ngcontent-%COMP%]   .user-avatar[_ngcontent-%COMP%] {\n  width: 34px;\n  height: 34px;\n  background: var(--sidebar-active);\n  border-radius: 50%;\n  display: flex;\n  align-items: center;\n  justify-content: center;\n  font-size: 0.85rem;\n  font-weight: 700;\n  color: #fff;\n  flex-shrink: 0;\n}\n.user-info[_ngcontent-%COMP%]   .user-details[_ngcontent-%COMP%] {\n  display: flex;\n  flex-direction: column;\n}\n.user-info[_ngcontent-%COMP%]   .user-details[_ngcontent-%COMP%]   .user-name[_ngcontent-%COMP%] {\n  font-size: 0.825rem;\n  font-weight: 600;\n  color: #fff;\n}\n.user-info[_ngcontent-%COMP%]   .user-details[_ngcontent-%COMP%]   .user-role[_ngcontent-%COMP%] {\n  font-size: 0.7rem;\n  color: var(--sidebar-text);\n}\n.settings-item[_ngcontent-%COMP%] {\n  margin-bottom: 2px;\n}\n.sidebar-divider[_ngcontent-%COMP%] {\n  height: 1px;\n  background: rgba(255, 255, 255, 0.08);\n  margin: 8px 10px;\n}\n.logout-btn[_ngcontent-%COMP%] {\n  color: var(--sidebar-text);\n}\n.logout-btn[_ngcontent-%COMP%]:hover {\n  background: rgba(239, 68, 68, 0.15);\n  color: var(--danger);\n}\n.logout-btn[_ngcontent-%COMP%]:hover   .nav-icon[_ngcontent-%COMP%] {\n  color: var(--danger);\n}\n/*# sourceMappingURL=sidebar.component.css.map */'] });
   }
 };
 (() => {
@@ -682,44 +512,58 @@ var SidebarComponent = class _SidebarComponent {
 
 // src/app/shared/layout/layout.component.ts
 var LayoutComponent = class _LayoutComponent {
-  constructor() {
-    this.sidebarCollapsed = false;
+  constructor(theme) {
+    this.theme = theme;
+    this.sidebarCollapsed = localStorage.getItem("leoni_compact_sidebar") === "true";
   }
   toggleSidebar() {
     this.sidebarCollapsed = !this.sidebarCollapsed;
   }
   static {
     this.\u0275fac = function LayoutComponent_Factory(t) {
-      return new (t || _LayoutComponent)();
+      return new (t || _LayoutComponent)(\u0275\u0275directiveInject(ThemeService));
     };
   }
   static {
-    this.\u0275cmp = /* @__PURE__ */ \u0275\u0275defineComponent({ type: _LayoutComponent, selectors: [["app-layout"]], standalone: true, features: [\u0275\u0275StandaloneFeature], decls: 4, vars: 3, consts: [[1, "app-shell"], [3, "collapseToggle", "collapsed"], [1, "main-content"]], template: function LayoutComponent_Template(rf, ctx) {
+    this.\u0275cmp = /* @__PURE__ */ \u0275\u0275defineComponent({ type: _LayoutComponent, selectors: [["app-layout"]], standalone: true, features: [\u0275\u0275StandaloneFeature], decls: 10, vars: 5, consts: [[1, "app-shell"], [3, "collapseToggle", "collapsed"], [1, "main-wrapper"], [1, "top-bar"], [1, "top-spacer"], ["mat-icon-button", "", "matTooltipPosition", "below", 1, "theme-toggle", 3, "click", "matTooltip"], [1, "main-content"]], template: function LayoutComponent_Template(rf, ctx) {
       if (rf & 1) {
         \u0275\u0275elementStart(0, "div", 0)(1, "app-sidebar", 1);
         \u0275\u0275listener("collapseToggle", function LayoutComponent_Template_app_sidebar_collapseToggle_1_listener() {
           return ctx.toggleSidebar();
         });
         \u0275\u0275elementEnd();
-        \u0275\u0275elementStart(2, "div", 2);
-        \u0275\u0275element(3, "router-outlet");
-        \u0275\u0275elementEnd()();
+        \u0275\u0275elementStart(2, "div", 2)(3, "header", 3);
+        \u0275\u0275element(4, "span", 4);
+        \u0275\u0275elementStart(5, "button", 5);
+        \u0275\u0275listener("click", function LayoutComponent_Template_button_click_5_listener() {
+          return ctx.theme.toggle();
+        });
+        \u0275\u0275elementStart(6, "mat-icon");
+        \u0275\u0275text(7);
+        \u0275\u0275elementEnd()()();
+        \u0275\u0275elementStart(8, "div", 6);
+        \u0275\u0275element(9, "router-outlet");
+        \u0275\u0275elementEnd()()();
       }
       if (rf & 2) {
         \u0275\u0275classProp("collapsed", ctx.sidebarCollapsed);
         \u0275\u0275advance();
         \u0275\u0275property("collapsed", ctx.sidebarCollapsed);
+        \u0275\u0275advance(4);
+        \u0275\u0275property("matTooltip", ctx.theme.isDark ? "Switch to light mode" : "Switch to dark mode");
+        \u0275\u0275advance(2);
+        \u0275\u0275textInterpolate(ctx.theme.isDark ? "light_mode" : "dark_mode");
       }
-    }, dependencies: [CommonModule, RouterOutlet, MatToolbarModule, MatIconModule, MatButtonModule, SidebarComponent], styles: ["\n\n.app-shell[_ngcontent-%COMP%] {\n  display: flex;\n  min-height: 100vh;\n}\n.app-shell[_ngcontent-%COMP%]   .main-content[_ngcontent-%COMP%] {\n  flex: 1;\n  margin-left: 260px;\n  padding: 28px 32px;\n  min-height: 100vh;\n  background: var(--bg-main);\n  transition: margin-left 0.25s cubic-bezier(0.4, 0, 0.2, 1);\n  min-width: 0;\n}\n.app-shell.collapsed[_ngcontent-%COMP%]   .main-content[_ngcontent-%COMP%] {\n  margin-left: 72px;\n}\n@media (max-width: 768px) {\n  .app-shell[_ngcontent-%COMP%]   .main-content[_ngcontent-%COMP%] {\n    margin-left: 0;\n    padding: 16px;\n  }\n}\n/*# sourceMappingURL=layout.component.css.map */"] });
+    }, dependencies: [CommonModule, RouterOutlet, MatIconModule, MatIcon, MatButtonModule, MatIconButton, MatTooltipModule, MatTooltip, SidebarComponent], styles: ["\n\n.app-shell[_ngcontent-%COMP%] {\n  display: flex;\n  min-height: 100vh;\n}\n.app-shell[_ngcontent-%COMP%]   .main-wrapper[_ngcontent-%COMP%] {\n  flex: 1;\n  margin-left: 260px;\n  display: flex;\n  flex-direction: column;\n  min-height: 100vh;\n  transition: margin-left 0.25s cubic-bezier(0.4, 0, 0.2, 1);\n  min-width: 0;\n  background: var(--bg-main);\n}\n.app-shell.collapsed[_ngcontent-%COMP%]   .main-wrapper[_ngcontent-%COMP%] {\n  margin-left: 72px;\n}\n.app-shell[_ngcontent-%COMP%]   .top-bar[_ngcontent-%COMP%] {\n  display: flex;\n  align-items: center;\n  height: 52px;\n  padding: 0 20px;\n  background: var(--bg-card);\n  border-bottom: 1px solid var(--border);\n  position: sticky;\n  top: 0;\n  z-index: 100;\n  transition: background 0.3s ease, border-color 0.3s ease;\n}\n.app-shell[_ngcontent-%COMP%]   .top-spacer[_ngcontent-%COMP%] {\n  flex: 1;\n}\n.app-shell[_ngcontent-%COMP%]   .theme-toggle[_ngcontent-%COMP%] {\n  color: var(--text-secondary);\n  transition: color 0.2s ease;\n}\n.app-shell[_ngcontent-%COMP%]   .theme-toggle[_ngcontent-%COMP%]:hover {\n  color: var(--text-primary);\n}\n.app-shell[_ngcontent-%COMP%]   .main-content[_ngcontent-%COMP%] {\n  flex: 1;\n  padding: 28px 32px;\n  background: var(--bg-main);\n  transition: background 0.3s ease;\n}\n@media (max-width: 768px) {\n  .app-shell[_ngcontent-%COMP%]   .main-wrapper[_ngcontent-%COMP%] {\n    margin-left: 0;\n  }\n  .app-shell[_ngcontent-%COMP%]   .main-content[_ngcontent-%COMP%] {\n    padding: 16px;\n  }\n}\n/*# sourceMappingURL=layout.component.css.map */"] });
   }
 };
 (() => {
-  (typeof ngDevMode === "undefined" || ngDevMode) && \u0275setClassDebugInfo(LayoutComponent, { className: "LayoutComponent", filePath: "src\\app\\shared\\layout\\layout.component.ts", lineNumber: 16 });
+  (typeof ngDevMode === "undefined" || ngDevMode) && \u0275setClassDebugInfo(LayoutComponent, { className: "LayoutComponent", filePath: "src\\app\\shared\\layout\\layout.component.ts", lineNumber: 17 });
 })();
 
 // src/app/app.routes.ts
 var routes = [
-  { path: "login", loadComponent: () => import("./chunk-MBGLOG2L.js").then((m) => m.LoginComponent) },
+  { path: "login", loadComponent: () => import("./chunk-BCNTVHMA.js").then((m) => m.LoginComponent) },
   {
     path: "",
     component: LayoutComponent,
@@ -728,32 +572,36 @@ var routes = [
       { path: "", redirectTo: "dashboard", pathMatch: "full" },
       {
         path: "dashboard",
-        loadComponent: () => import("./chunk-TVNIVBTW.js").then((m) => m.DashboardComponent)
+        loadComponent: () => import("./chunk-FP5FW5ZD.js").then((m) => m.DashboardComponent)
       },
       {
         path: "invoices",
-        loadComponent: () => import("./chunk-PCFQK4PV.js").then((m) => m.InvoiceListComponent)
+        loadComponent: () => import("./chunk-HNU63AJR.js").then((m) => m.InvoiceListComponent)
       },
       {
         path: "invoices/:id",
-        loadComponent: () => import("./chunk-QR6KOJWN.js").then((m) => m.InvoiceDetailComponent)
+        loadComponent: () => import("./chunk-VP7FDETX.js").then((m) => m.InvoiceDetailComponent)
       },
       {
         path: "clients",
-        loadComponent: () => import("./chunk-FXIJ2VMS.js").then((m) => m.ClientsComponent)
+        loadComponent: () => import("./chunk-CIQ47EAW.js").then((m) => m.ClientsComponent)
       },
       {
         path: "alerts",
-        loadComponent: () => import("./chunk-GOVSVIUB.js").then((m) => m.AlertsComponent)
+        loadComponent: () => import("./chunk-ILHGHDTL.js").then((m) => m.AlertsComponent)
       },
       {
         path: "reports",
-        loadComponent: () => import("./chunk-NUWNLPFV.js").then((m) => m.ReportsComponent)
+        loadComponent: () => import("./chunk-KUKDJ5KK.js").then((m) => m.ReportsComponent)
       },
       {
         path: "user-management",
         canActivate: [adminGuard],
-        loadComponent: () => import("./chunk-DN5E4J56.js").then((m) => m.UserManagementComponent)
+        loadComponent: () => import("./chunk-DSZBNXK3.js").then((m) => m.UserManagementComponent)
+      },
+      {
+        path: "settings",
+        loadComponent: () => import("./chunk-ODCYQMSB.js").then((m) => m.SettingsComponent)
       }
     ]
   },

@@ -80,6 +80,14 @@ export class AuthService {
     return `${user.firstName} ${user.lastName}`;
   }
 
+  forgotPassword(email: string): Observable<any> {
+    return this.http.post<any>(`${environment.apiUrl}/auth/forgot-password`, { email });
+  }
+
+  resetPassword(email: string, code: string, newPassword: string): Observable<any> {
+    return this.http.post<any>(`${environment.apiUrl}/auth/reset-password`, { email, code, newPassword });
+  }
+
   private loadUser(): User | null {
     const raw = localStorage.getItem(this.USER_KEY);
     if (!raw) return null;

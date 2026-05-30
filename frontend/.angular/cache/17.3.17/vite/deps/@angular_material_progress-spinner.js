@@ -1,6 +1,6 @@
 import {
   MatCommonModule
-} from "./chunk-QTKBDXKO.js";
+} from "./chunk-UW6SR7ZA.js";
 import {
   CommonModule,
   NgTemplateOutlet
@@ -46,8 +46,8 @@ import {
   ɵɵtemplateRefExtractor,
   ɵɵviewQuery
 } from "./chunk-IGJZNA3K.js";
-import "./chunk-V4GYEGQC.js";
 import "./chunk-CONQKHOI.js";
+import "./chunk-V4GYEGQC.js";
 import "./chunk-GC5FLHL6.js";
 
 // node_modules/@angular/material/fesm2022/progress-spinner.mjs

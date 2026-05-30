@@ -16,6 +16,8 @@ public class UserDto {
     private String role;
     private String status;
     private String department;
+    private String jobTitle;
+    private String phone;
     private LocalDateTime createdAt;
 
     public static UserDto from(User user) {
@@ -27,6 +29,8 @@ public class UserDto {
                 .role(user.getRole().name())
                 .status(user.getStatus().name())
                 .department(user.getDepartment())
+                .jobTitle(user.getJobTitle())
+                .phone(user.getPhone())
                 .createdAt(user.getCreatedAt())
                 .build();
     }

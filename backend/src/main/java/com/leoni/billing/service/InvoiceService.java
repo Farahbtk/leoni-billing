@@ -64,6 +64,11 @@ public class InvoiceService {
         return repo.findByRiskLevel(Invoice.RiskLevel.HIGH);
     }
 
+    @Transactional(readOnly = true)
+    public List<Invoice> findAllForExport() {
+        return repo.findAll(Sort.by(Sort.Direction.DESC, "issueDate"));
+    }
+
     private void updateDaysOverdue(Invoice invoice) {
         if (invoice.getStatus() == Invoice.InvoiceStatus.OVERDUE) {
             long days = ChronoUnit.DAYS.between(invoice.getDueDate(), LocalDate.now());

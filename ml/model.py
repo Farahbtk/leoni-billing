@@ -82,10 +82,9 @@ def _predict_rules(invoice: dict) -> dict:
     amount_impact     = amount_norm * 0.05
     terms_impact      = min(0.05, max(0.0, (payment_terms - 30) * 0.001))
 
-    noise       = np.random.uniform(-0.02, 0.02)
     risk_score  = float(np.clip(
         base + overdue_impact + dso_impact + history_impact
-        + profile_impact + amount_impact + terms_impact + noise,
+        + profile_impact + amount_impact + terms_impact,
         0.0, 1.0
     ))
     risk_level  = _score_to_level(risk_score)
@@ -106,9 +105,9 @@ def _predict_rules(invoice: dict) -> dict:
 # ── helpers ───────────────────────────────────────────────────────────────────
 
 def _score_to_level(score: float) -> str:
-    if score >= 0.66:
+    if score >= 0.70:
         return 'HIGH'
-    if score >= 0.33:
+    if score >= 0.40:
         return 'MEDIUM'
     return 'LOW'
 

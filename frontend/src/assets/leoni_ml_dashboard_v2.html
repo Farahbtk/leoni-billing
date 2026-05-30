@@ -1,0 +1,452 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>LEONI ML Risk Alerts</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Barlow:wght@300;400;500;600;700&family=Barlow+Condensed:wght@600;700&display=swap');
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:'Barlow',sans-serif;background:#0a1628;min-height:100vh;overflow-x:hidden;}
+
+
+.app{position:relative;z-index:2;padding:24px 32px;}
+
+/* HEADER */
+.header{display:flex;align-items:center;justify-content:space-between;margin-bottom:24px;padding-bottom:16px;border-bottom:1px solid rgba(255,255,255,0.08);}
+.header-left h1{font-family:'Barlow Condensed',sans-serif;font-size:28px;font-weight:700;color:white;text-transform:uppercase;letter-spacing:0.5px;}
+.header-left p{font-size:12px;color:rgba(255,255,255,0.4);margin-top:3px;}
+.run-btn{background:#e53e3e;color:white;border:none;padding:10px 20px;border-radius:8px;font-family:'Barlow',sans-serif;font-size:13px;font-weight:600;cursor:pointer;display:flex;align-items:center;gap:8px;box-shadow:0 4px 16px rgba(229,62,62,0.4);transition:all 0.2s;}
+.run-btn:hover{background:#c53030;transform:translateY(-1px);}
+.run-btn:disabled{opacity:0.5;cursor:not-allowed;transform:none;}
+
+/* KPI CARDS */
+.kpi-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:22px;}
+.kpi-card{background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.1);border-radius:12px;padding:18px 20px;position:relative;overflow:hidden;transition:transform 0.2s;backdrop-filter:blur(8px);}
+.kpi-card:hover{transform:translateY(-2px);}
+.kpi-card::after{content:'';position:absolute;bottom:0;left:0;right:0;height:3px;border-radius:0 0 12px 12px;}
+.kpi-card.red::after{background:#ef4444;}.kpi-card.orange::after{background:#f97316;}.kpi-card.gold::after{background:#f59e0b;}.kpi-card.blue::after{background:#3b82f6;}
+.kpi-label{font-size:10px;color:rgba(255,255,255,0.4);text-transform:uppercase;letter-spacing:1.2px;margin-bottom:8px;}
+.kpi-value{font-family:'Barlow Condensed',sans-serif;font-size:38px;font-weight:700;line-height:1;}
+.kpi-card.red .kpi-value{color:#fca5a5;}.kpi-card.orange .kpi-value{color:#fdba74;}.kpi-card.gold .kpi-value{color:#fcd34d;}.kpi-card.blue .kpi-value{color:#93c5fd;}
+.kpi-sub{font-size:11px;margin-top:5px;}
+.kpi-card.red .kpi-sub{color:#fca5a5;}.kpi-card.orange .kpi-sub{color:#fdba74;}.kpi-card.gold .kpi-sub{color:#fcd34d;}.kpi-card.blue .kpi-sub{color:#93c5fd;}
+
+/* MAIN GRID */
+.main-grid{display:grid;grid-template-columns:1fr 280px;gap:16px;}
+
+/* TABLE CARD */
+.table-card{background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.09);border-radius:12px;padding:20px;backdrop-filter:blur(8px);}
+.card-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;}
+.card-title{font-family:'Barlow Condensed',sans-serif;font-size:14px;font-weight:600;color:rgba(255,255,255,0.85);text-transform:uppercase;letter-spacing:1px;}
+.badge-count{background:rgba(239,68,68,0.2);color:#fca5a5;border:1px solid rgba(239,68,68,0.3);padding:3px 10px;border-radius:20px;font-size:11px;font-weight:700;}
+table{width:100%;border-collapse:collapse;}
+th{font-size:9px;color:rgba(255,255,255,0.3);text-transform:uppercase;letter-spacing:1px;padding:0 8px 10px 0;text-align:left;border-bottom:1px solid rgba(255,255,255,0.07);}
+.alert-row td{padding:11px 8px 11px 0;font-size:12px;color:rgba(255,255,255,0.75);border-bottom:1px solid rgba(255,255,255,0.04);vertical-align:middle;}
+.alert-row:last-child td{border-bottom:none;}
+.alert-row:hover td{background:rgba(255,255,255,0.02);}
+.inv-num{font-size:11px;color:rgba(255,255,255,0.4);font-family:monospace;}
+.client-cell{display:flex;align-items:center;gap:8px;}
+.client-avatar{width:28px;height:28px;border-radius:50%;background:linear-gradient(135deg,#ef4444,#7c3aed);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:white;flex-shrink:0;}
+.client-name{font-weight:600;color:white;max-width:160px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.amount-col{font-weight:600;color:rgba(255,255,255,0.9);}
+.score-cell{display:flex;align-items:center;gap:8px;}
+.risk-bar{width:60px;height:5px;background:rgba(255,255,255,0.1);border-radius:3px;overflow:hidden;flex-shrink:0;}
+.bar-fill{height:100%;background:linear-gradient(90deg,#f97316,#ef4444);border-radius:3px;}
+.score-num{font-size:12px;font-weight:700;color:#fca5a5;min-width:32px;}
+.nb-fac{font-size:12px;color:rgba(255,255,255,0.5);}
+.review-btn{font-size:10px;color:rgba(255,255,255,0.4);background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.1);padding:4px 10px;border-radius:5px;cursor:pointer;transition:all 0.2s;white-space:nowrap;}
+.review-btn:hover{border-color:#22c55e;color:#86efac;}
+
+/* RIGHT PANEL */
+.right-panel{display:flex;flex-direction:column;gap:14px;}
+.panel-card{background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.09);border-radius:12px;padding:18px;backdrop-filter:blur(8px);}
+
+/* DONUT */
+.donut-wrap{display:flex;flex-direction:column;align-items:center;gap:14px;}
+.legend{width:100%;}
+.legend-item{display:flex;align-items:center;justify-content:space-between;padding:8px 0;border-bottom:1px solid rgba(255,255,255,0.05);}
+.legend-item:last-child{border-bottom:none;}
+.legend-left{display:flex;align-items:center;gap:8px;font-size:13px;color:rgba(255,255,255,0.65);}
+.legend-dot{width:9px;height:9px;border-radius:50%;}
+.legend-val{font-family:'Barlow Condensed',sans-serif;font-size:20px;font-weight:700;}
+
+/* MODEL STATS */
+.model-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;}
+.model-stat{background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.07);border-radius:8px;padding:10px;text-align:center;}
+.model-val{font-family:'Barlow Condensed',sans-serif;font-size:20px;font-weight:700;color:#93c5fd;}
+.model-lbl{font-size:9px;color:rgba(255,255,255,0.3);text-transform:uppercase;letter-spacing:0.8px;margin-top:2px;}
+
+/* ACTIONS */
+.action-item{border-radius:8px;padding:11px;margin-bottom:8px;}
+.action-item:last-child{margin-bottom:0;}
+.action-item.red{background:rgba(239,68,68,0.08);border:1px solid rgba(239,68,68,0.2);}
+.action-item.orange{background:rgba(249,115,22,0.08);border:1px solid rgba(249,115,22,0.2);}
+.action-item.green{background:rgba(34,197,94,0.08);border:1px solid rgba(34,197,94,0.2);}
+.action-title{font-size:12px;font-weight:600;margin-bottom:3px;}
+.action-item.red .action-title{color:#fca5a5;}.action-item.orange .action-title{color:#fdba74;}.action-item.green .action-title{color:#86efac;}
+.action-desc{font-size:10px;color:rgba(255,255,255,0.4);line-height:1.5;}
+
+/* LOADING */
+.loading{display:none;position:fixed;inset:0;background:rgba(5,15,40,0.92);z-index:1000;align-items:center;justify-content:center;flex-direction:column;gap:16px;}
+.loading.show{display:flex;}
+.spinner{width:42px;height:42px;border:3px solid rgba(255,255,255,0.08);border-top-color:#e53e3e;border-radius:50%;animation:spin 0.8s linear infinite;}
+@keyframes spin{to{transform:rotate(360deg);}}
+.loading-text{font-size:14px;color:rgba(255,255,255,0.45);}
+
+/* ERROR TOAST */
+.toast{position:fixed;bottom:24px;right:24px;background:#1e293b;border:1px solid rgba(239,68,68,0.4);color:#fca5a5;padding:12px 18px;border-radius:8px;font-size:13px;z-index:2000;display:none;max-width:320px;}
+.toast.show{display:block;}
+</style>
+</head>
+<body>
+
+
+<div class="app">
+
+  <div class="header">
+    <div class="header-left">
+      <h1>🚨 ML Risk Alerts <span style="font-size:13px;font-weight:400;color:rgba(255,255,255,0.35);margin-left:12px;text-transform:none;">LightGBM v1 · AUC 0.796 · Avril 2026</span></h1>
+      <p id="header-subtitle">104 clients analysés · Seuil d'alerte : 0.35 · Généré le 19/05/2026</p>
+    </div>
+    <button class="run-btn" id="refresh-btn" onclick="refreshAlerts()">
+      ⟳ Refresh Alerts
+    </button>
+  </div>
+
+  <div class="kpi-grid">
+    <div class="kpi-card red">
+      <div class="kpi-label">Risque Élevé</div>
+      <div class="kpi-value" id="kpi-high">55</div>
+      <div class="kpi-sub">⚠️ Action immédiate requise</div>
+    </div>
+    <div class="kpi-card orange">
+      <div class="kpi-label">Montant à Risque</div>
+      <div class="kpi-value" id="kpi-amount">109M€</div>
+      <div class="kpi-sub">💰 Clients ÉLEVÉ uniquement</div>
+    </div>
+    <div class="kpi-card gold">
+      <div class="kpi-label">Prob. Moyenne</div>
+      <div class="kpi-value" id="kpi-prob">76.1%</div>
+      <div class="kpi-sub">📊 Clients ÉLEVÉ</div>
+    </div>
+    <div class="kpi-card blue">
+      <div class="kpi-label">Total Clients</div>
+      <div class="kpi-value" id="kpi-clients">104</div>
+      <div class="kpi-sub" id="kpi-clients-sub">🟢 29 Faible · 🟠 20 Moyen</div>
+    </div>
+  </div>
+
+  <div class="main-grid">
+    <div class="table-card">
+      <div class="card-header">
+        <div class="card-title" id="table-title">⚠️ High Risk Clients (score &gt; 70%)</div>
+        <span class="badge-count" id="badge-count">55 clients</span>
+      </div>
+      <table>
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>CLIENT</th>
+            <th>MONTANT</th>
+            <th>RISK SCORE</th>
+            <th>NB FACTURES</th>
+            <th>ACTION</th>
+          </tr>
+        </thead>
+        <tbody id="alerts-tbody">
+          <tr class="alert-row">
+            <td><span class="inv-num">ML-2026-001</span></td>
+            <td><div class="client-cell"><span class="client-avatar">A</span><span class="client-name">AMPERE ELECTRICITY</span></div></td>
+            <td class="amount-col">€12.9M</td>
+            <td><div class="score-cell"><div class="risk-bar"><div class="bar-fill" style="width:95%"></div></div><span class="score-num">95%</span></div></td>
+            <td><span class="nb-fac">148</span></td>
+            <td><button class="review-btn" onclick="markReviewed(this)">✓ Reviewed</button></td>
+          </tr>
+<tr class="alert-row">
+            <td><span class="inv-num">ML-2026-002</span></td>
+            <td><div class="client-cell"><span class="client-avatar">P</span><span class="client-name">PCA SLOVAQUIA</span></div></td>
+            <td class="amount-col">€21.9M</td>
+            <td><div class="score-cell"><div class="risk-bar"><div class="bar-fill" style="width:94%"></div></div><span class="score-num">94%</span></div></td>
+            <td><span class="nb-fac">316</span></td>
+            <td><button class="review-btn" onclick="markReviewed(this)">✓ Reviewed</button></td>
+          </tr>
+<tr class="alert-row">
+            <td><span class="inv-num">ML-2026-003</span></td>
+            <td><div class="client-cell"><span class="client-avatar">O</span><span class="client-name">OPEL AUTOMOBILE GMBH</span></div></td>
+            <td class="amount-col">€2.9M</td>
+            <td><div class="score-cell"><div class="risk-bar"><div class="bar-fill" style="width:94%"></div></div><span class="score-num">94%</span></div></td>
+            <td><span class="nb-fac">9316</span></td>
+            <td><button class="review-btn" onclick="markReviewed(this)">✓ Reviewed</button></td>
+          </tr>
+<tr class="alert-row">
+            <td><span class="inv-num">ML-2026-004</span></td>
+            <td><div class="client-cell"><span class="client-avatar">D</span><span class="client-name">DACIA AUTOMOBILE</span></div></td>
+            <td class="amount-col">€19.0M</td>
+            <td><div class="score-cell"><div class="risk-bar"><div class="bar-fill" style="width:91%"></div></div><span class="score-num">91%</span></div></td>
+            <td><span class="nb-fac">110</span></td>
+            <td><button class="review-btn" onclick="markReviewed(this)">✓ Reviewed</button></td>
+          </tr>
+<tr class="alert-row">
+            <td><span class="inv-num">ML-2026-005</span></td>
+            <td><div class="client-cell"><span class="client-avatar">N</span><span class="client-name">NISSAN MOTOR MANUFACTURING U</span></div></td>
+            <td class="amount-col">€4.4M</td>
+            <td><div class="score-cell"><div class="risk-bar"><div class="bar-fill" style="width:91%"></div></div><span class="score-num">91%</span></div></td>
+            <td><span class="nb-fac">92</span></td>
+            <td><button class="review-btn" onclick="markReviewed(this)">✓ Reviewed</button></td>
+          </tr>
+<tr class="alert-row">
+            <td><span class="inv-num">ML-2026-006</span></td>
+            <td><div class="client-cell"><span class="client-avatar">S</span><span class="client-name">STELLANTIS ESPAÑA, S.L.</span></div></td>
+            <td class="amount-col">€8.0M</td>
+            <td><div class="score-cell"><div class="risk-bar"><div class="bar-fill" style="width:90%"></div></div><span class="score-num">90%</span></div></td>
+            <td><span class="nb-fac">1611</span></td>
+            <td><button class="review-btn" onclick="markReviewed(this)">✓ Reviewed</button></td>
+          </tr>
+<tr class="alert-row">
+            <td><span class="inv-num">ML-2026-007</span></td>
+            <td><div class="client-cell"><span class="client-avatar">S</span><span class="client-name">STELLANTIS AUTO SAS</span></div></td>
+            <td class="amount-col">€5.9M</td>
+            <td><div class="score-cell"><div class="risk-bar"><div class="bar-fill" style="width:90%"></div></div><span class="score-num">90%</span></div></td>
+            <td><span class="nb-fac">514</span></td>
+            <td><button class="review-btn" onclick="markReviewed(this)">✓ Reviewed</button></td>
+          </tr>
+<tr class="alert-row">
+            <td><span class="inv-num">ML-2026-008</span></td>
+            <td><div class="client-cell"><span class="client-avatar">S</span><span class="client-name">STE SOVAB</span></div></td>
+            <td class="amount-col">€5.2M</td>
+            <td><div class="score-cell"><div class="risk-bar"><div class="bar-fill" style="width:90%"></div></div><span class="score-num">90%</span></div></td>
+            <td><span class="nb-fac">469</span></td>
+            <td><button class="review-btn" onclick="markReviewed(this)">✓ Reviewed</button></td>
+          </tr>
+<tr class="alert-row">
+            <td><span class="inv-num">ML-2026-009</span></td>
+            <td><div class="client-cell"><span class="client-avatar">F</span><span class="client-name">FCA SERBIA DOO</span></div></td>
+            <td class="amount-col">€2.6M</td>
+            <td><div class="score-cell"><div class="risk-bar"><div class="bar-fill" style="width:89%"></div></div><span class="score-num">89%</span></div></td>
+            <td><span class="nb-fac">64</span></td>
+            <td><button class="review-btn" onclick="markReviewed(this)">✓ Reviewed</button></td>
+          </tr>
+<tr class="alert-row">
+            <td><span class="inv-num">ML-2026-010</span></td>
+            <td><div class="client-cell"><span class="client-avatar">S</span><span class="client-name">SIEDOUBS</span></div></td>
+            <td class="amount-col">€589,354</td>
+            <td><div class="score-cell"><div class="risk-bar"><div class="bar-fill" style="width:89%"></div></div><span class="score-num">89%</span></div></td>
+            <td><span class="nb-fac">52</span></td>
+            <td><button class="review-btn" onclick="markReviewed(this)">✓ Reviewed</button></td>
+          </tr>
+<tr class="alert-row">
+            <td><span class="inv-num">ML-2026-011</span></td>
+            <td><div class="client-cell"><span class="client-avatar">R</span><span class="client-name">RENAULT - 4 44 (PROTO)</span></div></td>
+            <td class="amount-col">€1.5M</td>
+            <td><div class="score-cell"><div class="risk-bar"><div class="bar-fill" style="width:88%"></div></div><span class="score-num">88%</span></div></td>
+            <td><span class="nb-fac">47</span></td>
+            <td><button class="review-btn" onclick="markReviewed(this)">✓ Reviewed</button></td>
+          </tr>
+<tr class="alert-row">
+            <td><span class="inv-num">ML-2026-012</span></td>
+            <td><div class="client-cell"><span class="client-avatar">V</span><span class="client-name">VOLVO CARS N.V.</span></div></td>
+            <td class="amount-col">€1.9M</td>
+            <td><div class="score-cell"><div class="risk-bar"><div class="bar-fill" style="width:88%"></div></div><span class="score-num">88%</span></div></td>
+            <td><span class="nb-fac">80</span></td>
+            <td><button class="review-btn" onclick="markReviewed(this)">✓ Reviewed</button></td>
+          </tr>
+<tr class="alert-row">
+            <td><span class="inv-num">ML-2026-013</span></td>
+            <td><div class="client-cell"><span class="client-avatar">F</span><span class="client-name">FAURECIA - VITORIA-GASTEIZ (</span></div></td>
+            <td class="amount-col">€148,138</td>
+            <td><div class="score-cell"><div class="risk-bar"><div class="bar-fill" style="width:86%"></div></div><span class="score-num">86%</span></div></td>
+            <td><span class="nb-fac">59</span></td>
+            <td><button class="review-btn" onclick="markReviewed(this)">✓ Reviewed</button></td>
+          </tr>
+<tr class="alert-row">
+            <td><span class="inv-num">ML-2026-014</span></td>
+            <td><div class="client-cell"><span class="client-avatar">R</span><span class="client-name">RENAULT TECHNOLOGIE BUCUREST</span></div></td>
+            <td class="amount-col">€112,515</td>
+            <td><div class="score-cell"><div class="risk-bar"><div class="bar-fill" style="width:86%"></div></div><span class="score-num">86%</span></div></td>
+            <td><span class="nb-fac">14</span></td>
+            <td><button class="review-btn" onclick="markReviewed(this)">✓ Reviewed</button></td>
+          </tr>
+<tr class="alert-row">
+            <td><span class="inv-num">ML-2026-015</span></td>
+            <td><div class="client-cell"><span class="client-avatar">V</span><span class="client-name">VOLVO CAR CORPORATION</span></div></td>
+            <td class="amount-col">€18,237</td>
+            <td><div class="score-cell"><div class="risk-bar"><div class="bar-fill" style="width:85%"></div></div><span class="score-num">85%</span></div></td>
+            <td><span class="nb-fac">44</span></td>
+            <td><button class="review-btn" onclick="markReviewed(this)">✓ Reviewed</button></td>
+          </tr>
+
+        </tbody>
+      </table>
+    </div>
+
+    <div class="right-panel">
+      <div class="panel-card">
+        <div class="card-title" style="margin-bottom:14px;">📈 Répartition</div>
+        <div class="donut-wrap">
+          <svg width="130" height="130" viewBox="0 0 130 130" style="transform:rotate(-90deg)">
+            <circle cx="65" cy="65" r="48" fill="none" stroke="rgba(255,255,255,0.05)" stroke-width="16"/>
+            <circle id="donut-low" cx="65" cy="65" r="48" fill="none" stroke="#22c55e" stroke-width="16" stroke-dasharray="89 213" stroke-dashoffset="0" opacity="0.85"/>
+            <circle id="donut-med" cx="65" cy="65" r="48" fill="none" stroke="#f97316" stroke-width="16" stroke-dasharray="61 213" stroke-dashoffset="-89" opacity="0.85"/>
+            <circle id="donut-high" cx="65" cy="65" r="48" fill="none" stroke="#ef4444" stroke-width="16" stroke-dasharray="168 213" stroke-dashoffset="-150" opacity="0.85"/>
+          </svg>
+          <div class="legend">
+            <div class="legend-item"><div class="legend-left"><div class="legend-dot" style="background:#ef4444"></div>Élevé</div><div class="legend-val" style="color:#fca5a5" id="legend-high">55</div></div>
+            <div class="legend-item"><div class="legend-left"><div class="legend-dot" style="background:#f97316"></div>Moyen</div><div class="legend-val" style="color:#fdba74" id="legend-med">20</div></div>
+            <div class="legend-item"><div class="legend-left"><div class="legend-dot" style="background:#22c55e"></div>Faible</div><div class="legend-val" style="color:#86efac" id="legend-low">29</div></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="panel-card">
+        <div class="card-title" style="margin-bottom:14px;">🤖 Modèle ML</div>
+        <div class="model-grid">
+          <div class="model-stat"><div class="model-val">0.796</div><div class="model-lbl">AUC-ROC</div></div>
+          <div class="model-stat"><div class="model-val">0.835</div><div class="model-lbl">F1-Score</div></div>
+          <div class="model-stat"><div class="model-val">87.3%</div><div class="model-lbl">Précision</div></div>
+          <div class="model-stat"><div class="model-val">80%</div><div class="model-lbl">Recall</div></div>
+          <div class="model-stat"><div class="model-val">436</div><div class="model-lbl">Arbres</div></div>
+          <div class="model-stat"><div class="model-val">19</div><div class="model-lbl">Features</div></div>
+        </div>
+      </div>
+
+      <div class="panel-card">
+        <div class="card-title" style="margin-bottom:12px;">📋 Actions</div>
+        <div class="action-item red"><div class="action-title" id="action-high">🔴 ÉLEVÉ — 55 clients</div><div class="action-desc">Contacter immédiatement. Relance formelle. Alerter direction commerciale.</div></div>
+        <div class="action-item orange"><div class="action-title" id="action-med">🟠 MOYEN — 20 clients</div><div class="action-desc">Surveiller. Relance préventive douce.</div></div>
+        <div class="action-item green"><div class="action-title" id="action-low">🟢 FAIBLE — 29 clients</div><div class="action-desc">Comportement normal. Aucune action requise.</div></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="loading" id="loading">
+  <div class="spinner"></div>
+  <div class="loading-text" id="loading-text">Exécution LightGBM v1...</div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+const API = 'http://localhost:8080/api';
+
+function markReviewed(btn) {
+  btn.textContent = '✓ Done';
+  btn.style.color = '#86efac';
+  btn.style.borderColor = 'rgba(34,197,94,0.3)';
+  btn.disabled = true;
+}
+
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 4000);
+}
+
+function fmtAmount(val) {
+  const n = parseFloat(val) || 0;
+  if (n >= 1e6) return '€' + (n / 1e6).toFixed(1) + 'M';
+  if (n >= 1e3) return '€' + Math.round(n).toLocaleString('fr-FR');
+  return '€' + n.toFixed(0);
+}
+
+function updateDonut(high, med, low) {
+  const total = high + med + low || 1;
+  const C = 2 * Math.PI * 48;
+  const lowLen  = (low  / total) * C;
+  const medLen  = (med  / total) * C;
+  const highLen = (high / total) * C;
+
+  const setCircle = (id, len, offset) => {
+    const el = document.getElementById(id);
+    if (!el) return;
+    el.setAttribute('stroke-dasharray', `${len.toFixed(2)} ${C.toFixed(2)}`);
+    el.setAttribute('stroke-dashoffset', offset.toFixed(2));
+  };
+
+  setCircle('donut-low',  lowLen,  0);
+  setCircle('donut-med',  medLen,  -lowLen);
+  setCircle('donut-high', highLen, -(lowLen + medLen));
+
+  document.getElementById('legend-high').textContent = high;
+  document.getElementById('legend-med').textContent  = med;
+  document.getElementById('legend-low').textContent  = low;
+}
+
+async function refreshAlerts() {
+  const btn     = document.getElementById('refresh-btn');
+  const loading = document.getElementById('loading');
+  const loadTxt = document.getElementById('loading-text');
+
+  btn.disabled = true;
+  loading.classList.add('show');
+  loadTxt.textContent = 'Chargement des alertes ML...';
+
+  try {
+    loadTxt.textContent = 'Lecture alertes_2026_05.csv...';
+    const resp = await fetch('http://localhost:5000/api/alertes');
+    if (!resp.ok) throw new Error('Flask API ' + resp.status);
+    const data = await resp.json();
+
+    const high   = data.clients.filter(c => c.risque === 'ELEVE');
+    const moyen  = data.clients.filter(c => c.risque === 'MOYEN');
+    const faible = data.clients.filter(c => c.risque === 'FAIBLE');
+    const now    = new Date().toLocaleDateString('fr-FR');
+
+    // Update KPIs
+    document.getElementById('kpi-high').textContent    = data.high_count;
+    document.getElementById('kpi-amount').textContent  = fmtAmount(data.total_amount_high);
+    document.getElementById('kpi-prob').textContent    = data.avg_prob_high + '%';
+    document.getElementById('kpi-clients').textContent = data.total_clients;
+    document.getElementById('kpi-clients-sub').textContent =
+      '🟢 ' + data.faible_count + ' Faible · 🟠 ' + data.moyen_count + ' Moyen';
+    document.getElementById('header-subtitle').textContent =
+      data.total_clients + ' clients analysés · Seuil 0.35 · Rafraîchi le ' + now;
+
+    // Update table (top 20 ELEVE)
+    document.getElementById('badge-count').textContent = data.high_count + ' clients';
+    const tbody = document.getElementById('alerts-tbody');
+    tbody.innerHTML = high.slice(0, 20).map((c, i) => {
+      const idx    = String(i + 1).padStart(3, '0');
+      const letter = (c.Nom_client[0] || '?').toUpperCase();
+      const pct    = Math.round(c.prob_retard * 100);
+      const montant = c.montant_total_mois || 0;
+      const bu_label = c.Branche == 510 ? 'Stellantis'
+                     : c.Branche == 520 ? 'Renault'
+                     : c.Branche == 630 ? 'Volvo' : 'OEM';
+      return '<tr class="alert-row">' +
+        '<td><span class="inv-num">ML-2026-' + idx + '</span></td>' +
+        '<td><div class="client-cell">' +
+          '<span class="client-avatar">' + letter + '</span>' +
+          '<span class="client-name" title="' + c.Nom_client + '">' +
+            c.Nom_client.substring(0, 28) + '</span></div></td>' +
+        '<td class="amount-col">' + fmtAmount(montant) + '</td>' +
+        '<td><div class="score-cell">' +
+          '<div class="risk-bar"><div class="bar-fill" style="width:' + pct + '%"></div></div>' +
+          '<span class="score-num">' + pct + '%</span></div></td>' +
+        '<td><span class="nb-fac">' + (c.nb_factures_mois || '-') + '</span></td>' +
+        '<td><button class="review-btn" onclick="markReviewed(this)">✓ Reviewed</button></td>' +
+      '</tr>';
+    }).join('');
+
+    // Update donut + legend
+    updateDonut(data.high_count, data.moyen_count, data.faible_count);
+
+    // Update action items
+    document.getElementById('action-high').textContent = '🔴 ÉLEVÉ — ' + data.high_count + ' clients';
+    document.getElementById('action-med').textContent  = '🟠 MOYEN — ' + data.moyen_count + ' clients';
+    document.getElementById('action-low').textContent  = '🟢 FAIBLE — ' + data.faible_count + ' clients';
+
+  } catch (err) {
+    console.error('Refresh error:', err);
+    showToast('Erreur Flask : ' + err.message +
+              ' — Vérifier que Flask tourne sur localhost:5000');
+  } finally {
+    loading.classList.remove('show');
+    btn.disabled = false;
+  }
+}
+</script>
+</body>
+</html>

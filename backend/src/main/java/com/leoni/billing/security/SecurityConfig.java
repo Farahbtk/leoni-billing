@@ -47,7 +47,8 @@ public class SecurityConfig {
                         .requestMatchers(
                                 "/api/invoices/**", "/api/clients/**",
                                 "/api/dashboard/**", "/api/predictions/**",
-                                "/api/alerts/**", "/api/reports/**"
+                                "/api/alerts/**", "/api/reports/**",
+                                "/api/users/**", "/api/health"
                         ).hasAnyRole("ADMIN", "BILLING_MANAGER")
                         .anyRequest().authenticated()
                 )

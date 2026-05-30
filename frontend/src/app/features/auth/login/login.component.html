@@ -29,48 +29,132 @@
     </div>
   </div>
 
-  <!-- Right panel — form -->
+  <!-- Right panel -->
   <div class="login-form-panel">
     <div class="login-card">
-      <div class="login-header">
-        <h2>Welcome back</h2>
-        <p>Sign in to your admin account</p>
-      </div>
 
-      <form [formGroup]="form" (ngSubmit)="submit()" novalidate>
-        <mat-form-field appearance="outline" class="full-width">
-          <mat-label>Email address</mat-label>
-          <mat-icon matPrefix>email</mat-icon>
-          <input matInput type="email" formControlName="email" placeholder="admin@leoni.com" autocomplete="email">
-          <mat-error>{{ emailError }}</mat-error>
-        </mat-form-field>
+      <!-- ── LOGIN MODE ── -->
+      <ng-container *ngIf="mode === 'login'">
+        <div class="login-header">
+          <h2>Welcome back</h2>
+          <p>Sign in to your account</p>
+        </div>
 
-        <mat-form-field appearance="outline" class="full-width">
-          <mat-label>Password</mat-label>
-          <mat-icon matPrefix>lock</mat-icon>
-          <input matInput [type]="hidePassword ? 'password' : 'text'" formControlName="password" autocomplete="current-password">
-          <button mat-icon-button matSuffix type="button" (click)="hidePassword = !hidePassword">
-            <mat-icon>{{ hidePassword ? 'visibility_off' : 'visibility' }}</mat-icon>
+        <form [formGroup]="loginForm" (ngSubmit)="submit()" novalidate>
+          <mat-form-field appearance="outline" class="full-width">
+            <mat-label>Email address</mat-label>
+            <mat-icon matPrefix>email</mat-icon>
+            <input matInput type="email" formControlName="email" placeholder="admin@leoni.com" autocomplete="email">
+            <mat-error>{{ emailError }}</mat-error>
+          </mat-form-field>
+
+          <mat-form-field appearance="outline" class="full-width">
+            <mat-label>Password</mat-label>
+            <mat-icon matPrefix>lock</mat-icon>
+            <input matInput [type]="hidePassword ? 'password' : 'text'"
+                   formControlName="password" autocomplete="current-password">
+            <button mat-icon-button matSuffix type="button" (click)="hidePassword = !hidePassword">
+              <mat-icon>{{ hidePassword ? 'visibility_off' : 'visibility' }}</mat-icon>
+            </button>
+            <mat-error *ngIf="loginForm.get('password')?.hasError('required')">Password is required</mat-error>
+            <mat-error *ngIf="loginForm.get('password')?.hasError('minlength')">Minimum 6 characters</mat-error>
+          </mat-form-field>
+
+          <div class="forgot-link-row">
+            <button type="button" class="forgot-link" (click)="showForgot()">Forgot Password?</button>
+          </div>
+
+          <button mat-raised-button color="primary" class="submit-btn" type="submit" [disabled]="loading">
+            <mat-spinner *ngIf="loading" diameter="18"></mat-spinner>
+            <span *ngIf="!loading">Sign In</span>
           </button>
-          <mat-error *ngIf="form.get('password')?.hasError('required')">Password is required</mat-error>
-          <mat-error *ngIf="form.get('password')?.hasError('minlength')">Minimum 6 characters</mat-error>
-        </mat-form-field>
+        </form>
 
-        <button
-          mat-raised-button
-          color="primary"
-          class="submit-btn"
-          type="submit"
-          [disabled]="loading"
-        >
-          <mat-spinner *ngIf="loading" diameter="18"></mat-spinner>
-          <span *ngIf="!loading">Sign In</span>
-        </button>
-      </form>
+        <p class="login-footer">LEONI SSC Billing Admin &mdash; Restricted Access</p>
+      </ng-container>
 
-      <p class="login-footer">
-        LEONI SSC Billing Admin &mdash; Restricted Access
-      </p>
+      <!-- ── FORGOT MODE (Step 1: enter email) ── -->
+      <ng-container *ngIf="mode === 'forgot'">
+        <div class="login-header">
+          <h2>Forgot Password</h2>
+          <p>Enter your email to receive a reset code</p>
+        </div>
+
+        <form [formGroup]="forgotForm" (ngSubmit)="sendCode()" novalidate>
+          <mat-form-field appearance="outline" class="full-width">
+            <mat-label>Email address</mat-label>
+            <mat-icon matPrefix>email</mat-icon>
+            <input matInput type="email" formControlName="email" placeholder="your@email.com">
+            <mat-error *ngIf="forgotForm.get('email')?.hasError('required')">Email is required</mat-error>
+            <mat-error *ngIf="forgotForm.get('email')?.hasError('email')">Enter a valid email</mat-error>
+          </mat-form-field>
+
+          <button mat-raised-button color="primary" class="submit-btn" type="submit" [disabled]="loading">
+            <mat-spinner *ngIf="loading" diameter="18"></mat-spinner>
+            <span *ngIf="!loading">Send Reset Code</span>
+          </button>
+        </form>
+
+        <div class="back-row">
+          <button type="button" class="forgot-link" (click)="backToLogin()">
+            <mat-icon>arrow_back</mat-icon> Back to Login
+          </button>
+        </div>
+      </ng-container>
+
+      <!-- ── RESET MODE (Step 2: enter code + new password) ── -->
+      <ng-container *ngIf="mode === 'reset'">
+        <div class="login-header">
+          <h2>Reset Password</h2>
+          <p>Enter the code sent to <strong>{{ resetEmail }}</strong></p>
+        </div>
+
+        <form [formGroup]="resetForm" (ngSubmit)="doReset()" novalidate>
+          <mat-form-field appearance="outline" class="full-width">
+            <mat-label>6-digit reset code</mat-label>
+            <mat-icon matPrefix>pin</mat-icon>
+            <input matInput formControlName="code" placeholder="000000" maxlength="6">
+            <mat-error *ngIf="resetForm.get('code')?.hasError('required')">Code is required</mat-error>
+            <mat-error *ngIf="resetForm.get('code')?.hasError('pattern')">Must be exactly 6 digits</mat-error>
+          </mat-form-field>
+
+          <mat-form-field appearance="outline" class="full-width">
+            <mat-label>New Password</mat-label>
+            <mat-icon matPrefix>lock</mat-icon>
+            <input matInput [type]="hideNewPassword ? 'password' : 'text'" formControlName="newPassword">
+            <button mat-icon-button matSuffix type="button" (click)="hideNewPassword = !hideNewPassword">
+              <mat-icon>{{ hideNewPassword ? 'visibility_off' : 'visibility' }}</mat-icon>
+            </button>
+            <mat-error *ngIf="resetForm.get('newPassword')?.hasError('required')">Required</mat-error>
+            <mat-error *ngIf="resetForm.get('newPassword')?.hasError('minlength')">Minimum 8 characters</mat-error>
+          </mat-form-field>
+
+          <mat-form-field appearance="outline" class="full-width">
+            <mat-label>Confirm Password</mat-label>
+            <mat-icon matPrefix>lock_outline</mat-icon>
+            <input matInput [type]="hideConfirmPassword ? 'password' : 'text'" formControlName="confirmPassword">
+            <button mat-icon-button matSuffix type="button" (click)="hideConfirmPassword = !hideConfirmPassword">
+              <mat-icon>{{ hideConfirmPassword ? 'visibility_off' : 'visibility' }}</mat-icon>
+            </button>
+            <mat-error *ngIf="resetForm.get('confirmPassword')?.hasError('required')">Required</mat-error>
+            <mat-error *ngIf="resetForm.hasError('passwordMismatch') && resetForm.get('confirmPassword')?.touched">
+              Passwords do not match
+            </mat-error>
+          </mat-form-field>
+
+          <button mat-raised-button color="primary" class="submit-btn" type="submit" [disabled]="loading">
+            <mat-spinner *ngIf="loading" diameter="18"></mat-spinner>
+            <span *ngIf="!loading">Reset Password</span>
+          </button>
+        </form>
+
+        <div class="back-row">
+          <button type="button" class="forgot-link" (click)="backToLogin()">
+            <mat-icon>arrow_back</mat-icon> Back to Login
+          </button>
+        </div>
+      </ng-container>
+
     </div>
   </div>
 </div>

@@ -12,6 +12,7 @@ import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.http.client.SimpleClientHttpRequestFactory;
 import org.springframework.web.client.RestTemplate;
 
 import java.math.BigDecimal;
@@ -35,7 +36,10 @@ public class PredictionService {
     public PredictionService(InvoiceRepository invoiceRepo, ObjectMapper objectMapper) {
         this.invoiceRepo = invoiceRepo;
         this.objectMapper = objectMapper;
-        this.restTemplate = new RestTemplate();
+        var factory = new SimpleClientHttpRequestFactory();
+        factory.setConnectTimeout(3000);
+        factory.setReadTimeout(10000);
+        this.restTemplate = new RestTemplate(factory);
     }
 
     public List<Invoice> runPredictionOnAllAndReturnHighRisk() {
@@ -43,7 +47,7 @@ public class PredictionService {
         applyRuleBasedPredictions(invoices);
         List<Invoice> saved = invoiceRepo.saveAll(invoices);
         return saved.stream()
-                .filter(i -> i.getRiskScore() != null && i.getRiskScore().doubleValue() > 70)
+                .filter(i -> i.getRiskScore() != null && i.getRiskScore().doubleValue() >= 70)
                 .collect(Collectors.toList());
     }
 
@@ -147,8 +151,8 @@ public class PredictionService {
     }
 
     private Invoice.RiskLevel toRiskLevel(double score) {
-        if (score >= 66) return Invoice.RiskLevel.HIGH;
-        if (score >= 33) return Invoice.RiskLevel.MEDIUM;
+        if (score >= 70) return Invoice.RiskLevel.HIGH;
+        if (score >= 40) return Invoice.RiskLevel.MEDIUM;
         return Invoice.RiskLevel.LOW;
     }
 }

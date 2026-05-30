@@ -244,6 +244,123 @@ h3 { font-size: 1.15rem; }
   }
 }
 
+/* ── Dark Mode ─────────────────────────────────────────────────────────────── */
+body, * { transition: background-color 0.3s ease, border-color 0.3s ease; }
+/* exclude color transitions on text to avoid flicker on hover effects */
+
+body.dark-mode {
+  --bg-main:        #121212;
+  --bg-card:        #1e1e2e;
+  --text-primary:   #e2e8f0;
+  --text-secondary: #94a3b8;
+  --border:         #2d3748;
+  --shadow-card:    0 2px 12px rgba(0,0,0,0.4);
+  --shadow-hover:   0 8px 24px rgba(0,0,0,0.5);
+
+  background: var(--bg-main);
+  color: var(--text-primary);
+
+  h1, h2, h3, h4, h5 { color: var(--text-primary); }
+
+  // ── Material Cards
+  .mat-mdc-card {
+    background: var(--bg-card) !important;
+    border-color: var(--border) !important;
+    color: var(--text-primary) !important;
+  }
+
+  // ── Material Tables
+  .mat-mdc-table { background: var(--bg-card) !important; }
+  .mat-mdc-header-row { background: #252540 !important; }
+  .mat-mdc-header-cell {
+    color: var(--text-secondary) !important;
+    border-bottom-color: var(--border) !important;
+    background: #252540 !important;
+  }
+  .mat-mdc-cell { color: var(--text-primary) !important; border-bottom-color: var(--border) !important; }
+  .mat-mdc-row:hover { background: #252540 !important; }
+
+  // ── Dialogs (portaled to body)
+  .cdk-overlay-container {
+    .mat-mdc-dialog-surface { background: #1e1e2e !important; }
+    .mat-mdc-dialog-title   { color: var(--text-primary) !important; }
+    .mat-mdc-dialog-content { color: var(--text-primary) !important; }
+    .mdc-dialog__content    { color: var(--text-secondary) !important; }
+    p.confirm-msg           { color: var(--text-secondary) !important; }
+  }
+
+  // ── Form Fields (outline variant)
+  .mat-mdc-form-field {
+    .mdc-notched-outline__leading,
+    .mdc-notched-outline__notch,
+    .mdc-notched-outline__trailing { border-color: var(--border) !important; }
+    .mat-mdc-input-element { color: var(--text-primary) !important; caret-color: var(--text-primary); }
+    .mdc-floating-label    { color: var(--text-secondary) !important; }
+    .mat-mdc-select-value  { color: var(--text-primary) !important; }
+  }
+
+  // ── Select Panel
+  .mat-mdc-select-panel  { background: #252540 !important; }
+  .mat-mdc-option        { color: var(--text-primary) !important; }
+  .mat-mdc-option:hover,
+  .mat-mdc-option.mat-mdc-option-active { background: #2d3a5c !important; }
+  .mdc-list-item--selected .mdc-list-item__primary-text { color: var(--primary-light) !important; }
+
+  // ── Snackbar
+  .mat-mdc-snack-bar-container {
+    --mdc-snackbar-container-color: #2a2a3e;
+    --mdc-snackbar-supporting-text-color: #e2e8f0;
+  }
+
+  // ── Chips
+  .mat-mdc-chip-set .mat-mdc-chip { background: #252540 !important; }
+
+  // ── Table/card wrappers (component-level)
+  .table-wrapper, .um-table-wrapper {
+    background: var(--bg-card) !important;
+    box-shadow: var(--shadow-card) !important;
+  }
+  .table-title {
+    background: #2a1a1a !important;
+    color: #fca5a5 !important;
+    border-bottom-color: #3d2020 !important;
+    mat-icon { color: #f87171 !important; }
+  }
+
+  // ── Summary cards (Alerts page)
+  .summary-card {
+    &.card-danger  { background: rgba(185,28,28,.2)  !important; color: #fca5a5 !important; }
+    &.card-amount  { background: rgba(194,65,12,.2)  !important; color: #fdba74 !important; }
+    &.card-score   { background: rgba(161,98,7,.2)   !important; color: #fde68a !important; }
+    &.card-pending { background: rgba(29,78,216,.2)  !important; color: #93c5fd !important; }
+  }
+
+  // ── User management name cell
+  .user-fullname { color: var(--text-primary) !important; }
+  .dept-chip { background: #1e2a4a !important; color: #93c5fd !important; }
+
+  // ── Login page
+  .login-form-panel { background: #0d0d1a !important; }
+  .login-card {
+    background: #1e1e2e !important;
+    box-shadow: 0 8px 40px rgba(0,0,0,0.5) !important;
+    .login-header h2 { color: var(--text-primary) !important; }
+    .login-header p  { color: var(--text-secondary) !important; }
+    .login-footer    { color: var(--text-secondary) !important; }
+  }
+  .demo-code-box {
+    background: #1a2a3e !important;
+    border-color: #1d4ed8 !important;
+    span { color: var(--text-secondary) !important; }
+    code { color: #93c5fd !important; }
+    strong { color: #60a5fa !important; }
+  }
+  .forgot-link { color: var(--primary-light) !important; }
+
+  // ── Scrollbar
+  ::-webkit-scrollbar-thumb { background: #4a5568; }
+}
+
 /* ── Utilities ── */
 .text-success { color: var(--success) !important; }
 .text-warning { color: var(--warning) !important; }

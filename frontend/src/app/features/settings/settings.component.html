@@ -1,0 +1,560 @@
+<div class="settings-container">
+
+  <!-- Header -->
+  <div class="settings-header">
+    <div>
+      <h1>Settings</h1>
+      <p>Manage your account, security, and preferences</p>
+    </div>
+  </div>
+
+  <!-- Tabs -->
+  <mat-tab-group animationDuration="200ms" class="settings-tabs">
+
+    <!-- ══ TAB 1: PROFILE ══════════════════════════════════════════════════════ -->
+    <mat-tab>
+      <ng-template matTabLabel>
+        <mat-icon>person_outline</mat-icon>&nbsp;Profile
+      </ng-template>
+
+      <div class="tab-content" *ngIf="!loadingProfile; else profileLoader">
+
+        <div class="settings-card">
+          <div class="card-header">
+            <h2>Profile Information</h2>
+            <p>Update your personal details and contact information</p>
+          </div>
+
+          <!-- Avatar + form -->
+          <div class="profile-layout">
+            <div class="avatar-section">
+              <div class="profile-avatar">{{ initials }}</div>
+              <div class="avatar-name" *ngIf="profile">{{ profile.firstName }} {{ profile.lastName }}</div>
+              <div class="avatar-role" *ngIf="profile">{{ profile.role === 'ADMIN' ? 'Administrator' : 'Billing Manager' }}</div>
+            </div>
+
+            <form [formGroup]="profileForm" class="profile-form">
+              <div class="form-row">
+                <mat-form-field appearance="outline">
+                  <mat-label>First Name</mat-label>
+                  <input matInput formControlName="firstName">
+                  <mat-error *ngIf="profileForm.get('firstName')?.hasError('required')">Required</mat-error>
+                </mat-form-field>
+                <mat-form-field appearance="outline">
+                  <mat-label>Last Name</mat-label>
+                  <input matInput formControlName="lastName">
+                  <mat-error *ngIf="profileForm.get('lastName')?.hasError('required')">Required</mat-error>
+                </mat-form-field>
+              </div>
+
+              <mat-form-field appearance="outline" class="full-width">
+                <mat-label>Email Address</mat-label>
+                <mat-icon matPrefix>email</mat-icon>
+                <input matInput formControlName="email" type="email">
+                <mat-error *ngIf="profileForm.get('email')?.hasError('required')">Required</mat-error>
+                <mat-error *ngIf="profileForm.get('email')?.hasError('email')">Invalid email</mat-error>
+              </mat-form-field>
+
+              <div class="form-row">
+                <mat-form-field appearance="outline">
+                  <mat-label>Department</mat-label>
+                  <mat-select formControlName="department">
+                    <mat-option value="">— None —</mat-option>
+                    <mat-option *ngFor="let d of departments" [value]="d">{{ d }}</mat-option>
+                  </mat-select>
+                </mat-form-field>
+                <mat-form-field appearance="outline">
+                  <mat-label>Job Title</mat-label>
+                  <input matInput formControlName="jobTitle" placeholder="e.g. Billing Analyst">
+                </mat-form-field>
+              </div>
+
+              <mat-form-field appearance="outline" class="full-width">
+                <mat-label>Phone Number</mat-label>
+                <mat-icon matPrefix>phone</mat-icon>
+                <input matInput formControlName="phone" placeholder="+216 XX XXX XXX">
+              </mat-form-field>
+
+              <div class="form-actions">
+                <button mat-flat-button color="primary" (click)="saveProfile()"
+                        [disabled]="profileForm.invalid || savingProfile">
+                  <mat-spinner diameter="18" *ngIf="savingProfile" style="display:inline-block;margin-right:6px"></mat-spinner>
+                  <mat-icon *ngIf="!savingProfile">save</mat-icon>
+                  {{ savingProfile ? 'Saving…' : 'Save Changes' }}
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+
+        <!-- Read-only info -->
+        <div class="settings-card info-card" *ngIf="profile">
+          <div class="card-header">
+            <h2>Account Information</h2>
+            <p>Read-only account details</p>
+          </div>
+          <div class="info-grid">
+            <div class="info-item">
+              <span class="info-label">Role</span>
+              <span class="info-value">
+                <mat-icon>{{ profile.role === 'ADMIN' ? 'admin_panel_settings' : 'manage_accounts' }}</mat-icon>
+                {{ profile.role === 'ADMIN' ? 'Administrator' : 'Billing Manager' }}
+              </span>
+            </div>
+            <div class="info-item">
+              <span class="info-label">Account Status</span>
+              <span class="info-value status-badge" [class.status-active]="profile.status === 'ACTIVE'">
+                <span class="status-dot"></span>{{ profile.status }}
+              </span>
+            </div>
+            <div class="info-item">
+              <span class="info-label">Member Since</span>
+              <span class="info-value">{{ profile.createdAt | date:'dd MMMM yyyy' }}</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <ng-template #profileLoader>
+        <div class="tab-loader"><mat-spinner diameter="48"></mat-spinner></div>
+      </ng-template>
+    </mat-tab>
+
+    <!-- ══ TAB 2: SECURITY ════════════════════════════════════════════════════ -->
+    <mat-tab>
+      <ng-template matTabLabel>
+        <mat-icon>lock_outline</mat-icon>&nbsp;Security
+      </ng-template>
+
+      <div class="tab-content">
+
+        <!-- Change Password -->
+        <div class="settings-card">
+          <div class="card-header">
+            <h2>Change Password</h2>
+            <p>Update your password to keep your account secure</p>
+          </div>
+          <form [formGroup]="passwordForm" class="password-form">
+            <mat-form-field appearance="outline" class="full-width">
+              <mat-label>Current Password</mat-label>
+              <mat-icon matPrefix>lock</mat-icon>
+              <input matInput [type]="hideCurrentPw ? 'password' : 'text'" formControlName="currentPassword">
+              <button mat-icon-button matSuffix type="button" (click)="hideCurrentPw = !hideCurrentPw">
+                <mat-icon>{{ hideCurrentPw ? 'visibility_off' : 'visibility' }}</mat-icon>
+              </button>
+              <mat-error *ngIf="passwordForm.get('currentPassword')?.hasError('required')">Required</mat-error>
+            </mat-form-field>
+
+            <mat-form-field appearance="outline" class="full-width">
+              <mat-label>New Password</mat-label>
+              <mat-icon matPrefix>lock_open</mat-icon>
+              <input matInput [type]="hideNewPw ? 'password' : 'text'" formControlName="newPassword">
+              <button mat-icon-button matSuffix type="button" (click)="hideNewPw = !hideNewPw">
+                <mat-icon>{{ hideNewPw ? 'visibility_off' : 'visibility' }}</mat-icon>
+              </button>
+              <mat-error *ngIf="passwordForm.get('newPassword')?.hasError('required')">Required</mat-error>
+              <mat-error *ngIf="passwordForm.get('newPassword')?.hasError('minlength')">Minimum 8 characters</mat-error>
+            </mat-form-field>
+
+            <mat-form-field appearance="outline" class="full-width">
+              <mat-label>Confirm New Password</mat-label>
+              <mat-icon matPrefix>lock_outline</mat-icon>
+              <input matInput [type]="hideConfirmPw ? 'password' : 'text'" formControlName="confirmPassword">
+              <button mat-icon-button matSuffix type="button" (click)="hideConfirmPw = !hideConfirmPw">
+                <mat-icon>{{ hideConfirmPw ? 'visibility_off' : 'visibility' }}</mat-icon>
+              </button>
+              <mat-error *ngIf="passwordForm.get('confirmPassword')?.hasError('required')">Required</mat-error>
+              <mat-error *ngIf="passwordForm.hasError('passwordMismatch') && passwordForm.get('confirmPassword')?.touched">
+                Passwords do not match
+              </mat-error>
+            </mat-form-field>
+
+            <div class="form-actions">
+              <button mat-flat-button color="primary" (click)="changePassword()"
+                      [disabled]="passwordForm.invalid || changingPassword">
+                <mat-spinner diameter="18" *ngIf="changingPassword" style="display:inline-block;margin-right:6px"></mat-spinner>
+                {{ changingPassword ? 'Updating…' : 'Update Password' }}
+              </button>
+            </div>
+          </form>
+        </div>
+
+        <!-- Active Sessions -->
+        <div class="settings-card">
+          <div class="card-header-row">
+            <div>
+              <h2>Active Sessions</h2>
+              <p>Devices currently logged into your account</p>
+            </div>
+            <button mat-stroked-button color="warn" (click)="logoutOtherSessions()">
+              <mat-icon>logout</mat-icon> Logout All Others
+            </button>
+          </div>
+          <div class="sessions-list">
+            <div class="session-item" *ngFor="let s of fakeSessions">
+              <div class="session-icon" [class.session-current]="s.current">
+                <mat-icon>{{ s.device.includes('Mobile') ? 'phone_android' : 'computer' }}</mat-icon>
+              </div>
+              <div class="session-info">
+                <div class="session-device">{{ s.device }} <span class="current-badge" *ngIf="s.current">Current</span></div>
+                <div class="session-meta"><mat-icon>location_on</mat-icon>{{ s.location }} · <mat-icon>schedule</mat-icon>{{ s.lastActive }}</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 2FA -->
+        <div class="settings-card">
+          <div class="card-header-row">
+            <div>
+              <h2>Two-Factor Authentication</h2>
+              <p>Add an extra layer of security to your account</p>
+            </div>
+            <span class="coming-soon-badge">Coming Soon</span>
+          </div>
+          <div class="tfa-row">
+            <mat-slide-toggle [disabled]="true" color="primary">Enable 2FA</mat-slide-toggle>
+            <span class="tfa-desc">Two-factor authentication is not yet available but will be added in a future update.</span>
+          </div>
+        </div>
+
+      </div>
+    </mat-tab>
+
+    <!-- ══ TAB 3: NOTIFICATIONS ═══════════════════════════════════════════════ -->
+    <mat-tab>
+      <ng-template matTabLabel>
+        <mat-icon>notifications_none</mat-icon>&nbsp;Notifications
+      </ng-template>
+
+      <div class="tab-content">
+        <div class="settings-card">
+          <div class="card-header">
+            <h2>Notification Preferences</h2>
+            <p>Control which notifications you receive</p>
+          </div>
+
+          <div class="toggle-list">
+            <div class="toggle-item toggle-master">
+              <div class="toggle-info">
+                <span class="toggle-label">Email Notifications</span>
+                <span class="toggle-desc">Master switch for all email notifications</span>
+              </div>
+              <mat-slide-toggle [(ngModel)]="notifications.emailEnabled" color="primary"></mat-slide-toggle>
+            </div>
+
+            <mat-divider></mat-divider>
+
+            <div class="toggle-item" [class.disabled]="!notifications.emailEnabled">
+              <div class="toggle-info">
+                <mat-icon class="toggle-icon" style="color:#ef4444">warning</mat-icon>
+                <div>
+                  <span class="toggle-label">Overdue Invoice Alerts</span>
+                  <span class="toggle-desc">Get notified when invoices become overdue</span>
+                </div>
+              </div>
+              <mat-slide-toggle [(ngModel)]="notifications.overdueAlerts" color="primary"
+                                [disabled]="!notifications.emailEnabled"></mat-slide-toggle>
+            </div>
+
+            <div class="toggle-item" [class.disabled]="!notifications.emailEnabled">
+              <div class="toggle-info">
+                <mat-icon class="toggle-icon" style="color:#f59e0b">psychology</mat-icon>
+                <div>
+                  <span class="toggle-label">High Risk Invoice Alerts</span>
+                  <span class="toggle-desc">ML risk score above 70% triggers an alert</span>
+                </div>
+              </div>
+              <mat-slide-toggle [(ngModel)]="notifications.highRiskAlerts" color="primary"
+                                [disabled]="!notifications.emailEnabled"></mat-slide-toggle>
+            </div>
+
+            <div class="toggle-item" [class.disabled]="!notifications.emailEnabled">
+              <div class="toggle-info">
+                <mat-icon class="toggle-icon" style="color:#3b82f6">bar_chart</mat-icon>
+                <div>
+                  <span class="toggle-label">Weekly Summary Report</span>
+                  <span class="toggle-desc">Receive a weekly billing performance summary</span>
+                </div>
+              </div>
+              <mat-slide-toggle [(ngModel)]="notifications.weeklySummary" color="primary"
+                                [disabled]="!notifications.emailEnabled"></mat-slide-toggle>
+            </div>
+
+            <div class="toggle-item" *ngIf="isAdmin" [class.disabled]="!notifications.emailEnabled">
+              <div class="toggle-info">
+                <mat-icon class="toggle-icon" style="color:#8b5cf6">person_add</mat-icon>
+                <div>
+                  <span class="toggle-label">New User Added</span>
+                  <span class="toggle-desc">Alert when a new billing manager is created</span>
+                </div>
+              </div>
+              <mat-slide-toggle [(ngModel)]="notifications.newUserAdded" color="primary"
+                                [disabled]="!notifications.emailEnabled"></mat-slide-toggle>
+            </div>
+
+            <div class="toggle-item" [class.disabled]="!notifications.emailEnabled">
+              <div class="toggle-info">
+                <mat-icon class="toggle-icon" style="color:#6b7280">build</mat-icon>
+                <div>
+                  <span class="toggle-label">System Maintenance Alerts</span>
+                  <span class="toggle-desc">Notifications about planned maintenance windows</span>
+                </div>
+              </div>
+              <mat-slide-toggle [(ngModel)]="notifications.maintenanceAlerts" color="primary"
+                                [disabled]="!notifications.emailEnabled"></mat-slide-toggle>
+            </div>
+          </div>
+
+          <div class="form-actions">
+            <button mat-flat-button color="primary" (click)="saveNotifications()">
+              <mat-icon>save</mat-icon> Save Preferences
+            </button>
+          </div>
+        </div>
+      </div>
+    </mat-tab>
+
+    <!-- ══ TAB 4: APPEARANCE ══════════════════════════════════════════════════ -->
+    <mat-tab>
+      <ng-template matTabLabel>
+        <mat-icon>palette</mat-icon>&nbsp;Appearance
+      </ng-template>
+
+      <div class="tab-content">
+
+        <!-- Theme -->
+        <div class="settings-card">
+          <div class="card-header">
+            <h2>Theme</h2>
+            <p>Choose how the application looks</p>
+          </div>
+          <div class="theme-options">
+            <button class="theme-option" [class.active]="theme.mode === 'light'" (click)="setTheme('light')">
+              <div class="theme-preview theme-light-preview">
+                <div class="preview-sidebar"></div>
+                <div class="preview-content"><div class="preview-bar"></div><div class="preview-card"></div></div>
+              </div>
+              <mat-icon>light_mode</mat-icon>
+              <span>Light</span>
+              <mat-icon class="check-icon" *ngIf="theme.mode === 'light'">check_circle</mat-icon>
+            </button>
+
+            <button class="theme-option" [class.active]="theme.mode === 'dark'" (click)="setTheme('dark')">
+              <div class="theme-preview theme-dark-preview">
+                <div class="preview-sidebar"></div>
+                <div class="preview-content"><div class="preview-bar"></div><div class="preview-card"></div></div>
+              </div>
+              <mat-icon>dark_mode</mat-icon>
+              <span>Dark</span>
+              <mat-icon class="check-icon" *ngIf="theme.mode === 'dark'">check_circle</mat-icon>
+            </button>
+
+            <button class="theme-option" [class.active]="theme.mode === 'system'" (click)="setTheme('system')">
+              <div class="theme-preview theme-system-preview">
+                <div class="preview-sidebar"></div>
+                <div class="preview-content"><div class="preview-bar"></div><div class="preview-card"></div></div>
+              </div>
+              <mat-icon>computer</mat-icon>
+              <span>System</span>
+              <mat-icon class="check-icon" *ngIf="theme.mode === 'system'">check_circle</mat-icon>
+            </button>
+          </div>
+        </div>
+
+        <!-- Other preferences -->
+        <div class="settings-card">
+          <div class="card-header">
+            <h2>Display Preferences</h2>
+            <p>Customize regional and layout settings</p>
+          </div>
+
+          <div class="pref-grid">
+            <mat-form-field appearance="outline">
+              <mat-label>Language</mat-label>
+              <mat-icon matPrefix>language</mat-icon>
+              <mat-select [(ngModel)]="appearance.language">
+                <mat-option value="en">English</mat-option>
+                <mat-option value="fr">Français</mat-option>
+              </mat-select>
+            </mat-form-field>
+
+            <mat-form-field appearance="outline">
+              <mat-label>Date Format</mat-label>
+              <mat-icon matPrefix>date_range</mat-icon>
+              <mat-select [(ngModel)]="appearance.dateFormat">
+                <mat-option value="DD/MM/YYYY">DD/MM/YYYY</mat-option>
+                <mat-option value="MM/DD/YYYY">MM/DD/YYYY</mat-option>
+                <mat-option value="YYYY-MM-DD">YYYY-MM-DD</mat-option>
+              </mat-select>
+            </mat-form-field>
+
+            <mat-form-field appearance="outline">
+              <mat-label>Currency Display</mat-label>
+              <mat-icon matPrefix>euro</mat-icon>
+              <mat-select [(ngModel)]="appearance.currency">
+                <mat-option value="EUR">EUR — Euro (€)</mat-option>
+                <mat-option value="USD">USD — Dollar ($)</mat-option>
+                <mat-option value="GBP">GBP — Pound (£)</mat-option>
+              </mat-select>
+            </mat-form-field>
+          </div>
+
+          <div class="toggle-item" style="margin-top: 8px;">
+            <div class="toggle-info">
+              <mat-icon class="toggle-icon">view_sidebar</mat-icon>
+              <div>
+                <span class="toggle-label">Compact Sidebar</span>
+                <span class="toggle-desc">Show icons only — collapse the sidebar by default</span>
+              </div>
+            </div>
+            <mat-slide-toggle [(ngModel)]="appearance.compactSidebar" color="primary"></mat-slide-toggle>
+          </div>
+
+          <div class="form-actions" style="margin-top: 20px;">
+            <button mat-flat-button color="primary" (click)="saveAppearance()">
+              <mat-icon>save</mat-icon> Save Preferences
+            </button>
+          </div>
+        </div>
+      </div>
+    </mat-tab>
+
+    <!-- ══ TAB 5: SYSTEM (Admin Only) ════════════════════════════════════════ -->
+    <mat-tab *ngIf="isAdmin">
+      <ng-template matTabLabel>
+        <mat-icon>developer_mode</mat-icon>&nbsp;System
+      </ng-template>
+
+      <div class="tab-content">
+
+        <!-- App Info -->
+        <div class="settings-card">
+          <div class="card-header">
+            <h2>Application Status</h2>
+            <p>Real-time health of system services</p>
+          </div>
+          <div class="health-grid" *ngIf="!loadingHealth && healthStatus; else healthLoader">
+            <div class="health-item">
+              <div class="health-dot" [class.up]="healthStatus.backend === 'UP'"></div>
+              <div class="health-info">
+                <span class="health-name">Backend API</span>
+                <span class="health-status" [class.up]="healthStatus.backend === 'UP'">
+                  {{ healthStatus.backend }}
+                </span>
+              </div>
+              <mat-icon class="health-icon">cloud</mat-icon>
+            </div>
+            <div class="health-item">
+              <div class="health-dot" [class.up]="healthStatus.database === 'UP'"></div>
+              <div class="health-info">
+                <span class="health-name">MySQL Database</span>
+                <span class="health-status" [class.up]="healthStatus.database === 'UP'">
+                  {{ healthStatus.database }}
+                </span>
+              </div>
+              <mat-icon class="health-icon">storage</mat-icon>
+            </div>
+            <div class="health-item">
+              <div class="health-dot" [class.up]="healthStatus.mlService === 'UP'"></div>
+              <div class="health-info">
+                <span class="health-name">ML Risk Engine</span>
+                <span class="health-status" [class.up]="healthStatus.mlService === 'UP'">
+                  {{ healthStatus.mlService }}
+                </span>
+              </div>
+              <mat-icon class="health-icon">psychology</mat-icon>
+            </div>
+            <div class="health-item up-item">
+              <div class="health-dot up"></div>
+              <div class="health-info">
+                <span class="health-name">App Version</span>
+                <span class="health-status up">1.0.0</span>
+              </div>
+              <mat-icon class="health-icon">info</mat-icon>
+            </div>
+          </div>
+          <ng-template #healthLoader>
+            <div class="tab-loader small"><mat-spinner diameter="36"></mat-spinner></div>
+          </ng-template>
+        </div>
+
+        <!-- Data Management -->
+        <div class="settings-card">
+          <div class="card-header">
+            <h2>Data Management</h2>
+            <p>Export data or manage system cache</p>
+          </div>
+          <div class="export-grid">
+            <div class="export-item">
+              <mat-icon>receipt_long</mat-icon>
+              <div>
+                <strong>Invoices</strong>
+                <span>Export all invoices as CSV</span>
+              </div>
+              <button mat-stroked-button color="primary" (click)="exportCsv('invoices')">
+                <mat-icon>download</mat-icon> Export
+              </button>
+            </div>
+            <div class="export-item">
+              <mat-icon>business</mat-icon>
+              <div>
+                <strong>Clients</strong>
+                <span>Export all clients as CSV</span>
+              </div>
+              <button mat-stroked-button color="primary" (click)="exportCsv('clients')">
+                <mat-icon>download</mat-icon> Export
+              </button>
+            </div>
+            <div class="export-item">
+              <mat-icon>cached</mat-icon>
+              <div>
+                <strong>Cache</strong>
+                <span>Clear application cache</span>
+              </div>
+              <button mat-stroked-button color="warn" (click)="clearCache()">
+                <mat-icon>delete_sweep</mat-icon> Clear
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- User Statistics -->
+        <div class="settings-card" *ngIf="!loadingStats && userStats; else statsLoader">
+          <div class="card-header">
+            <h2>User Statistics</h2>
+            <p>Overview of billing manager accounts</p>
+          </div>
+          <div class="stats-grid">
+            <div class="stat-card">
+              <mat-icon>group</mat-icon>
+              <span class="stat-value">{{ userStats.total }}</span>
+              <span class="stat-label">Total Managers</span>
+            </div>
+            <div class="stat-card stat-active">
+              <mat-icon>check_circle</mat-icon>
+              <span class="stat-value">{{ userStats.active }}</span>
+              <span class="stat-label">Active</span>
+            </div>
+            <div class="stat-card stat-inactive">
+              <mat-icon>cancel</mat-icon>
+              <span class="stat-value">{{ userStats.inactive }}</span>
+              <span class="stat-label">Inactive</span>
+            </div>
+            <div class="stat-card stat-login">
+              <mat-icon>login</mat-icon>
+              <span class="stat-value stat-value-sm">{{ userStats.lastLogin }}</span>
+              <span class="stat-label">Last Activity</span>
+            </div>
+          </div>
+        </div>
+
+        <ng-template #statsLoader>
+          <div class="tab-loader small" *ngIf="loadingStats"><mat-spinner diameter="36"></mat-spinner></div>
+        </ng-template>
+
+      </div>
+    </mat-tab>
+
+  </mat-tab-group>
+</div>

@@ -17,7 +17,7 @@ public class Invoice {
     @Column(nullable = false, unique = true)
     private String invoiceNumber;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "client_id", nullable = false)
     private Client client;
 

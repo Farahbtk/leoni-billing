@@ -17,6 +17,7 @@ export interface UpdateUserPayload {
   lastName: string;
   email: string;
   department: string;
+  newPassword?: string;
 }
 
 @Injectable({ providedIn: 'root' })

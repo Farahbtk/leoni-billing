@@ -59,6 +59,9 @@ public class AdminUserService {
         user.setLastName(req.getLastName());
         user.setEmail(req.getEmail());
         user.setDepartment(req.getDepartment());
+        if (req.getNewPassword() != null && !req.getNewPassword().isBlank()) {
+            user.setPassword(passwordEncoder.encode(req.getNewPassword()));
+        }
         return UserDto.from(userRepo.save(user));
     }
 
@@ -71,7 +74,8 @@ public class AdminUserService {
 
     public void deleteManager(Long id) {
         User user = findManagerById(id);
-        userRepo.delete(user);
+        user.setStatus(User.Status.INACTIVE);
+        userRepo.save(user);
     }
 
     private User findManagerById(Long id) {

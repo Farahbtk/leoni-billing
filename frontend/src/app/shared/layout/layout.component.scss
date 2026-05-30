@@ -2,24 +2,55 @@
   display: flex;
   min-height: 100vh;
 
-  .main-content {
+  .main-wrapper {
     flex: 1;
     margin-left: 260px;
-    padding: 28px 32px;
+    display: flex;
+    flex-direction: column;
     min-height: 100vh;
-    background: var(--bg-main);
     transition: margin-left 0.25s cubic-bezier(0.4, 0, 0.2, 1);
     min-width: 0;
+    background: var(--bg-main);
   }
 
-  &.collapsed .main-content {
+  &.collapsed .main-wrapper {
     margin-left: 72px;
+  }
+
+  .top-bar {
+    display: flex;
+    align-items: center;
+    height: 52px;
+    padding: 0 20px;
+    background: var(--bg-card);
+    border-bottom: 1px solid var(--border);
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    transition: background 0.3s ease, border-color 0.3s ease;
+  }
+
+  .top-spacer { flex: 1; }
+
+  .theme-toggle {
+    color: var(--text-secondary);
+    transition: color 0.2s ease;
+    &:hover { color: var(--text-primary); }
+  }
+
+  .main-content {
+    flex: 1;
+    padding: 28px 32px;
+    background: var(--bg-main);
+    transition: background 0.3s ease;
   }
 }
 
 @media (max-width: 768px) {
-  .app-shell .main-content {
+  .app-shell .main-wrapper {
     margin-left: 0;
+  }
+  .app-shell .main-content {
     padding: 16px;
   }
 }

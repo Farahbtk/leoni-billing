@@ -69,6 +69,8 @@ export class InvoiceListComponent implements OnInit, AfterViewInit {
 
     this.filterForm.get('status')!.valueChanges.subscribe(() => this.loadInvoices());
     this.filterForm.get('riskLevel')!.valueChanges.subscribe(() => this.loadInvoices());
+    this.filterForm.get('dateFrom')!.valueChanges.subscribe(() => this.loadInvoices());
+    this.filterForm.get('dateTo')!.valueChanges.subscribe(() => this.loadInvoices());
   }
 
   ngAfterViewInit(): void {
@@ -89,10 +91,14 @@ export class InvoiceListComponent implements OnInit, AfterViewInit {
         this.totalElements = res.totalElements;
         this.loading = false;
       },
-      error: () => {
-        this.dataSource.data = MOCK_INVOICES;
-        this.totalElements = MOCK_INVOICES.length;
+      error: (err) => {
+        this.dataSource.data = [];
+        this.totalElements = 0;
         this.loading = false;
+        const msg = err.status === 401 || err.status === 403
+          ? 'Session expired — please log in again'
+          : 'Failed to load invoices — check backend connection';
+        this.snack.open(msg, 'Close', { duration: 5000 });
       }
     });
   }
@@ -145,16 +151,3 @@ export class InvoiceListComponent implements OnInit, AfterViewInit {
     return s.toLowerCase();
   }
 }
-
-const MOCK_INVOICES: Invoice[] = [
-  { id: 1,  invoiceNumber: 'INV-2024-001', clientId: 1, clientName: 'BMW Group',           amount: 285000, currency: 'EUR', issueDate: '2024-01-10', dueDate: '2024-02-09', status: 'PAID',    riskScore: 12, riskLevel: 'LOW',    paymentTerms: 30 },
-  { id: 2,  invoiceNumber: 'INV-2024-002', clientId: 2, clientName: 'Volkswagen AG',       amount: 420000, currency: 'EUR', issueDate: '2024-01-15', dueDate: '2024-02-14', status: 'OVERDUE', riskScore: 78, riskLevel: 'HIGH',   paymentTerms: 30, daysOverdue: 18 },
-  { id: 3,  invoiceNumber: 'INV-2024-003', clientId: 3, clientName: 'Mercedes-Benz',       amount: 195000, currency: 'EUR', issueDate: '2024-01-20', dueDate: '2024-02-19', status: 'PENDING', riskScore: 45, riskLevel: 'MEDIUM', paymentTerms: 30 },
-  { id: 4,  invoiceNumber: 'INV-2024-004', clientId: 4, clientName: 'Stellantis',          amount: 312000, currency: 'EUR', issueDate: '2024-01-22', dueDate: '2024-02-21', status: 'PAID',    riskScore: 22, riskLevel: 'LOW',    paymentTerms: 30 },
-  { id: 5,  invoiceNumber: 'INV-2024-005', clientId: 2, clientName: 'Volkswagen AG',       amount: 540000, currency: 'EUR', issueDate: '2024-01-25', dueDate: '2024-02-24', status: 'OVERDUE', riskScore: 85, riskLevel: 'HIGH',   paymentTerms: 30, daysOverdue: 8 },
-  { id: 6,  invoiceNumber: 'INV-2024-006', clientId: 5, clientName: 'Renault Group',       amount: 178000, currency: 'EUR', issueDate: '2024-01-28', dueDate: '2024-02-27', status: 'PENDING', riskScore: 31, riskLevel: 'LOW',    paymentTerms: 30 },
-  { id: 7,  invoiceNumber: 'INV-2024-007', clientId: 6, clientName: 'Toyota Motor',        amount: 623000, currency: 'EUR', issueDate: '2024-01-30', dueDate: '2024-02-29', status: 'PAID',    riskScore: 8,  riskLevel: 'LOW',    paymentTerms: 30 },
-  { id: 8,  invoiceNumber: 'INV-2024-008', clientId: 7, clientName: 'Ford Motor Company',  amount: 291000, currency: 'EUR', issueDate: '2024-02-01', dueDate: '2024-03-02', status: 'OVERDUE', riskScore: 72, riskLevel: 'HIGH',   paymentTerms: 30, daysOverdue: 5 },
-  { id: 9,  invoiceNumber: 'INV-2024-009', clientId: 1, clientName: 'BMW Group',           amount: 415000, currency: 'EUR', issueDate: '2024-02-05', dueDate: '2024-03-06', status: 'PENDING', riskScore: 18, riskLevel: 'LOW',    paymentTerms: 30 },
-  { id: 10, invoiceNumber: 'INV-2024-010', clientId: 3, clientName: 'Mercedes-Benz',       amount: 368000, currency: 'EUR', issueDate: '2024-02-08', dueDate: '2024-03-09', status: 'PAID',    riskScore: 15, riskLevel: 'LOW',    paymentTerms: 30 }
-];
