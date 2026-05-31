@@ -1,9 +1,9 @@
 import {
   ThemeService
-} from "./chunk-7RNVM5YD.js";
+} from "./chunk-5RQKEHXG.js";
 import {
   AuthService
-} from "./chunk-MVY7NJAQ.js";
+} from "./chunk-PADCB2SJ.js";
 import {
   Router,
   RouterLink,
@@ -11,12 +11,12 @@ import {
   RouterModule,
   RouterOutlet,
   provideRouter
-} from "./chunk-U3DLQZFR.js";
+} from "./chunk-KFYCFTGM.js";
 import {
   MatTooltip,
   MatTooltipModule
-} from "./chunk-EOJBJDFG.js";
-import "./chunk-32VODOFB.js";
+} from "./chunk-NVH64VTL.js";
+import "./chunk-WJ3XFFVQ.js";
 import {
   MatButtonModule,
   MatIcon,
@@ -24,20 +24,20 @@ import {
   MatIconModule,
   MatRipple,
   MatRippleModule
-} from "./chunk-7F5FDPEU.js";
-import "./chunk-N625QWFE.js";
+} from "./chunk-GP3DPIH4.js";
+import "./chunk-GZT44RQ4.js";
 import {
   DomRendererFactory2,
   bootstrapApplication,
   provideHttpClient,
   withInterceptors
-} from "./chunk-LMCEUH37.js";
+} from "./chunk-IT5HHABJ.js";
 import {
   CommonModule,
   DOCUMENT,
   NgForOf,
   NgIf
-} from "./chunk-E6MJ6NZN.js";
+} from "./chunk-Q6QAO5LM.js";
 import {
   ANIMATION_MODULE_TYPE,
   ChangeDetectionScheduler,
@@ -68,7 +68,7 @@ import {
   ɵɵtemplate,
   ɵɵtext,
   ɵɵtextInterpolate
-} from "./chunk-UIKDKAPR.js";
+} from "./chunk-5P2RJQ5K.js";
 
 // node_modules/@angular/platform-browser/fesm2022/animations/async.mjs
 var ANIMATION_PREFIX = "@";
@@ -96,7 +96,7 @@ var AsyncAnimationRendererFactory = class _AsyncAnimationRendererFactory {
    * @internal
    */
   loadImpl() {
-    const moduleImpl = this.moduleImpl ?? import("./chunk-4JSC2DLD.js");
+    const moduleImpl = this.moduleImpl ?? import("./chunk-INYQ7SKC.js");
     return moduleImpl.catch((e) => {
       throw new RuntimeError(5300, (typeof ngDevMode === "undefined" || ngDevMode) && "Async loading for animations package was enabled, but loading failed. Angular falls back to using regular rendering. No animations will be displayed and their styles won't be applied.");
     }).then(({
@@ -302,24 +302,24 @@ var adminGuard = () => {
 // src/app/shared/sidebar/sidebar.component.ts
 function SidebarComponent_div_5_Template(rf, ctx) {
   if (rf & 1) {
-    \u0275\u0275elementStart(0, "div", 15)(1, "span", 16);
+    \u0275\u0275elementStart(0, "div", 19)(1, "span", 20);
     \u0275\u0275text(2, "LEONI");
     \u0275\u0275elementEnd();
-    \u0275\u0275elementStart(3, "span", 17);
+    \u0275\u0275elementStart(3, "span", 21);
     \u0275\u0275text(4, "Billing Dashboard");
     \u0275\u0275elementEnd()();
   }
 }
 function SidebarComponent_div_9_Template(rf, ctx) {
   if (rf & 1) {
-    \u0275\u0275elementStart(0, "div", 18);
+    \u0275\u0275elementStart(0, "div", 22);
     \u0275\u0275text(1, "MAIN MENU");
     \u0275\u0275elementEnd();
   }
 }
 function SidebarComponent_li_11_span_4_Template(rf, ctx) {
   if (rf & 1) {
-    \u0275\u0275elementStart(0, "span", 22);
+    \u0275\u0275elementStart(0, "span", 26);
     \u0275\u0275text(1);
     \u0275\u0275elementEnd();
   }
@@ -331,7 +331,7 @@ function SidebarComponent_li_11_span_4_Template(rf, ctx) {
 }
 function SidebarComponent_li_11_span_5_Template(rf, ctx) {
   if (rf & 1) {
-    \u0275\u0275elementStart(0, "span", 23);
+    \u0275\u0275elementStart(0, "span", 27);
     \u0275\u0275text(1);
     \u0275\u0275elementEnd();
   }
@@ -343,15 +343,15 @@ function SidebarComponent_li_11_span_5_Template(rf, ctx) {
 }
 function SidebarComponent_li_11_span_6_Template(rf, ctx) {
   if (rf & 1) {
-    \u0275\u0275element(0, "span", 24);
+    \u0275\u0275element(0, "span", 28);
   }
 }
 function SidebarComponent_li_11_Template(rf, ctx) {
   if (rf & 1) {
-    \u0275\u0275elementStart(0, "li")(1, "a", 19)(2, "mat-icon", 10);
+    \u0275\u0275elementStart(0, "li")(1, "a", 23)(2, "mat-icon", 11);
     \u0275\u0275text(3);
     \u0275\u0275elementEnd();
-    \u0275\u0275template(4, SidebarComponent_li_11_span_4_Template, 2, 1, "span", 11)(5, SidebarComponent_li_11_span_5_Template, 2, 1, "span", 20)(6, SidebarComponent_li_11_span_6_Template, 1, 0, "span", 21);
+    \u0275\u0275template(4, SidebarComponent_li_11_span_4_Template, 2, 1, "span", 12)(5, SidebarComponent_li_11_span_5_Template, 2, 1, "span", 24)(6, SidebarComponent_li_11_span_6_Template, 1, 0, "span", 25);
     \u0275\u0275elementEnd()();
   }
   if (rf & 2) {
@@ -369,29 +369,50 @@ function SidebarComponent_li_11_Template(rf, ctx) {
     \u0275\u0275property("ngIf", item_r1.badge && ctx_r1.collapsed);
   }
 }
-function SidebarComponent_span_16_Template(rf, ctx) {
+function SidebarComponent_div_13_Template(rf, ctx) {
   if (rf & 1) {
-    \u0275\u0275elementStart(0, "span", 22);
+    \u0275\u0275elementStart(0, "div", 29);
+    \u0275\u0275text(1, "TOOLS");
+    \u0275\u0275elementEnd();
+  }
+}
+function SidebarComponent_span_17_Template(rf, ctx) {
+  if (rf & 1) {
+    \u0275\u0275elementStart(0, "span", 26);
+    \u0275\u0275text(1, "Power Apps Portal");
+    \u0275\u0275elementEnd();
+  }
+}
+function SidebarComponent_mat_icon_18_Template(rf, ctx) {
+  if (rf & 1) {
+    \u0275\u0275elementStart(0, "mat-icon", 30);
+    \u0275\u0275text(1, "open_in_new");
+    \u0275\u0275elementEnd();
+  }
+}
+function SidebarComponent_span_23_Template(rf, ctx) {
+  if (rf & 1) {
+    \u0275\u0275elementStart(0, "span", 26);
     \u0275\u0275text(1, "Settings");
     \u0275\u0275elementEnd();
   }
 }
-function SidebarComponent_div_18_Template(rf, ctx) {
+function SidebarComponent_div_25_Template(rf, ctx) {
   if (rf & 1) {
-    \u0275\u0275elementStart(0, "div", 18);
+    \u0275\u0275elementStart(0, "div", 22);
     \u0275\u0275text(1, "ACCOUNT");
     \u0275\u0275elementEnd();
   }
 }
-function SidebarComponent_div_19_Template(rf, ctx) {
+function SidebarComponent_div_26_Template(rf, ctx) {
   if (rf & 1) {
-    \u0275\u0275elementStart(0, "div", 25)(1, "div", 26);
+    \u0275\u0275elementStart(0, "div", 31)(1, "div", 32);
     \u0275\u0275text(2);
     \u0275\u0275elementEnd();
-    \u0275\u0275elementStart(3, "div", 27)(4, "span", 28);
+    \u0275\u0275elementStart(3, "div", 33)(4, "span", 34);
     \u0275\u0275text(5);
     \u0275\u0275elementEnd();
-    \u0275\u0275elementStart(6, "span", 29);
+    \u0275\u0275elementStart(6, "span", 35);
     \u0275\u0275text(7);
     \u0275\u0275elementEnd()()();
   }
@@ -405,9 +426,9 @@ function SidebarComponent_div_19_Template(rf, ctx) {
     \u0275\u0275textInterpolate(ctx_r1.roleLabel);
   }
 }
-function SidebarComponent_span_23_Template(rf, ctx) {
+function SidebarComponent_span_30_Template(rf, ctx) {
   if (rf & 1) {
-    \u0275\u0275elementStart(0, "span", 22);
+    \u0275\u0275elementStart(0, "span", 26);
     \u0275\u0275text(1, "Logout");
     \u0275\u0275elementEnd();
   }
@@ -425,6 +446,7 @@ var SidebarComponent = class _SidebarComponent {
       { label: "Reports", icon: "bar_chart", route: "/reports" },
       { label: "User Management", icon: "manage_accounts", route: "/user-management", adminOnly: true }
     ];
+    this.POWERAPPS_URL = `https://apps.powerapps.com/play/e/default-b7bd4715-4217-48c7-919e-2ea97f592fa7/a/a5c4e5ec-949b-4f0e-aa13-7b8f94289025?tenantId=b7bd4715-4217-48c7-919e-2ea97f592fa7&hint=87fb8e82-8f3d-49d0-b844-222202695999&sourcetime=${Date.now()}`;
   }
   get navItems() {
     return this.allNavItems.filter((item) => !item.adminOnly || this.auth.isAdmin());
@@ -435,6 +457,9 @@ var SidebarComponent = class _SidebarComponent {
   get roleLabel() {
     return this.auth.getCurrentUser()?.role === "ADMIN" ? "Administrator" : "Billing Manager";
   }
+  openPowerApps() {
+    window.open(this.POWERAPPS_URL, "_blank", "width=950,height=700,noopener,noreferrer");
+  }
   logout() {
     this.auth.logout();
   }
@@ -444,7 +469,7 @@ var SidebarComponent = class _SidebarComponent {
     };
   }
   static {
-    this.\u0275cmp = /* @__PURE__ */ \u0275\u0275defineComponent({ type: _SidebarComponent, selectors: [["app-sidebar"]], inputs: { collapsed: "collapsed" }, outputs: { collapseToggle: "collapseToggle" }, standalone: true, features: [\u0275\u0275StandaloneFeature], decls: 24, vars: 15, consts: [[1, "sidebar"], [1, "sidebar-logo"], [1, "logo-icon"], ["class", "logo-text", 4, "ngIf"], [1, "collapse-btn", 3, "click", "matTooltip"], ["class", "nav-section-label", 4, "ngIf"], [1, "nav-list"], [4, "ngFor", "ngForOf"], [1, "sidebar-bottom"], ["routerLinkActive", "active", "matRipple", "", "matTooltipPosition", "right", 1, "nav-item", "settings-item", 3, "routerLink", "matRippleColor", "matTooltip"], [1, "nav-icon"], ["class", "nav-label", 4, "ngIf"], [1, "sidebar-divider"], ["class", "user-info", 4, "ngIf"], ["matRipple", "", "matTooltipPosition", "right", 1, "nav-item", "logout-btn", 3, "click", "matTooltip"], [1, "logo-text"], [1, "logo-name"], [1, "logo-sub"], [1, "nav-section-label"], ["routerLinkActive", "active", "matRipple", "", "matTooltipPosition", "right", 1, "nav-item", 3, "routerLink", "matRippleColor", "matTooltip"], ["class", "nav-badge", 4, "ngIf"], ["class", "nav-badge-dot", 4, "ngIf"], [1, "nav-label"], [1, "nav-badge"], [1, "nav-badge-dot"], [1, "user-info"], [1, "user-avatar"], [1, "user-details"], [1, "user-name"], [1, "user-role"]], template: function SidebarComponent_Template(rf, ctx) {
+    this.\u0275cmp = /* @__PURE__ */ \u0275\u0275defineComponent({ type: _SidebarComponent, selectors: [["app-sidebar"]], inputs: { collapsed: "collapsed" }, outputs: { collapseToggle: "collapseToggle" }, standalone: true, features: [\u0275\u0275StandaloneFeature], decls: 31, vars: 20, consts: [[1, "sidebar"], [1, "sidebar-logo"], [1, "logo-icon"], ["class", "logo-text", 4, "ngIf"], [1, "collapse-btn", 3, "click", "matTooltip"], ["class", "nav-section-label", 4, "ngIf"], [1, "nav-list"], [4, "ngFor", "ngForOf"], [1, "nav-section"], ["class", "nav-section-title", 4, "ngIf"], ["matRipple", "", "matTooltipPosition", "right", 1, "nav-item", "powerapps-btn", 3, "click", "matRippleColor", "matTooltip"], [1, "nav-icon"], ["class", "nav-label", 4, "ngIf"], ["class", "ext-icon", 4, "ngIf"], [1, "sidebar-bottom"], ["routerLinkActive", "active", "matRipple", "", "matTooltipPosition", "right", 1, "nav-item", "settings-item", 3, "routerLink", "matRippleColor", "matTooltip"], [1, "sidebar-divider"], ["class", "user-info", 4, "ngIf"], ["matRipple", "", "matTooltipPosition", "right", 1, "nav-item", "logout-btn", 3, "click", "matTooltip"], [1, "logo-text"], [1, "logo-name"], [1, "logo-sub"], [1, "nav-section-label"], ["routerLinkActive", "active", "matRipple", "", "matTooltipPosition", "right", 1, "nav-item", 3, "routerLink", "matRippleColor", "matTooltip"], ["class", "nav-badge", 4, "ngIf"], ["class", "nav-badge-dot", 4, "ngIf"], [1, "nav-label"], [1, "nav-badge"], [1, "nav-badge-dot"], [1, "nav-section-title"], [1, "ext-icon"], [1, "user-info"], [1, "user-avatar"], [1, "user-details"], [1, "user-name"], [1, "user-role"]], template: function SidebarComponent_Template(rf, ctx) {
       if (rf & 1) {
         \u0275\u0275elementStart(0, "nav", 0)(1, "div", 1)(2, "div", 2)(3, "mat-icon");
         \u0275\u0275text(4, "electric_bolt");
@@ -461,21 +486,32 @@ var SidebarComponent = class _SidebarComponent {
         \u0275\u0275elementStart(10, "ul", 6);
         \u0275\u0275template(11, SidebarComponent_li_11_Template, 7, 7, "li", 7);
         \u0275\u0275elementEnd();
-        \u0275\u0275elementStart(12, "div", 8)(13, "a", 9)(14, "mat-icon", 10);
-        \u0275\u0275text(15, "settings");
+        \u0275\u0275elementStart(12, "div", 8);
+        \u0275\u0275template(13, SidebarComponent_div_13_Template, 2, 0, "div", 9);
+        \u0275\u0275elementStart(14, "button", 10);
+        \u0275\u0275listener("click", function SidebarComponent_Template_button_click_14_listener() {
+          return ctx.openPowerApps();
+        });
+        \u0275\u0275elementStart(15, "mat-icon", 11);
+        \u0275\u0275text(16, "grid_view");
         \u0275\u0275elementEnd();
-        \u0275\u0275template(16, SidebarComponent_span_16_Template, 2, 0, "span", 11);
+        \u0275\u0275template(17, SidebarComponent_span_17_Template, 2, 0, "span", 12)(18, SidebarComponent_mat_icon_18_Template, 2, 0, "mat-icon", 13);
+        \u0275\u0275elementEnd()();
+        \u0275\u0275elementStart(19, "div", 14)(20, "a", 15)(21, "mat-icon", 11);
+        \u0275\u0275text(22, "settings");
         \u0275\u0275elementEnd();
-        \u0275\u0275element(17, "div", 12);
-        \u0275\u0275template(18, SidebarComponent_div_18_Template, 2, 0, "div", 5)(19, SidebarComponent_div_19_Template, 8, 3, "div", 13);
-        \u0275\u0275elementStart(20, "button", 14);
-        \u0275\u0275listener("click", function SidebarComponent_Template_button_click_20_listener() {
+        \u0275\u0275template(23, SidebarComponent_span_23_Template, 2, 0, "span", 12);
+        \u0275\u0275elementEnd();
+        \u0275\u0275element(24, "div", 16);
+        \u0275\u0275template(25, SidebarComponent_div_25_Template, 2, 0, "div", 5)(26, SidebarComponent_div_26_Template, 8, 3, "div", 17);
+        \u0275\u0275elementStart(27, "button", 18);
+        \u0275\u0275listener("click", function SidebarComponent_Template_button_click_27_listener() {
           return ctx.logout();
         });
-        \u0275\u0275elementStart(21, "mat-icon", 10);
-        \u0275\u0275text(22, "logout");
+        \u0275\u0275elementStart(28, "mat-icon", 11);
+        \u0275\u0275text(29, "logout");
         \u0275\u0275elementEnd();
-        \u0275\u0275template(23, SidebarComponent_span_23_Template, 2, 0, "span", 11);
+        \u0275\u0275template(30, SidebarComponent_span_30_Template, 2, 0, "span", 12);
         \u0275\u0275elementEnd()()();
       }
       if (rf & 2) {
@@ -491,6 +527,14 @@ var SidebarComponent = class _SidebarComponent {
         \u0275\u0275advance(2);
         \u0275\u0275property("ngForOf", ctx.navItems);
         \u0275\u0275advance(2);
+        \u0275\u0275property("ngIf", !ctx.collapsed);
+        \u0275\u0275advance();
+        \u0275\u0275property("matRippleColor", "rgba(103,80,164,0.15)")("matTooltip", ctx.collapsed ? "Power Apps Portal" : "");
+        \u0275\u0275advance(3);
+        \u0275\u0275property("ngIf", !ctx.collapsed);
+        \u0275\u0275advance();
+        \u0275\u0275property("ngIf", !ctx.collapsed);
+        \u0275\u0275advance(2);
         \u0275\u0275property("routerLink", "/settings")("matRippleColor", "rgba(255,255,255,0.08)")("matTooltip", ctx.collapsed ? "Settings" : "");
         \u0275\u0275advance(3);
         \u0275\u0275property("ngIf", !ctx.collapsed);
@@ -503,7 +547,7 @@ var SidebarComponent = class _SidebarComponent {
         \u0275\u0275advance(3);
         \u0275\u0275property("ngIf", !ctx.collapsed);
       }
-    }, dependencies: [CommonModule, NgForOf, NgIf, RouterModule, RouterLink, RouterLinkActive, MatIconModule, MatIcon, MatTooltipModule, MatTooltip, MatRippleModule, MatRipple], styles: ['@charset "UTF-8";\n\n\n\n.sidebar[_ngcontent-%COMP%] {\n  width: 260px;\n  min-height: 100vh;\n  background: var(--sidebar-bg);\n  display: flex;\n  flex-direction: column;\n  transition: width 0.25s cubic-bezier(0.4, 0, 0.2, 1);\n  position: fixed;\n  top: 0;\n  left: 0;\n  bottom: 0;\n  z-index: 100;\n  overflow: hidden;\n}\n.sidebar.collapsed[_ngcontent-%COMP%] {\n  width: 72px;\n}\n.sidebar.collapsed[_ngcontent-%COMP%]   .logo-text[_ngcontent-%COMP%], .sidebar.collapsed[_ngcontent-%COMP%]   .nav-label[_ngcontent-%COMP%], .sidebar.collapsed[_ngcontent-%COMP%]   .user-info[_ngcontent-%COMP%], .sidebar.collapsed[_ngcontent-%COMP%]   .nav-badge[_ngcontent-%COMP%] {\n  display: none;\n}\n.sidebar.collapsed[_ngcontent-%COMP%]   .sidebar-logo[_ngcontent-%COMP%] {\n  justify-content: center;\n  padding: 0 16px;\n}\n.sidebar.collapsed[_ngcontent-%COMP%]   .collapse-btn[_ngcontent-%COMP%] {\n  margin-left: 0;\n}\n.sidebar.collapsed[_ngcontent-%COMP%]   .nav-section-label[_ngcontent-%COMP%] {\n  display: none;\n}\n.sidebar-logo[_ngcontent-%COMP%] {\n  display: flex;\n  align-items: center;\n  gap: 12px;\n  padding: 20px 16px 20px 20px;\n  border-bottom: 1px solid rgba(255, 255, 255, 0.08);\n  min-height: 72px;\n}\n.sidebar-logo[_ngcontent-%COMP%]   .logo-icon[_ngcontent-%COMP%] {\n  width: 38px;\n  height: 38px;\n  background: var(--sidebar-active);\n  border-radius: 10px;\n  display: flex;\n  align-items: center;\n  justify-content: center;\n  flex-shrink: 0;\n}\n.sidebar-logo[_ngcontent-%COMP%]   .logo-icon[_ngcontent-%COMP%]   mat-icon[_ngcontent-%COMP%] {\n  color: #fff;\n  font-size: 20px;\n  width: 20px;\n  height: 20px;\n}\n.sidebar-logo[_ngcontent-%COMP%]   .logo-text[_ngcontent-%COMP%] {\n  flex: 1;\n  display: flex;\n  flex-direction: column;\n  line-height: 1.2;\n}\n.sidebar-logo[_ngcontent-%COMP%]   .logo-text[_ngcontent-%COMP%]   .logo-name[_ngcontent-%COMP%] {\n  font-size: 1rem;\n  font-weight: 700;\n  color: #fff;\n  letter-spacing: 1px;\n}\n.sidebar-logo[_ngcontent-%COMP%]   .logo-text[_ngcontent-%COMP%]   .logo-sub[_ngcontent-%COMP%] {\n  font-size: 0.68rem;\n  color: var(--sidebar-text);\n  font-weight: 400;\n}\n.sidebar-logo[_ngcontent-%COMP%]   .collapse-btn[_ngcontent-%COMP%] {\n  background: none;\n  border: none;\n  cursor: pointer;\n  color: var(--sidebar-text);\n  padding: 4px;\n  border-radius: 6px;\n  display: flex;\n  align-items: center;\n  margin-left: auto;\n  flex-shrink: 0;\n  transition: background 0.15s, color 0.15s;\n}\n.sidebar-logo[_ngcontent-%COMP%]   .collapse-btn[_ngcontent-%COMP%]:hover {\n  background: rgba(255, 255, 255, 0.1);\n  color: #fff;\n}\n.sidebar-logo[_ngcontent-%COMP%]   .collapse-btn[_ngcontent-%COMP%]   mat-icon[_ngcontent-%COMP%] {\n  font-size: 18px;\n  width: 18px;\n  height: 18px;\n}\n.nav-section-label[_ngcontent-%COMP%] {\n  font-size: 0.65rem;\n  font-weight: 700;\n  letter-spacing: 1px;\n  color: rgba(168, 184, 216, 0.5);\n  padding: 16px 20px 6px;\n  text-transform: uppercase;\n}\n.nav-list[_ngcontent-%COMP%] {\n  list-style: none;\n  padding: 0 10px;\n  flex: 1;\n}\n.nav-item[_ngcontent-%COMP%] {\n  display: flex;\n  align-items: center;\n  gap: 12px;\n  padding: 10px 14px;\n  border-radius: 10px;\n  color: var(--sidebar-text);\n  text-decoration: none;\n  font-size: 0.875rem;\n  font-weight: 500;\n  transition: background 0.15s, color 0.15s;\n  cursor: pointer;\n  width: 100%;\n  border: none;\n  background: none;\n  margin-bottom: 2px;\n}\n.nav-item[_ngcontent-%COMP%]:hover {\n  background: rgba(255, 255, 255, 0.08);\n  color: #fff;\n}\n.nav-item[_ngcontent-%COMP%]:hover   .nav-icon[_ngcontent-%COMP%] {\n  color: #fff;\n}\n.nav-item.active[_ngcontent-%COMP%] {\n  background: var(--sidebar-active);\n  color: #fff;\n}\n.nav-item.active[_ngcontent-%COMP%]   .nav-icon[_ngcontent-%COMP%] {\n  color: #fff;\n}\n.nav-item[_ngcontent-%COMP%]   .nav-icon[_ngcontent-%COMP%] {\n  font-size: 20px;\n  width: 20px;\n  height: 20px;\n  color: var(--sidebar-text);\n  flex-shrink: 0;\n  transition: color 0.15s;\n}\n.nav-item[_ngcontent-%COMP%]   .nav-label[_ngcontent-%COMP%] {\n  flex: 1;\n  white-space: nowrap;\n}\n.nav-item[_ngcontent-%COMP%]   .nav-badge[_ngcontent-%COMP%] {\n  background: var(--danger);\n  color: #fff;\n  font-size: 0.65rem;\n  font-weight: 700;\n  border-radius: 10px;\n  padding: 1px 6px;\n  min-width: 18px;\n  text-align: center;\n}\n.nav-item[_ngcontent-%COMP%]   .nav-badge-dot[_ngcontent-%COMP%] {\n  width: 8px;\n  height: 8px;\n  background: var(--danger);\n  border-radius: 50%;\n  position: absolute;\n  top: 8px;\n  right: 10px;\n}\n.sidebar-bottom[_ngcontent-%COMP%] {\n  padding: 10px;\n  border-top: 1px solid rgba(255, 255, 255, 0.08);\n}\n.user-info[_ngcontent-%COMP%] {\n  display: flex;\n  align-items: center;\n  gap: 10px;\n  padding: 10px 14px;\n  margin-bottom: 4px;\n}\n.user-info[_ngcontent-%COMP%]   .user-avatar[_ngcontent-%COMP%] {\n  width: 34px;\n  height: 34px;\n  background: var(--sidebar-active);\n  border-radius: 50%;\n  display: flex;\n  align-items: center;\n  justify-content: center;\n  font-size: 0.85rem;\n  font-weight: 700;\n  color: #fff;\n  flex-shrink: 0;\n}\n.user-info[_ngcontent-%COMP%]   .user-details[_ngcontent-%COMP%] {\n  display: flex;\n  flex-direction: column;\n}\n.user-info[_ngcontent-%COMP%]   .user-details[_ngcontent-%COMP%]   .user-name[_ngcontent-%COMP%] {\n  font-size: 0.825rem;\n  font-weight: 600;\n  color: #fff;\n}\n.user-info[_ngcontent-%COMP%]   .user-details[_ngcontent-%COMP%]   .user-role[_ngcontent-%COMP%] {\n  font-size: 0.7rem;\n  color: var(--sidebar-text);\n}\n.settings-item[_ngcontent-%COMP%] {\n  margin-bottom: 2px;\n}\n.sidebar-divider[_ngcontent-%COMP%] {\n  height: 1px;\n  background: rgba(255, 255, 255, 0.08);\n  margin: 8px 10px;\n}\n.logout-btn[_ngcontent-%COMP%] {\n  color: var(--sidebar-text);\n}\n.logout-btn[_ngcontent-%COMP%]:hover {\n  background: rgba(239, 68, 68, 0.15);\n  color: var(--danger);\n}\n.logout-btn[_ngcontent-%COMP%]:hover   .nav-icon[_ngcontent-%COMP%] {\n  color: var(--danger);\n}\n/*# sourceMappingURL=sidebar.component.css.map */'] });
+    }, dependencies: [CommonModule, NgForOf, NgIf, RouterModule, RouterLink, RouterLinkActive, MatIconModule, MatIcon, MatTooltipModule, MatTooltip, MatRippleModule, MatRipple], styles: ['@charset "UTF-8";\n\n\n\n.sidebar[_ngcontent-%COMP%] {\n  width: 260px;\n  min-height: 100vh;\n  background: var(--sidebar-bg);\n  display: flex;\n  flex-direction: column;\n  transition: width 0.25s cubic-bezier(0.4, 0, 0.2, 1);\n  position: fixed;\n  top: 0;\n  left: 0;\n  bottom: 0;\n  z-index: 100;\n  overflow: hidden;\n}\n.sidebar.collapsed[_ngcontent-%COMP%] {\n  width: 72px;\n}\n.sidebar.collapsed[_ngcontent-%COMP%]   .logo-text[_ngcontent-%COMP%], .sidebar.collapsed[_ngcontent-%COMP%]   .nav-label[_ngcontent-%COMP%], .sidebar.collapsed[_ngcontent-%COMP%]   .user-info[_ngcontent-%COMP%], .sidebar.collapsed[_ngcontent-%COMP%]   .nav-badge[_ngcontent-%COMP%] {\n  display: none;\n}\n.sidebar.collapsed[_ngcontent-%COMP%]   .sidebar-logo[_ngcontent-%COMP%] {\n  justify-content: center;\n  padding: 0 16px;\n}\n.sidebar.collapsed[_ngcontent-%COMP%]   .collapse-btn[_ngcontent-%COMP%] {\n  margin-left: 0;\n}\n.sidebar.collapsed[_ngcontent-%COMP%]   .nav-section-label[_ngcontent-%COMP%] {\n  display: none;\n}\n.sidebar-logo[_ngcontent-%COMP%] {\n  display: flex;\n  align-items: center;\n  gap: 12px;\n  padding: 20px 16px 20px 20px;\n  border-bottom: 1px solid rgba(255, 255, 255, 0.08);\n  min-height: 72px;\n}\n.sidebar-logo[_ngcontent-%COMP%]   .logo-icon[_ngcontent-%COMP%] {\n  width: 38px;\n  height: 38px;\n  background: var(--sidebar-active);\n  border-radius: 10px;\n  display: flex;\n  align-items: center;\n  justify-content: center;\n  flex-shrink: 0;\n}\n.sidebar-logo[_ngcontent-%COMP%]   .logo-icon[_ngcontent-%COMP%]   mat-icon[_ngcontent-%COMP%] {\n  color: #fff;\n  font-size: 20px;\n  width: 20px;\n  height: 20px;\n}\n.sidebar-logo[_ngcontent-%COMP%]   .logo-text[_ngcontent-%COMP%] {\n  flex: 1;\n  display: flex;\n  flex-direction: column;\n  line-height: 1.2;\n}\n.sidebar-logo[_ngcontent-%COMP%]   .logo-text[_ngcontent-%COMP%]   .logo-name[_ngcontent-%COMP%] {\n  font-size: 1rem;\n  font-weight: 700;\n  color: #fff;\n  letter-spacing: 1px;\n}\n.sidebar-logo[_ngcontent-%COMP%]   .logo-text[_ngcontent-%COMP%]   .logo-sub[_ngcontent-%COMP%] {\n  font-size: 0.68rem;\n  color: var(--sidebar-text);\n  font-weight: 400;\n}\n.sidebar-logo[_ngcontent-%COMP%]   .collapse-btn[_ngcontent-%COMP%] {\n  background: none;\n  border: none;\n  cursor: pointer;\n  color: var(--sidebar-text);\n  padding: 4px;\n  border-radius: 6px;\n  display: flex;\n  align-items: center;\n  margin-left: auto;\n  flex-shrink: 0;\n  transition: background 0.15s, color 0.15s;\n}\n.sidebar-logo[_ngcontent-%COMP%]   .collapse-btn[_ngcontent-%COMP%]:hover {\n  background: rgba(255, 255, 255, 0.1);\n  color: #fff;\n}\n.sidebar-logo[_ngcontent-%COMP%]   .collapse-btn[_ngcontent-%COMP%]   mat-icon[_ngcontent-%COMP%] {\n  font-size: 18px;\n  width: 18px;\n  height: 18px;\n}\n.nav-section-label[_ngcontent-%COMP%] {\n  font-size: 0.65rem;\n  font-weight: 700;\n  letter-spacing: 1px;\n  color: rgba(168, 184, 216, 0.5);\n  padding: 16px 20px 6px;\n  text-transform: uppercase;\n}\n.nav-list[_ngcontent-%COMP%] {\n  list-style: none;\n  padding: 0 10px;\n  flex: 1;\n}\n.nav-item[_ngcontent-%COMP%] {\n  display: flex;\n  align-items: center;\n  gap: 12px;\n  padding: 10px 14px;\n  border-radius: 10px;\n  color: var(--sidebar-text);\n  text-decoration: none;\n  font-size: 0.875rem;\n  font-weight: 500;\n  transition: background 0.15s, color 0.15s;\n  cursor: pointer;\n  width: 100%;\n  border: none;\n  background: none;\n  margin-bottom: 2px;\n}\n.nav-item[_ngcontent-%COMP%]:hover {\n  background: rgba(255, 255, 255, 0.08);\n  color: #fff;\n}\n.nav-item[_ngcontent-%COMP%]:hover   .nav-icon[_ngcontent-%COMP%] {\n  color: #fff;\n}\n.nav-item.active[_ngcontent-%COMP%] {\n  background: var(--sidebar-active);\n  color: #fff;\n}\n.nav-item.active[_ngcontent-%COMP%]   .nav-icon[_ngcontent-%COMP%] {\n  color: #fff;\n}\n.nav-item[_ngcontent-%COMP%]   .nav-icon[_ngcontent-%COMP%] {\n  font-size: 20px;\n  width: 20px;\n  height: 20px;\n  color: var(--sidebar-text);\n  flex-shrink: 0;\n  transition: color 0.15s;\n}\n.nav-item[_ngcontent-%COMP%]   .nav-label[_ngcontent-%COMP%] {\n  flex: 1;\n  white-space: nowrap;\n}\n.nav-item[_ngcontent-%COMP%]   .nav-badge[_ngcontent-%COMP%] {\n  background: var(--danger);\n  color: #fff;\n  font-size: 0.65rem;\n  font-weight: 700;\n  border-radius: 10px;\n  padding: 1px 6px;\n  min-width: 18px;\n  text-align: center;\n}\n.nav-item[_ngcontent-%COMP%]   .nav-badge-dot[_ngcontent-%COMP%] {\n  width: 8px;\n  height: 8px;\n  background: var(--danger);\n  border-radius: 50%;\n  position: absolute;\n  top: 8px;\n  right: 10px;\n}\n.nav-section[_ngcontent-%COMP%] {\n  padding: 0 10px;\n  border-top: 1px solid rgba(255, 255, 255, 0.06);\n}\n.nav-section-title[_ngcontent-%COMP%] {\n  font-size: 0.65rem;\n  font-weight: 700;\n  letter-spacing: 1px;\n  color: rgba(168, 184, 216, 0.5);\n  padding: 12px 4px 6px;\n  text-transform: uppercase;\n}\n.powerapps-btn[_ngcontent-%COMP%] {\n  background: rgba(103, 80, 164, 0.12);\n  border: 1px solid rgba(103, 80, 164, 0.22);\n  color: #c4b5fd;\n}\n.powerapps-btn[_ngcontent-%COMP%]   .nav-icon[_ngcontent-%COMP%] {\n  color: #a78bfa;\n}\n.powerapps-btn[_ngcontent-%COMP%]:hover {\n  background: rgba(103, 80, 164, 0.28);\n  border-color: rgba(103, 80, 164, 0.45);\n  color: #fff;\n}\n.powerapps-btn[_ngcontent-%COMP%]:hover   .nav-icon[_ngcontent-%COMP%], .powerapps-btn[_ngcontent-%COMP%]:hover   .ext-icon[_ngcontent-%COMP%] {\n  color: #fff;\n}\n.ext-icon[_ngcontent-%COMP%] {\n  font-size: 14px !important;\n  width: 14px !important;\n  height: 14px !important;\n  color: rgba(196, 181, 253, 0.5);\n  flex-shrink: 0;\n  transition: color 0.15s;\n}\n.sidebar-bottom[_ngcontent-%COMP%] {\n  padding: 10px;\n  border-top: 1px solid rgba(255, 255, 255, 0.08);\n}\n.user-info[_ngcontent-%COMP%] {\n  display: flex;\n  align-items: center;\n  gap: 10px;\n  padding: 10px 14px;\n  margin-bottom: 4px;\n}\n.user-info[_ngcontent-%COMP%]   .user-avatar[_ngcontent-%COMP%] {\n  width: 34px;\n  height: 34px;\n  background: var(--sidebar-active);\n  border-radius: 50%;\n  display: flex;\n  align-items: center;\n  justify-content: center;\n  font-size: 0.85rem;\n  font-weight: 700;\n  color: #fff;\n  flex-shrink: 0;\n}\n.user-info[_ngcontent-%COMP%]   .user-details[_ngcontent-%COMP%] {\n  display: flex;\n  flex-direction: column;\n}\n.user-info[_ngcontent-%COMP%]   .user-details[_ngcontent-%COMP%]   .user-name[_ngcontent-%COMP%] {\n  font-size: 0.825rem;\n  font-weight: 600;\n  color: #fff;\n}\n.user-info[_ngcontent-%COMP%]   .user-details[_ngcontent-%COMP%]   .user-role[_ngcontent-%COMP%] {\n  font-size: 0.7rem;\n  color: var(--sidebar-text);\n}\n.settings-item[_ngcontent-%COMP%] {\n  margin-bottom: 2px;\n}\n.sidebar-divider[_ngcontent-%COMP%] {\n  height: 1px;\n  background: rgba(255, 255, 255, 0.08);\n  margin: 8px 10px;\n}\n.logout-btn[_ngcontent-%COMP%] {\n  color: var(--sidebar-text);\n}\n.logout-btn[_ngcontent-%COMP%]:hover {\n  background: rgba(239, 68, 68, 0.15);\n  color: var(--danger);\n}\n.logout-btn[_ngcontent-%COMP%]:hover   .nav-icon[_ngcontent-%COMP%] {\n  color: var(--danger);\n}\n/*# sourceMappingURL=sidebar.component.css.map */'] });
   }
 };
 (() => {
@@ -563,7 +607,7 @@ var LayoutComponent = class _LayoutComponent {
 
 // src/app/app.routes.ts
 var routes = [
-  { path: "login", loadComponent: () => import("./chunk-BCNTVHMA.js").then((m) => m.LoginComponent) },
+  { path: "login", loadComponent: () => import("./chunk-HR75IRAL.js").then((m) => m.LoginComponent) },
   {
     path: "",
     component: LayoutComponent,
@@ -572,36 +616,36 @@ var routes = [
       { path: "", redirectTo: "dashboard", pathMatch: "full" },
       {
         path: "dashboard",
-        loadComponent: () => import("./chunk-FP5FW5ZD.js").then((m) => m.DashboardComponent)
+        loadComponent: () => import("./chunk-6E5OB2BE.js").then((m) => m.DashboardComponent)
       },
       {
         path: "invoices",
-        loadComponent: () => import("./chunk-HNU63AJR.js").then((m) => m.InvoiceListComponent)
+        loadComponent: () => import("./chunk-JOXBWQ67.js").then((m) => m.InvoiceListComponent)
       },
       {
         path: "invoices/:id",
-        loadComponent: () => import("./chunk-VP7FDETX.js").then((m) => m.InvoiceDetailComponent)
+        loadComponent: () => import("./chunk-V5OMTLPO.js").then((m) => m.InvoiceDetailComponent)
       },
       {
         path: "clients",
-        loadComponent: () => import("./chunk-CIQ47EAW.js").then((m) => m.ClientsComponent)
+        loadComponent: () => import("./chunk-64MANCVU.js").then((m) => m.ClientsComponent)
       },
       {
         path: "alerts",
-        loadComponent: () => import("./chunk-ILHGHDTL.js").then((m) => m.AlertsComponent)
+        loadComponent: () => import("./chunk-ISLQXI6O.js").then((m) => m.AlertsComponent)
       },
       {
         path: "reports",
-        loadComponent: () => import("./chunk-KUKDJ5KK.js").then((m) => m.ReportsComponent)
+        loadComponent: () => import("./chunk-XDOR75AV.js").then((m) => m.ReportsComponent)
       },
       {
         path: "user-management",
         canActivate: [adminGuard],
-        loadComponent: () => import("./chunk-DSZBNXK3.js").then((m) => m.UserManagementComponent)
+        loadComponent: () => import("./chunk-MCYSOTJK.js").then((m) => m.UserManagementComponent)
       },
       {
         path: "settings",
-        loadComponent: () => import("./chunk-ODCYQMSB.js").then((m) => m.SettingsComponent)
+        loadComponent: () => import("./chunk-PHDVZKI6.js").then((m) => m.SettingsComponent)
       }
     ]
   },

@@ -160,6 +160,45 @@
   }
 }
 
+/* ── Tools / Power Apps ── */
+.nav-section {
+  padding: 0 10px;
+  border-top: 1px solid rgba(255,255,255,0.06);
+}
+
+.nav-section-title {
+  font-size: 0.65rem;
+  font-weight: 700;
+  letter-spacing: 1px;
+  color: rgba(168, 184, 216, 0.5);
+  padding: 12px 4px 6px;
+  text-transform: uppercase;
+}
+
+.powerapps-btn {
+  background: rgba(103, 80, 164, 0.12);
+  border: 1px solid rgba(103, 80, 164, 0.22);
+  color: #c4b5fd;
+
+  .nav-icon { color: #a78bfa; }
+
+  &:hover {
+    background: rgba(103, 80, 164, 0.28);
+    border-color: rgba(103, 80, 164, 0.45);
+    color: #fff;
+    .nav-icon, .ext-icon { color: #fff; }
+  }
+}
+
+.ext-icon {
+  font-size: 14px !important;
+  width: 14px !important;
+  height: 14px !important;
+  color: rgba(196, 181, 253, 0.5);
+  flex-shrink: 0;
+  transition: color 0.15s;
+}
+
 /* ── Bottom ── */
 .sidebar-bottom {
   padding: 10px;

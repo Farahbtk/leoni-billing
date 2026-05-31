@@ -48,6 +48,12 @@ export class SidebarComponent {
     return this.auth.getCurrentUser()?.role === 'ADMIN' ? 'Administrator' : 'Billing Manager';
   }
 
+  private readonly POWERAPPS_URL = `https://apps.powerapps.com/play/e/default-b7bd4715-4217-48c7-919e-2ea97f592fa7/a/a5c4e5ec-949b-4f0e-aa13-7b8f94289025?tenantId=b7bd4715-4217-48c7-919e-2ea97f592fa7&hint=87fb8e82-8f3d-49d0-b844-222202695999&sourcetime=${Date.now()}`;
+
+  openPowerApps(): void {
+    window.open(this.POWERAPPS_URL, '_blank', 'width=950,height=700,noopener,noreferrer');
+  }
+
   logout(): void {
     this.auth.logout();
   }

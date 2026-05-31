@@ -36,6 +36,23 @@
     </li>
   </ul>
 
+  <!-- Tools Section -->
+  <div class="nav-section">
+    <div class="nav-section-title" *ngIf="!collapsed">TOOLS</div>
+    <button
+      class="nav-item powerapps-btn"
+      (click)="openPowerApps()"
+      matRipple
+      [matRippleColor]="'rgba(103,80,164,0.15)'"
+      [matTooltip]="collapsed ? 'Power Apps Portal' : ''"
+      matTooltipPosition="right"
+    >
+      <mat-icon class="nav-icon">grid_view</mat-icon>
+      <span class="nav-label" *ngIf="!collapsed">Power Apps Portal</span>
+      <mat-icon class="ext-icon" *ngIf="!collapsed">open_in_new</mat-icon>
+    </button>
+  </div>
+
   <!-- Bottom Section -->
   <div class="sidebar-bottom">
     <!-- Settings -->
