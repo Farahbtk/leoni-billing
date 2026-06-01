@@ -35,7 +35,7 @@ public class DataInitializer implements CommandLineRunner {
     public void run(String... args) {
         seedAdmin();
         seedManagers();
-        if (clientRepo.count() == 0) {
+        if (clientRepo.count() == 0 || invoiceRepo.findAll().stream().anyMatch(i -> i.getRiskLevel() == null)) {
             seedClientsAndInvoices();
         }
     }
@@ -108,7 +108,8 @@ public class DataInitializer implements CommandLineRunner {
 
     private void seedClientsAndInvoices() {
         boolean needsReseed = clientRepo.count() == 0 ||
-                clientRepo.findAll().stream().anyMatch(c -> c.getCollaborationSince() == null);
+                clientRepo.findAll().stream().anyMatch(c -> c.getCollaborationSince() == null) ||
+                invoiceRepo.findAll().stream().anyMatch(i -> i.getRiskLevel() == null);
 
         if (!needsReseed) return;
 
@@ -176,37 +177,42 @@ public class DataInitializer implements CommandLineRunner {
     private List<Invoice> buildInvoices(Client bmw, Client vw, Client mercedes,
                                          Client ford, Client stellantis) {
         LocalDate now = LocalDate.now();
+        // riskLevel distribution: ~10% HIGH (2), ~30% MEDIUM (4), ~60% LOW (9)
+        // riskScore bands: HIGH ≥ 70, MEDIUM 40-69, LOW < 40
         return List.of(
+            // ── PAID (3) : 0 HIGH · 1 MEDIUM · 2 LOW ──────────────────────────
             inv("INV-2024-001", bmw,       "125000", now.minusDays(60), now.minusDays(15),
                 Invoice.InvoiceStatus.PAID,    null, "15", Invoice.RiskLevel.LOW,    45),
+            inv("INV-2024-005", vw,        "445000", now.minusDays(120),now.minusDays(60),
+                Invoice.InvoiceStatus.PAID,    null, "45", Invoice.RiskLevel.MEDIUM, 60),
+            inv("INV-2024-007", mercedes,  "340000", now.minusDays(75), now.minusDays(30),
+                Invoice.InvoiceStatus.PAID,    null, "12", Invoice.RiskLevel.LOW,    45),
+            // ── PENDING (7) : 0 HIGH · 1 MEDIUM · 6 LOW ───────────────────────
             inv("INV-2024-002", bmw,       "89500",  now.minusDays(30), now.plusDays(15),
                 Invoice.InvoiceStatus.PENDING, null, "18", Invoice.RiskLevel.LOW,    45),
             inv("INV-2024-003", bmw,       "312000", now.minusDays(10), now.plusDays(35),
-                Invoice.InvoiceStatus.PENDING, null, "10", Invoice.RiskLevel.LOW,    45),
-            inv("INV-2024-004", vw,        "215000", now.minusDays(90), now.minusDays(30),
-                Invoice.InvoiceStatus.OVERDUE, 30,   "78", Invoice.RiskLevel.HIGH,   60),
-            inv("INV-2024-005", vw,        "445000", now.minusDays(120),now.minusDays(60),
-                Invoice.InvoiceStatus.PAID,    null, "45", Invoice.RiskLevel.MEDIUM, 60),
+                Invoice.InvoiceStatus.PENDING, null, "22", Invoice.RiskLevel.LOW,    45),
             inv("INV-2024-006", vw,        "178000", now.minusDays(20), now.plusDays(40),
-                Invoice.InvoiceStatus.PENDING, null, "52", Invoice.RiskLevel.MEDIUM, 60),
-            inv("INV-2024-007", mercedes,  "340000", now.minusDays(75), now.minusDays(30),
-                Invoice.InvoiceStatus.PAID,    null, "12", Invoice.RiskLevel.LOW,    45),
+                Invoice.InvoiceStatus.PENDING, null, "38", Invoice.RiskLevel.LOW,    60),
             inv("INV-2024-008", mercedes,  "156000", now.minusDays(20), now.plusDays(25),
                 Invoice.InvoiceStatus.PENDING, null, "20", Invoice.RiskLevel.LOW,    45),
             inv("INV-2024-009", mercedes,  "520000", now.minusDays(10), now.plusDays(35),
-                Invoice.InvoiceStatus.PENDING, null, "8",  Invoice.RiskLevel.LOW,    45),
+                Invoice.InvoiceStatus.PENDING, null, "28", Invoice.RiskLevel.LOW,    45),
+            inv("INV-2024-012", ford,      "167000", now.minusDays(15), now.plusDays(15),
+                Invoice.InvoiceStatus.PENDING, null, "48", Invoice.RiskLevel.MEDIUM, 30),
+            inv("INV-2024-015", stellantis,"190000", now.minusDays(40), now.plusDays(20),
+                Invoice.InvoiceStatus.PENDING, null, "35", Invoice.RiskLevel.LOW,    60),
+            // ── OVERDUE (5) : 2 HIGH · 2 MEDIUM · 1 LOW ───────────────────────
+            inv("INV-2024-004", vw,        "215000", now.minusDays(90), now.minusDays(30),
+                Invoice.InvoiceStatus.OVERDUE, 30,   "78", Invoice.RiskLevel.HIGH,   60),
             inv("INV-2024-010", ford,      "380000", now.minusDays(85), now.minusDays(25),
                 Invoice.InvoiceStatus.OVERDUE, 25,   "82", Invoice.RiskLevel.HIGH,   30),
             inv("INV-2024-011", ford,      "290000", now.minusDays(50), now.minusDays(20),
-                Invoice.InvoiceStatus.OVERDUE, 20,   "75", Invoice.RiskLevel.HIGH,   30),
-            inv("INV-2024-012", ford,      "167000", now.minusDays(15), now.plusDays(15),
-                Invoice.InvoiceStatus.PENDING, null, "60", Invoice.RiskLevel.MEDIUM, 30),
+                Invoice.InvoiceStatus.OVERDUE, 20,   "55", Invoice.RiskLevel.MEDIUM, 30),
             inv("INV-2024-013", stellantis,"420000", now.minusDays(110),now.minusDays(50),
-                Invoice.InvoiceStatus.OVERDUE, 50,   "90", Invoice.RiskLevel.HIGH,   60),
+                Invoice.InvoiceStatus.OVERDUE, 50,   "32", Invoice.RiskLevel.LOW,    60),
             inv("INV-2024-014", stellantis,"285000", now.minusDays(80), now.minusDays(20),
-                Invoice.InvoiceStatus.OVERDUE, 20,   "85", Invoice.RiskLevel.HIGH,   60),
-            inv("INV-2024-015", stellantis,"190000", now.minusDays(40), now.plusDays(20),
-                Invoice.InvoiceStatus.PENDING, null, "68", Invoice.RiskLevel.HIGH,   60)
+                Invoice.InvoiceStatus.OVERDUE, 20,   "42", Invoice.RiskLevel.MEDIUM, 60)
         );
     }
 

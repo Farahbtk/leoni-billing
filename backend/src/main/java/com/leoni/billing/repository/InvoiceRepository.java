@@ -13,8 +13,8 @@ public interface InvoiceRepository extends JpaRepository<Invoice, Long> {
 
     @Query("""
         SELECT i FROM Invoice i JOIN i.client c
-        WHERE (:status IS NULL OR i.status = :status)
-          AND (:riskLevel IS NULL OR i.riskLevel = :riskLevel)
+        WHERE (:status IS NULL OR CAST(i.status AS string) = :status)
+          AND (:riskLevel IS NULL OR CAST(i.riskLevel AS string) = :riskLevel)
           AND (:clientId IS NULL OR c.id = :clientId)
           AND (:dateFrom IS NULL OR i.issueDate >= :dateFrom)
           AND (:dateTo IS NULL OR i.issueDate <= :dateTo)
@@ -22,8 +22,8 @@ public interface InvoiceRepository extends JpaRepository<Invoice, Long> {
                OR LOWER(c.name) LIKE LOWER(CONCAT('%',:search,'%')))
         """)
     Page<Invoice> findWithFilters(
-        @Param("status")    Invoice.InvoiceStatus status,
-        @Param("riskLevel") Invoice.RiskLevel riskLevel,
+        @Param("status")    String status,
+        @Param("riskLevel") String riskLevel,
         @Param("clientId")  Long clientId,
         @Param("dateFrom")  LocalDate dateFrom,
         @Param("dateTo")    LocalDate dateTo,

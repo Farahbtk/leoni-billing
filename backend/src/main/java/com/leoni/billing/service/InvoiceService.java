@@ -26,7 +26,10 @@ public class InvoiceService {
     public Page<Invoice> findAll(Invoice.InvoiceStatus status, Invoice.RiskLevel riskLevel,
                                   Long clientId, LocalDate dateFrom, LocalDate dateTo,
                                   String search, int page, int size) {
-        return repo.findWithFilters(status, riskLevel, clientId, dateFrom, dateTo, search,
+        return repo.findWithFilters(
+            status    != null ? status.name()    : null,
+            riskLevel != null ? riskLevel.name() : null,
+            clientId, dateFrom, dateTo, search,
             PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, "issueDate")));
     }
 

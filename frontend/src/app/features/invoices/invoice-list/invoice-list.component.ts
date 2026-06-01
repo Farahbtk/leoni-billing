@@ -48,7 +48,6 @@ export class InvoiceListComponent implements OnInit, AfterViewInit {
   loading = false;
 
   filterForm: FormGroup;
-  statusOptions: InvoiceStatus[] = ['PAID', 'OVERDUE', 'PENDING'];
 
   constructor(
     private invoiceService: InvoiceService,

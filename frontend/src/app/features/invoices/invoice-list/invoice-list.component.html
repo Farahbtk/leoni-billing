@@ -25,7 +25,9 @@
     <mat-label>Status</mat-label>
     <mat-select formControlName="status">
       <mat-option value="">All Statuses</mat-option>
-      <mat-option *ngFor="let s of statusOptions" [value]="s">{{ s }}</mat-option>
+      <mat-option value="PAID">Paid</mat-option>
+      <mat-option value="PENDING">Pending</mat-option>
+      <mat-option value="OVERDUE">Overdue</mat-option>
     </mat-select>
   </mat-form-field>
 
