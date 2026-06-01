@@ -4,16 +4,9 @@
     <h2>Invoices</h2>
     <p>Manage and track all customer invoices</p>
   </div>
-  <div style="display:flex;gap:10px;align-items:center">
-    <button mat-stroked-button [disabled]="!selection.hasValue() || predicting" (click)="runPrediction()">
-      <mat-icon>psychology</mat-icon>
-      <span *ngIf="!predicting">Run AI Prediction ({{ selection.selected.length }})</span>
-      <span *ngIf="predicting">Predicting...</span>
-    </button>
-    <button mat-raised-button color="primary">
-      <mat-icon>add</mat-icon> New Invoice
-    </button>
-  </div>
+  <button mat-raised-button color="primary" (click)="openNewInvoice()">
+    <mat-icon>add</mat-icon> New Invoice
+  </button>
 </div>
 
 <!-- Filter Bar -->
@@ -22,7 +15,8 @@
     <mat-label>Search invoices</mat-label>
     <mat-icon matPrefix>search</mat-icon>
     <input matInput formControlName="search" placeholder="Invoice #, client...">
-    <button *ngIf="filterForm.get('search')?.value" mat-icon-button matSuffix (click)="filterForm.get('search')?.reset()">
+    <button *ngIf="filterForm.get('search')?.value" mat-icon-button matSuffix
+            (click)="filterForm.get('search')?.reset()">
       <mat-icon>close</mat-icon>
     </button>
   </mat-form-field>
@@ -148,15 +142,13 @@
     <ng-container matColumnDef="riskScore">
       <mat-header-cell *matHeaderCellDef mat-sort-header>Risk Score</mat-header-cell>
       <mat-cell *matCellDef="let row">
-        <div class="risk-score-cell" *ngIf="row.riskScore !== undefined; else noScore">
-          <div class="risk-bar">
-            <div class="risk-fill" [class]="getRiskClass(row.riskScore)"
-              [style.width.%]="row.riskScore"></div>
-          </div>
-          <span class="risk-badge" [class]="getRiskClass(row.riskScore)">{{ row.riskScore }}%</span>
-        </div>
+        <ng-container *ngIf="row.riskScore != null && row.riskScore > 0; else noScore">
+          <span class="risk-badge" [class]="getRiskClass(row.riskScore)">
+            {{ row.riskScore | number:'1.0-0' }}%
+          </span>
+        </ng-container>
         <ng-template #noScore>
-          <span class="text-muted" style="font-size:0.8rem">—</span>
+          <span class="risk-badge na">N/A</span>
         </ng-template>
       </mat-cell>
     </ng-container>
@@ -169,17 +161,11 @@
           <mat-icon>more_vert</mat-icon>
         </button>
         <mat-menu #menu="matMenu">
-          <button mat-menu-item [routerLink]="['/invoices', row.id]">
-            <mat-icon>visibility</mat-icon> View Details
-          </button>
-          <button mat-menu-item>
+          <button mat-menu-item (click)="openEditInvoice(row)">
             <mat-icon>edit</mat-icon> Edit
           </button>
-          <button mat-menu-item (click)="runPrediction()">
-            <mat-icon>psychology</mat-icon> Run Prediction
-          </button>
           <mat-divider></mat-divider>
-          <button mat-menu-item class="text-danger">
+          <button mat-menu-item class="text-danger" (click)="deleteInvoice(row)">
             <mat-icon>delete</mat-icon> Delete
           </button>
         </mat-menu>

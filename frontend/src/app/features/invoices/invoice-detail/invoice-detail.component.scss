@@ -1,7 +1,6 @@
 .detail-grid {
   display: grid;
   grid-template-columns: 1fr 320px;
-  grid-template-rows: auto auto;
   gap: 16px;
 
   @media (max-width: 900px) { grid-template-columns: 1fr; }
@@ -122,22 +121,3 @@
   p { font-size: 0.875rem; margin-bottom: 16px; }
 }
 
-/* ── SHAP Card ── */
-.shap-card { grid-column: 1 / -1; }
-
-.shap-chart { height: 260px; margin-top: 16px; }
-
-.shap-legend {
-  display: flex;
-  gap: 20px;
-  margin-top: 12px;
-  font-size: 0.78rem;
-  color: var(--text-secondary);
-
-  .legend-item { display: flex; align-items: center; gap: 6px; }
-  .dot {
-    width: 10px; height: 10px; border-radius: 2px;
-    &.red   { background: rgba(239,68,68,0.75); }
-    &.green { background: rgba(16,185,129,0.75); }
-  }
-}

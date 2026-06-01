@@ -1,51 +1,74 @@
-<div class="page-header">
-  <div class="page-title">
-    <h2>Financial Reports</h2>
-    <p>KPI summary and billing performance metrics</p>
-  </div>
-  <div style="display:flex;gap:10px;align-items:center">
-    <mat-select [(ngModel)]="selectedPeriod" style="width:140px">
-      <mat-option value="Q1-2024">Q1 2024</mat-option>
-      <mat-option value="Q4-2023">Q4 2023</mat-option>
-      <mat-option value="Q3-2023">Q3 2023</mat-option>
-    </mat-select>
-    <button mat-stroked-button>
-      <mat-icon>download</mat-icon> Export Excel
-    </button>
-    <button mat-raised-button color="primary">
-      <mat-icon>picture_as_pdf</mat-icon> Export PDF
-    </button>
-  </div>
+<!-- Loading -->
+<div *ngIf="loading" style="display:flex;justify-content:center;align-items:center;padding:80px">
+  <mat-progress-spinner mode="indeterminate" diameter="48"></mat-progress-spinner>
 </div>
 
-<div class="reports-grid">
-  <!-- KPI Table -->
-  <div class="table-container kpi-section">
-    <div class="table-header">
-      <h3>KPI Summary — {{ selectedPeriod }}</h3>
+<!-- Error -->
+<div *ngIf="!loading && error"
+     style="text-align:center;padding:80px 24px;color:var(--text-secondary)">
+  <mat-icon style="font-size:48px;width:48px;height:48px;opacity:0.3">error_outline</mat-icon>
+  <p style="margin-top:12px">Could not load report data. Check your backend connection.</p>
+</div>
+
+<!-- Content -->
+<ng-container *ngIf="!loading && !error">
+
+  <!-- Page Header -->
+  <div class="page-header">
+    <div class="page-title">
+      <h2>Financial Reports</h2>
+      <p>KPI summary and billing performance metrics</p>
     </div>
-    <mat-table [dataSource]="kpiData">
+    <div class="header-actions">
+      <mat-select [(ngModel)]="selectedPeriod" class="period-select">
+        <mat-option *ngFor="let p of periods" [value]="p">{{ p }}</mat-option>
+      </mat-select>
+      <button mat-stroked-button>
+        <mat-icon>download</mat-icon> Export Excel
+      </button>
+      <button mat-raised-button color="primary">
+        <mat-icon>picture_as_pdf</mat-icon> Export PDF
+      </button>
+    </div>
+  </div>
+
+  <!-- KPI Summary Table -->
+  <div class="table-container kpi-table-container">
+    <div class="table-header">
+      <h3>KPI Summary &mdash; {{ selectedPeriod }}</h3>
+    </div>
+
+    <mat-table [dataSource]="kpiRows" class="kpi-table">
+
+      <!-- Metric Column -->
       <ng-container matColumnDef="metric">
         <mat-header-cell *matHeaderCellDef>Metric</mat-header-cell>
-        <mat-cell *matCellDef="let row" class="fw-600">{{ row.metric }}</mat-cell>
+        <mat-cell *matCellDef="let row" class="metric-cell">{{ row.metric }}</mat-cell>
       </ng-container>
-      <ng-container matColumnDef="value">
+
+      <!-- Actual Column -->
+      <ng-container matColumnDef="actual">
         <mat-header-cell *matHeaderCellDef>Actual</mat-header-cell>
-        <mat-cell *matCellDef="let row" class="fw-600">{{ row.value }}</mat-cell>
+        <mat-cell *matCellDef="let row" class="fw-600 actual-cell">{{ row.actual }}</mat-cell>
       </ng-container>
+
+      <!-- Target Column -->
       <ng-container matColumnDef="target">
         <mat-header-cell *matHeaderCellDef>Target</mat-header-cell>
-        <mat-cell *matCellDef="let row" class="text-muted">{{ row.target }}</mat-cell>
+        <mat-cell *matCellDef="let row" class="target-cell">{{ row.target }}</mat-cell>
       </ng-container>
+
+      <!-- Status Column -->
       <ng-container matColumnDef="status">
         <mat-header-cell *matHeaderCellDef>Status</mat-header-cell>
         <mat-cell *matCellDef="let row">
-          <span class="kpi-status" [class]="row.status">
-            <mat-icon>{{ row.status === 'on-track' ? 'check_circle' : row.status === 'at-risk' ? 'info' : 'cancel' }}</mat-icon>
-            {{ row.status | titlecase }}
+          <span class="kpi-status" [ngClass]="row.status">
+            <mat-icon>{{ statusIcon(row.status) }}</mat-icon>
+            {{ statusLabel(row.status) }}
           </span>
         </mat-cell>
       </ng-container>
+
       <mat-header-row *matHeaderRowDef="kpiColumns"></mat-header-row>
       <mat-row *matRowDef="let row; columns: kpiColumns;"></mat-row>
     </mat-table>
@@ -54,10 +77,23 @@
   <!-- DSO Trend Chart -->
   <div class="chart-card">
     <div class="chart-header">
-      <h3>DSO Trend vs Target</h3>
+      <div>
+        <h3>DSO Trend vs Target</h3>
+        <p class="chart-subtitle">Days Sales Outstanding per month compared to the 39-day target</p>
+      </div>
+      <div class="chart-legend">
+        <span class="legend-item">
+          <span class="legend-line solid"></span> DSO Actual
+        </span>
+        <span class="legend-item">
+          <span class="legend-line dashed"></span> Target (39d)
+        </span>
+      </div>
     </div>
-    <div style="height:260px">
-      <canvas baseChart [data]="lineChartData" [options]="lineChartOptions" type="line"></canvas>
+    <mat-divider style="margin-bottom:20px"></mat-divider>
+    <div class="chart-area">
+      <canvas #dsoChart></canvas>
     </div>
   </div>
-</div>
+
+</ng-container>

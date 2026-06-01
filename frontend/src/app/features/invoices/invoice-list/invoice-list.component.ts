@@ -15,10 +15,13 @@ import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { MatDividerModule } from '@angular/material/divider';
+import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { SelectionModel } from '@angular/cdk/collections';
 import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
 import { InvoiceService } from '../../../core/services/invoice.service';
 import { Invoice, InvoiceStatus } from '../../../models/invoice.model';
+import { InvoiceFormDialogComponent } from '../invoice-form-dialog/invoice-form-dialog.component';
+import { InvoiceDeleteDialogComponent } from '../invoice-delete-dialog/invoice-delete-dialog.component';
 
 @Component({
   selector: 'app-invoice-list',
@@ -28,7 +31,7 @@ import { Invoice, InvoiceStatus } from '../../../models/invoice.model';
     MatTableModule, MatPaginatorModule, MatSortModule, MatInputModule,
     MatSelectModule, MatButtonModule, MatIconModule, MatCheckboxModule,
     MatMenuModule, MatSnackBarModule, MatProgressSpinnerModule, MatTooltipModule,
-    MatDividerModule
+    MatDividerModule, MatDialogModule
   ],
   templateUrl: './invoice-list.component.html',
   styleUrls: ['./invoice-list.component.scss']
@@ -42,7 +45,6 @@ export class InvoiceListComponent implements OnInit, AfterViewInit {
   selection = new SelectionModel<Invoice>(true, []);
   totalElements = 0;
   loading = false;
-  predicting = false;
 
   filterForm: FormGroup;
   statusOptions: InvoiceStatus[] = ['PAID', 'OVERDUE', 'PENDING'];
@@ -50,14 +52,15 @@ export class InvoiceListComponent implements OnInit, AfterViewInit {
   constructor(
     private invoiceService: InvoiceService,
     private fb: FormBuilder,
-    private snack: MatSnackBar
+    private snack: MatSnackBar,
+    private dialog: MatDialog
   ) {
     this.filterForm = this.fb.group({
-      search: [''],
-      status: [''],
-      riskLevel: [''],
+      search:   [''],
+      status:   [''],
+      riskLevel:[''],
       dateFrom: [''],
-      dateTo: ['']
+      dateTo:   ['']
     });
   }
 
@@ -75,25 +78,28 @@ export class InvoiceListComponent implements OnInit, AfterViewInit {
 
   ngAfterViewInit(): void {
     this.dataSource.paginator = this.paginator;
-    this.dataSource.sort = this.sort;
+    this.dataSource.sort      = this.sort;
   }
 
   loadInvoices(): void {
     this.loading = true;
     const f = this.filterForm.value;
     this.invoiceService.getAll({
-      search: f.search, status: f.status || undefined,
+      search:    f.search,
+      status:    f.status    || undefined,
       riskLevel: f.riskLevel || undefined,
-      dateFrom: f.dateFrom, dateTo: f.dateTo, page: 0, size: 50
+      dateFrom:  f.dateFrom,
+      dateTo:    f.dateTo,
+      page: 0, size: 50
     }).subscribe({
       next: (res) => {
         this.dataSource.data = res.content;
-        this.totalElements = res.totalElements;
+        this.totalElements   = res.totalElements;
         this.loading = false;
       },
       error: (err) => {
         this.dataSource.data = [];
-        this.totalElements = 0;
+        this.totalElements   = 0;
         this.loading = false;
         const msg = err.status === 401 || err.status === 403
           ? 'Session expired — please log in again'
@@ -103,28 +109,48 @@ export class InvoiceListComponent implements OnInit, AfterViewInit {
     });
   }
 
-  runPrediction(): void {
-    const ids = this.selection.selected.map(i => i.id);
-    if (!ids.length) {
-      this.snack.open('Select at least one invoice to run prediction', 'OK', { duration: 3000 });
-      return;
-    }
-    this.predicting = true;
-    this.invoiceService.runPrediction(ids).subscribe({
-      next: (updated) => {
-        updated.forEach(u => {
-          const idx = this.dataSource.data.findIndex(i => i.id === u.id);
-          if (idx >= 0) this.dataSource.data[idx] = u;
-        });
-        this.dataSource.data = [...this.dataSource.data];
-        this.selection.clear();
-        this.predicting = false;
-        this.snack.open(`Prediction complete for ${ids.length} invoice(s)`, 'OK', { duration: 3000 });
-      },
-      error: () => {
-        this.predicting = false;
-        this.snack.open('Prediction service unavailable', 'Close', { duration: 4000 });
+  openNewInvoice(): void {
+    const ref = this.dialog.open(InvoiceFormDialogComponent, {
+      data: {},
+      width: '560px',
+      disableClose: true
+    });
+    ref.afterClosed().subscribe(result => {
+      if (result) {
+        this.loadInvoices();
+        this.snack.open('Invoice created successfully', 'OK', { duration: 3000 });
       }
+    });
+  }
+
+  openEditInvoice(invoice: Invoice): void {
+    const ref = this.dialog.open(InvoiceFormDialogComponent, {
+      data: { invoice },
+      width: '560px',
+      disableClose: true
+    });
+    ref.afterClosed().subscribe(result => {
+      if (result) {
+        this.loadInvoices();
+        this.snack.open('Invoice updated successfully', 'OK', { duration: 3000 });
+      }
+    });
+  }
+
+  deleteInvoice(invoice: Invoice): void {
+    const ref = this.dialog.open(InvoiceDeleteDialogComponent, {
+      data: { invoiceNumber: invoice.invoiceNumber },
+      width: '420px'
+    });
+    ref.afterClosed().subscribe(confirmed => {
+      if (!confirmed) return;
+      this.invoiceService.delete(invoice.id).subscribe({
+        next:  () => {
+          this.loadInvoices();
+          this.snack.open('Invoice deleted', 'OK', { duration: 3000 });
+        },
+        error: () => this.snack.open('Delete failed — check backend connection', 'Close', { duration: 4000 })
+      });
     });
   }
 
@@ -138,7 +164,9 @@ export class InvoiceListComponent implements OnInit, AfterViewInit {
   }
 
   toggleAllRows(): void {
-    this.isAllSelected() ? this.selection.clear() : this.dataSource.data.forEach(r => this.selection.select(r));
+    this.isAllSelected()
+      ? this.selection.clear()
+      : this.dataSource.data.forEach(r => this.selection.select(r));
   }
 
   getRiskClass(score: number): string {
