@@ -373,7 +373,8 @@
             <mat-form-field appearance="outline">
               <mat-label>Language</mat-label>
               <mat-icon matPrefix>language</mat-icon>
-              <mat-select [(ngModel)]="appearance.language">
+              <mat-select [(ngModel)]="appearance.language"
+                          (ngModelChange)="onLangChange($event)">
                 <mat-option value="en">English</mat-option>
                 <mat-option value="fr">Français</mat-option>
               </mat-select>
@@ -392,7 +393,8 @@
             <mat-form-field appearance="outline">
               <mat-label>Currency Display</mat-label>
               <mat-icon matPrefix>euro</mat-icon>
-              <mat-select [(ngModel)]="appearance.currency">
+              <mat-select [(ngModel)]="appearance.currency"
+                          (ngModelChange)="onCurrencyChange($event)">
                 <mat-option value="EUR">EUR — Euro (€)</mat-option>
                 <mat-option value="USD">USD — Dollar ($)</mat-option>
                 <mat-option value="GBP">GBP — Pound (£)</mat-option>

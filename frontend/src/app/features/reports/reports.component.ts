@@ -12,7 +12,9 @@ import { MatTableModule } from '@angular/material/table';
 import { MatSelectModule } from '@angular/material/select';
 import { MatDividerModule } from '@angular/material/divider';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { ClientService } from '../../core/services/client.service';
+import { LocaleService } from '../../core/services/locale.service';
 import { DashboardKpi, MonthlyData } from '../../models/client.model';
 
 Chart.register(...registerables);
@@ -32,7 +34,7 @@ interface KpiRow {
   imports: [
     CommonModule, FormsModule,
     MatButtonModule, MatIconModule, MatTableModule,
-    MatSelectModule, MatDividerModule, MatProgressSpinnerModule
+    MatSelectModule, MatDividerModule, MatProgressSpinnerModule, MatSnackBarModule
   ],
   templateUrl: './reports.component.html',
   styleUrls: ['./reports.component.scss']
@@ -48,13 +50,18 @@ export class ReportsComponent implements OnInit, OnDestroy, AfterViewChecked {
   periods = ['Q1-2025', 'Q4-2024', 'Q3-2024', 'Q2-2024', 'Q1-2024'];
 
   kpiColumns = ['metric', 'actual', 'target', 'status'];
-  kpiRows: KpiRow[] = [];
+  kpiRows: KpiRow[]    = [];
   monthly: MonthlyData[] = [];
 
+  private rawKpi: DashboardKpi | null = null;
   private chartInstance: Chart | null = null;
-  private chartReady = false;
+  private chartReady    = false;
 
-  constructor(private clientService: ClientService) {}
+  constructor(
+    private clientService: ClientService,
+    public  locale: LocaleService,
+    private snack: MatSnackBar
+  ) {}
 
   ngOnInit(): void {
     forkJoin({
@@ -62,6 +69,7 @@ export class ReportsComponent implements OnInit, OnDestroy, AfterViewChecked {
       monthly: this.clientService.getMonthlyData(),
     }).subscribe({
       next: ({ kpi, monthly }) => {
+        this.rawKpi  = kpi;
         this.kpiRows = this.buildKpiRows(kpi);
         this.monthly = monthly.slice(-6);
         this.loading = false;
@@ -88,7 +96,12 @@ export class ReportsComponent implements OnInit, OnDestroy, AfterViewChecked {
   // ── KPI table ──────────────────────────────────────────────────────────────
 
   private buildKpiRows(kpi: DashboardKpi): KpiRow[] {
-    const eur = (v: number) =>
+    const cur = this.locale.currency;
+    const fmt = (v: number) =>
+      new Intl.NumberFormat('de-DE', { style: 'currency', currency: cur, maximumFractionDigits: 0 }).format(v);
+
+    // Static targets keep EUR reference values for comparison logic
+    const targetFmt = (v: number) =>
       new Intl.NumberFormat('de-DE', { style: 'currency', currency: 'EUR', maximumFractionDigits: 0 }).format(v);
 
     const dso     = Number(kpi.averageDso);
@@ -113,14 +126,14 @@ export class ReportsComponent implements OnInit, OnDestroy, AfterViewChecked {
       },
       {
         metric: 'Total Invoiced',
-        actual: eur(revenue),
-        target: '€4,500,000',
+        actual: fmt(revenue),
+        target: targetFmt(4_500_000),
         status: revenue >= 4_500_000 ? 'on-track' : revenue >= 3_500_000 ? 'at-risk' : 'off-track',
       },
       {
         metric: 'Overdue Amount',
-        actual: eur(ovdAmt),
-        target: '< €300,000',
+        actual: fmt(ovdAmt),
+        target: `< ${targetFmt(300_000)}`,
         status: ovdAmt < 300_000 ? 'on-track' : ovdAmt < 500_000 ? 'at-risk' : 'off-track',
       },
       {
@@ -146,6 +159,144 @@ export class ReportsComponent implements OnInit, OnDestroy, AfterViewChecked {
     return s === 'on-track' ? 'On-track' : s === 'at-risk' ? 'At-risk' : 'Off-track';
   }
 
+  // ── Excel export (no external library) ────────────────────────────────────
+
+  exportExcel(): void {
+    const bgOf = (s: KpiStatus) =>
+      s === 'on-track' ? '#d1fae5' : s === 'at-risk' ? '#fef3c7' : '#fee2e2';
+
+    const bodyRows = this.kpiRows.map(r => `
+      <tr>
+        <td>${r.metric}</td>
+        <td style="font-weight:600">${r.actual}</td>
+        <td>${r.target}</td>
+        <td style="background:${bgOf(r.status)};font-weight:600">${this.statusLabel(r.status)}</td>
+      </tr>`).join('');
+
+    const html = `<html xmlns:o="urn:schemas-microsoft-com:office:office"
+      xmlns:x="urn:schemas-microsoft-com:office:excel"
+      xmlns="http://www.w3.org/TR/REC-html40">
+      <head>
+        <meta charset="UTF-8">
+        <!--[if gte mso 9]><xml>
+          <x:ExcelWorkbook><x:ExcelWorksheets><x:ExcelWorksheet>
+            <x:Name>KPI Summary</x:Name>
+          </x:ExcelWorksheet></x:ExcelWorksheets></x:ExcelWorkbook>
+        </xml><![endif]-->
+        <style>
+          body { font-family: Calibri, Arial, sans-serif; }
+          h2   { color: #3d52a0; }
+          table { border-collapse: collapse; width: 100%; }
+          th, td { border: 1px solid #cbd5e1; padding: 8px 12px; }
+          th { background: #3d52a0; color: #fff; font-weight: 700; }
+          tr:nth-child(even) td { background: #f8fafc; }
+        </style>
+      </head>
+      <body>
+        <h2>LEONI — Financial Reports (${this.selectedPeriod})</h2>
+        <p style="color:#64748b;font-size:12px">
+          Generated: ${new Date().toLocaleDateString()} &nbsp;|&nbsp; Currency: ${this.locale.currency}
+        </p>
+        <table>
+          <thead>
+            <tr>
+              <th>Metric</th><th>Actual</th><th>Target</th><th>Status</th>
+            </tr>
+          </thead>
+          <tbody>${bodyRows}</tbody>
+        </table>
+      </body>
+    </html>`;
+
+    const blob = new Blob(['﻿', html], { type: 'application/vnd.ms-excel;charset=utf-8' });
+    this.triggerDownload(blob, 'LEONI_Financial_Report.xls');
+  }
+
+  // ── PDF export (popup print window) ───────────────────────────────────────
+
+  exportPdf(): void {
+    const win = window.open('', '_blank', 'width=900,height=700');
+    if (!win) {
+      this.snack.open('Allow pop-ups for this site to export PDF', 'Close', { duration: 4000 });
+      return;
+    }
+
+    const bgOf    = (s: KpiStatus) =>
+      s === 'on-track' ? '#d1fae5' : s === 'at-risk' ? '#fef3c7' : '#fee2e2';
+    const colorOf = (s: KpiStatus) =>
+      s === 'on-track' ? '#065f46' : s === 'at-risk' ? '#92400e' : '#991b1b';
+
+    const bodyRows = this.kpiRows.map(r => `
+      <tr>
+        <td>${r.metric}</td>
+        <td style="font-weight:600">${r.actual}</td>
+        <td style="color:#64748b">${r.target}</td>
+        <td>
+          <span style="display:inline-block;padding:3px 10px;border-radius:6px;font-size:11px;
+            font-weight:700;background:${bgOf(r.status)};color:${colorOf(r.status)}">
+            ${this.statusLabel(r.status)}
+          </span>
+        </td>
+      </tr>`).join('');
+
+    win.document.write(`<!DOCTYPE html>
+      <html>
+      <head>
+        <meta charset="UTF-8">
+        <title>LEONI Financial Report</title>
+        <style>
+          * { box-sizing: border-box; margin: 0; padding: 0; }
+          body { font-family: 'Segoe UI', Arial, sans-serif; padding: 32px 40px; color: #1e293b; font-size: 13px; }
+          .header { border-bottom: 3px solid #3d52a0; padding-bottom: 14px; margin-bottom: 22px; }
+          .header h1 { font-size: 20px; color: #3d52a0; margin-bottom: 4px; }
+          .header p  { font-size: 11px; color: #64748b; }
+          h3 { font-size: 13px; margin-bottom: 10px; color: #475569; text-transform: uppercase; letter-spacing: 0.5px; }
+          table { width: 100%; border-collapse: collapse; }
+          th { background: #3d52a0; color: #fff; padding: 9px 12px; text-align: left; font-weight: 600; font-size: 11px; text-transform: uppercase; letter-spacing: 0.4px; }
+          td { padding: 9px 12px; border-bottom: 1px solid #e2e8f0; }
+          tr:nth-child(even) td { background: #f8fafc; }
+          .footer { margin-top: 20px; font-size: 10px; color: #94a3b8; border-top: 1px solid #e2e8f0; padding-top: 10px; }
+          @media print { @page { margin: 15mm 20mm; size: A4; } }
+        </style>
+      </head>
+      <body>
+        <div class="header">
+          <h1>LEONI — Financial Reports</h1>
+          <p>Period: <strong>${this.selectedPeriod}</strong> &nbsp;·&nbsp;
+             Generated: ${new Date().toLocaleDateString()} &nbsp;·&nbsp;
+             Currency: ${this.locale.currency}</p>
+        </div>
+        <h3>KPI Summary</h3>
+        <table>
+          <thead>
+            <tr><th>Metric</th><th>Actual</th><th>Target</th><th>Status</th></tr>
+          </thead>
+          <tbody>${bodyRows}</tbody>
+        </table>
+        <div class="footer">LEONI Billing System &nbsp;·&nbsp; Confidential — Internal Use Only</div>
+        <script>
+          window.addEventListener('load', function() {
+            setTimeout(function() { window.print(); }, 350);
+          });
+        </script>
+      </body>
+      </html>`);
+    win.document.close();
+  }
+
+  // ── Helpers ────────────────────────────────────────────────────────────────
+
+  private triggerDownload(blob: Blob, filename: string): void {
+    const url = URL.createObjectURL(blob);
+    const a   = document.createElement('a');
+    a.href     = url;
+    a.download = filename;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+  }
+
   // ── Chart ──────────────────────────────────────────────────────────────────
 
   private monthLabel(m: string): string {
@@ -158,13 +309,9 @@ export class ReportsComponent implements OnInit, OnDestroy, AfterViewChecked {
   private buildChart(): void {
     const canvas = this.dsoChartRef?.nativeElement;
     if (!canvas) return;
-
     const ctx = canvas.getContext('2d');
     if (!ctx) return;
 
-    // Only keep months where outstanding > 0 (invoiced but not yet fully collected).
-    // Months where collected >= invoiced produce DSO = 0 and are not meaningful;
-    // months absent from the API result would create null gaps — both are excluded here.
     const valid = this.monthly.filter(m => {
       const inv = Number(m.invoiced);
       const col = Number(m.collected);
@@ -172,7 +319,6 @@ export class ReportsComponent implements OnInit, OnDestroy, AfterViewChecked {
     });
 
     const labels    = valid.map(m => this.monthLabel(m.month));
-    // DSO = (outstanding / invoiced) * 30  — standard 30-day period approximation
     const dsoActual = valid.map(m => {
       const inv = Number(m.invoiced);
       const col = Number(m.collected);
@@ -217,9 +363,7 @@ export class ReportsComponent implements OnInit, OnDestroy, AfterViewChecked {
             labels: { font: { family: 'Inter, sans-serif', size: 12 }, usePointStyle: true, padding: 16 },
           },
           tooltip: {
-            callbacks: {
-              label: ctx => `${ctx.dataset.label}: ${ctx.parsed.y}d`,
-            },
+            callbacks: { label: c => `${c.dataset.label}: ${c.parsed.y}d` },
           },
         },
         scales: {

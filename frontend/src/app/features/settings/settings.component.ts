@@ -17,6 +17,7 @@ import { MatTooltipModule } from '@angular/material/tooltip';
 
 import { AuthService } from '../../core/services/auth.service';
 import { ThemeService, ThemeMode } from '../../core/services/theme.service';
+import { LocaleService, Lang, Currency } from '../../core/services/locale.service';
 import { UserProfileService, UserProfile, HealthStatus, UserStats } from '../../core/services/user-profile.service';
 
 function passwordMatchValidator(group: AbstractControl): ValidationErrors | null {
@@ -85,6 +86,7 @@ export class SettingsComponent implements OnInit {
     private fb: FormBuilder,
     public auth: AuthService,
     public theme: ThemeService,
+    public locale: LocaleService,
     private profileService: UserProfileService,
     private snack: MatSnackBar
   ) {}
@@ -200,10 +202,31 @@ export class SettingsComponent implements OnInit {
   // ── Appearance ─────────────────────────────────────────────────────────────
 
   private loadAppearancePrefs(): void {
+    // Read lang and currency from LocaleService (source of truth)
+    this.appearance.language = this.locale.lang;
+    this.appearance.currency = this.locale.currency;
+
     const saved = localStorage.getItem('leoni_appearance');
     if (saved) {
-      try { this.appearance = { ...this.appearance, ...JSON.parse(saved) }; } catch {}
+      try {
+        const parsed = JSON.parse(saved);
+        this.appearance = {
+          ...this.appearance,
+          ...parsed,
+          // Always prefer LocaleService values so they stay in sync
+          language: this.locale.lang,
+          currency: this.locale.currency,
+        };
+      } catch {}
     }
+  }
+
+  onLangChange(lang: string): void {
+    this.appearance.language = lang;
+  }
+
+  onCurrencyChange(currency: string): void {
+    this.appearance.currency = currency;
   }
 
   setTheme(mode: ThemeMode): void {
@@ -211,9 +234,12 @@ export class SettingsComponent implements OnInit {
   }
 
   saveAppearance(): void {
+    this.locale.setLang(this.appearance.language as Lang);
+    this.locale.setCurrency(this.appearance.currency as Currency);
     localStorage.setItem('leoni_appearance', JSON.stringify(this.appearance));
     localStorage.setItem('leoni_compact_sidebar', String(this.appearance.compactSidebar));
-    this.snack.open('Appearance preferences saved. Reload to apply sidebar changes.', 'OK', { duration: 4000 });
+    this.snack.open('Preferences saved — reloading…', 'OK', { duration: 1500 });
+    setTimeout(() => window.location.reload(), 500);
   }
 
   // ── System ─────────────────────────────────────────────────────────────────

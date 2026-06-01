@@ -9,16 +9,30 @@
 *{margin:0;padding:0;box-sizing:border-box;}
 body{font-family:'Barlow',sans-serif;background:#0a1628;min-height:100vh;overflow-x:hidden;}
 
-
 .app{position:relative;z-index:2;padding:24px 32px;}
 
 /* HEADER */
-.header{display:flex;align-items:center;justify-content:space-between;margin-bottom:24px;padding-bottom:16px;border-bottom:1px solid rgba(255,255,255,0.08);}
+.header{display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;padding-bottom:16px;border-bottom:1px solid rgba(255,255,255,0.08);}
 .header-left h1{font-family:'Barlow Condensed',sans-serif;font-size:28px;font-weight:700;color:white;text-transform:uppercase;letter-spacing:0.5px;}
 .header-left p{font-size:12px;color:rgba(255,255,255,0.4);margin-top:3px;}
 .run-btn{background:#e53e3e;color:white;border:none;padding:10px 20px;border-radius:8px;font-family:'Barlow',sans-serif;font-size:13px;font-weight:600;cursor:pointer;display:flex;align-items:center;gap:8px;box-shadow:0 4px 16px rgba(229,62,62,0.4);transition:all 0.2s;}
 .run-btn:hover{background:#c53030;transform:translateY(-1px);}
 .run-btn:disabled{opacity:0.5;cursor:not-allowed;transform:none;}
+
+/* FILTER BAR */
+.filter-bar{display:flex;align-items:center;gap:8px;margin-bottom:18px;flex-wrap:wrap;overflow:visible;}
+.bu-btn{display:flex;align-items:center;gap:6px;background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.1);border-radius:20px;padding:6px 14px 6px 8px;cursor:pointer;transition:all 0.2s;color:rgba(255,255,255,0.6);font-family:'Barlow',sans-serif;font-size:12px;font-weight:500;white-space:nowrap;overflow:visible !important;}
+.bu-btn:hover{background:rgba(255,255,255,0.09);border-color:rgba(255,255,255,0.22);color:rgba(255,255,255,0.85);}
+.bu-btn.active{background:rgba(59,130,246,0.14);border-color:#3b82f6;color:white;}
+.bu-logo{width:24px;height:24px;min-width:24px;min-height:24px;border-radius:50%;object-fit:cover;object-position:center;overflow:hidden;flex-shrink:0;flex-shrink:0;background:rgba(255,255,255,0.08);}
+.bu-count{font-size:10px;color:rgba(255,255,255,0.35);font-weight:400;margin-left:1px;}
+.bu-btn.active .bu-count{color:rgba(147,197,253,0.65);}
+.filter-sep{width:1px;height:20px;background:rgba(255,255,255,0.08);flex-shrink:0;}
+.search-wrap{margin-left:auto;position:relative;display:flex;align-items:center;}
+.search-icon{position:absolute;left:11px;pointer-events:none;opacity:0.35;}
+.search-input{background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.1);border-radius:20px;padding:6px 14px 6px 32px;color:white;font-family:'Barlow',sans-serif;font-size:12px;outline:none;width:210px;transition:border-color 0.2s;}
+.search-input:focus{border-color:rgba(59,130,246,0.5);background:rgba(255,255,255,0.07);}
+.search-input::placeholder{color:rgba(255,255,255,0.22);}
 
 /* KPI CARDS */
 .kpi-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:22px;}
@@ -94,16 +108,16 @@ th{font-size:9px;color:rgba(255,255,255,0.3);text-transform:uppercase;letter-spa
 @keyframes spin{to{transform:rotate(360deg);}}
 .loading-text{font-size:14px;color:rgba(255,255,255,0.45);}
 
-/* ERROR TOAST */
-.toast{position:fixed;bottom:24px;right:24px;background:#1e293b;border:1px solid rgba(239,68,68,0.4);color:#fca5a5;padding:12px 18px;border-radius:8px;font-size:13px;z-index:2000;display:none;max-width:320px;}
+/* TOAST */
+.toast{position:fixed;bottom:24px;right:24px;background:#1e293b;border:1px solid rgba(239,68,68,0.4);color:#fca5a5;padding:12px 18px;border-radius:8px;font-size:13px;z-index:2000;display:none;max-width:340px;line-height:1.5;}
 .toast.show{display:block;}
 </style>
 </head>
 <body>
 
-
 <div class="app">
 
+  <!-- HEADER -->
   <div class="header">
     <div class="header-left">
       <h1>🚨 ML Risk Alerts <span style="font-size:13px;font-weight:400;color:rgba(255,255,255,0.35);margin-left:12px;text-transform:none;">LightGBM v1 · AUC 0.796 · Avril 2026</span></h1>
@@ -114,6 +128,39 @@ th{font-size:9px;color:rgba(255,255,255,0.3);text-transform:uppercase;letter-spa
     </button>
   </div>
 
+  <!-- FILTER BAR -->
+  <div class="filter-bar">
+    <button class="bu-btn active" id="btn-all" onclick="setBuFilter('all')">
+      Tous <span class="bu-count" id="cnt-all"></span>
+    </button>
+    <div class="filter-sep"></div>
+    <button class="bu-btn" id="btn-510" onclick="setBuFilter(510)">
+      <div style="width:24px;height:24px;border-radius:50%;background:#1e3a8a;display:flex;align-items:center;justify-content:center;font-size:9px;font-weight:700;color:white;flex-shrink:0;">ST</div>
+      Stellantis <span class="bu-count" id="cnt-510"></span>
+    </button>
+    <button class="bu-btn" id="btn-520" onclick="setBuFilter(520)">
+      <div style="width:24px;height:24px;border-radius:50%;background:#ef4444;display:flex;align-items:center;justify-content:center;font-size:9px;font-weight:700;color:white;flex-shrink:0;">RN</div>
+      Renault <span class="bu-count" id="cnt-520"></span>
+    </button>
+    <button class="bu-btn" id="btn-440" onclick="setBuFilter(440)">
+      <div style="width:24px;height:24px;border-radius:50%;background:#6d28d9;display:flex;align-items:center;justify-content:center;font-size:9px;font-weight:700;color:white;flex-shrink:0;">OE</div>
+      OEM <span class="bu-count" id="cnt-440"></span>
+    </button>
+    <button class="bu-btn" id="btn-630" onclick="setBuFilter(630)">
+      <div style="width:24px;height:24px;border-radius:50%;background:#0369a1;display:flex;align-items:center;justify-content:center;font-size:9px;font-weight:700;color:white;flex-shrink:0;">VV</div>
+      Volvo <span class="bu-count" id="cnt-630"></span>
+    </button>
+    <div class="search-wrap">
+      <svg class="search-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5">
+        <circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/>
+      </svg>
+      <input class="search-input" id="search-input" type="text"
+             placeholder="Rechercher un client..."
+             oninput="setSearch(this.value)">
+    </div>
+  </div>
+
+  <!-- KPI CARDS -->
   <div class="kpi-grid">
     <div class="kpi-card red">
       <div class="kpi-label">Risque Élevé</div>
@@ -137,10 +184,11 @@ th{font-size:9px;color:rgba(255,255,255,0.3);text-transform:uppercase;letter-spa
     </div>
   </div>
 
+  <!-- MAIN GRID -->
   <div class="main-grid">
     <div class="table-card">
       <div class="card-header">
-        <div class="card-title" id="table-title">⚠️ High Risk Clients (score &gt; 70%)</div>
+        <div class="card-title">⚠️ High Risk Clients (score &gt; 70%)</div>
         <span class="badge-count" id="badge-count">55 clients</span>
       </div>
       <table>
@@ -163,7 +211,7 @@ th{font-size:9px;color:rgba(255,255,255,0.3);text-transform:uppercase;letter-spa
             <td><span class="nb-fac">148</span></td>
             <td><button class="review-btn" onclick="markReviewed(this)">✓ Reviewed</button></td>
           </tr>
-<tr class="alert-row">
+          <tr class="alert-row">
             <td><span class="inv-num">ML-2026-002</span></td>
             <td><div class="client-cell"><span class="client-avatar">P</span><span class="client-name">PCA SLOVAQUIA</span></div></td>
             <td class="amount-col">€21.9M</td>
@@ -171,7 +219,7 @@ th{font-size:9px;color:rgba(255,255,255,0.3);text-transform:uppercase;letter-spa
             <td><span class="nb-fac">316</span></td>
             <td><button class="review-btn" onclick="markReviewed(this)">✓ Reviewed</button></td>
           </tr>
-<tr class="alert-row">
+          <tr class="alert-row">
             <td><span class="inv-num">ML-2026-003</span></td>
             <td><div class="client-cell"><span class="client-avatar">O</span><span class="client-name">OPEL AUTOMOBILE GMBH</span></div></td>
             <td class="amount-col">€2.9M</td>
@@ -179,7 +227,7 @@ th{font-size:9px;color:rgba(255,255,255,0.3);text-transform:uppercase;letter-spa
             <td><span class="nb-fac">9316</span></td>
             <td><button class="review-btn" onclick="markReviewed(this)">✓ Reviewed</button></td>
           </tr>
-<tr class="alert-row">
+          <tr class="alert-row">
             <td><span class="inv-num">ML-2026-004</span></td>
             <td><div class="client-cell"><span class="client-avatar">D</span><span class="client-name">DACIA AUTOMOBILE</span></div></td>
             <td class="amount-col">€19.0M</td>
@@ -187,7 +235,7 @@ th{font-size:9px;color:rgba(255,255,255,0.3);text-transform:uppercase;letter-spa
             <td><span class="nb-fac">110</span></td>
             <td><button class="review-btn" onclick="markReviewed(this)">✓ Reviewed</button></td>
           </tr>
-<tr class="alert-row">
+          <tr class="alert-row">
             <td><span class="inv-num">ML-2026-005</span></td>
             <td><div class="client-cell"><span class="client-avatar">N</span><span class="client-name">NISSAN MOTOR MANUFACTURING U</span></div></td>
             <td class="amount-col">€4.4M</td>
@@ -195,7 +243,7 @@ th{font-size:9px;color:rgba(255,255,255,0.3);text-transform:uppercase;letter-spa
             <td><span class="nb-fac">92</span></td>
             <td><button class="review-btn" onclick="markReviewed(this)">✓ Reviewed</button></td>
           </tr>
-<tr class="alert-row">
+          <tr class="alert-row">
             <td><span class="inv-num">ML-2026-006</span></td>
             <td><div class="client-cell"><span class="client-avatar">S</span><span class="client-name">STELLANTIS ESPAÑA, S.L.</span></div></td>
             <td class="amount-col">€8.0M</td>
@@ -203,7 +251,7 @@ th{font-size:9px;color:rgba(255,255,255,0.3);text-transform:uppercase;letter-spa
             <td><span class="nb-fac">1611</span></td>
             <td><button class="review-btn" onclick="markReviewed(this)">✓ Reviewed</button></td>
           </tr>
-<tr class="alert-row">
+          <tr class="alert-row">
             <td><span class="inv-num">ML-2026-007</span></td>
             <td><div class="client-cell"><span class="client-avatar">S</span><span class="client-name">STELLANTIS AUTO SAS</span></div></td>
             <td class="amount-col">€5.9M</td>
@@ -211,71 +259,30 @@ th{font-size:9px;color:rgba(255,255,255,0.3);text-transform:uppercase;letter-spa
             <td><span class="nb-fac">514</span></td>
             <td><button class="review-btn" onclick="markReviewed(this)">✓ Reviewed</button></td>
           </tr>
-<tr class="alert-row">
+          <tr class="alert-row">
             <td><span class="inv-num">ML-2026-008</span></td>
-            <td><div class="client-cell"><span class="client-avatar">S</span><span class="client-name">STE SOVAB</span></div></td>
-            <td class="amount-col">€5.2M</td>
-            <td><div class="score-cell"><div class="risk-bar"><div class="bar-fill" style="width:90%"></div></div><span class="score-num">90%</span></div></td>
-            <td><span class="nb-fac">469</span></td>
-            <td><button class="review-btn" onclick="markReviewed(this)">✓ Reviewed</button></td>
-          </tr>
-<tr class="alert-row">
-            <td><span class="inv-num">ML-2026-009</span></td>
-            <td><div class="client-cell"><span class="client-avatar">F</span><span class="client-name">FCA SERBIA DOO</span></div></td>
-            <td class="amount-col">€2.6M</td>
-            <td><div class="score-cell"><div class="risk-bar"><div class="bar-fill" style="width:89%"></div></div><span class="score-num">89%</span></div></td>
-            <td><span class="nb-fac">64</span></td>
-            <td><button class="review-btn" onclick="markReviewed(this)">✓ Reviewed</button></td>
-          </tr>
-<tr class="alert-row">
-            <td><span class="inv-num">ML-2026-010</span></td>
-            <td><div class="client-cell"><span class="client-avatar">S</span><span class="client-name">SIEDOUBS</span></div></td>
-            <td class="amount-col">€589,354</td>
-            <td><div class="score-cell"><div class="risk-bar"><div class="bar-fill" style="width:89%"></div></div><span class="score-num">89%</span></div></td>
-            <td><span class="nb-fac">52</span></td>
-            <td><button class="review-btn" onclick="markReviewed(this)">✓ Reviewed</button></td>
-          </tr>
-<tr class="alert-row">
-            <td><span class="inv-num">ML-2026-011</span></td>
             <td><div class="client-cell"><span class="client-avatar">R</span><span class="client-name">RENAULT - 4 44 (PROTO)</span></div></td>
             <td class="amount-col">€1.5M</td>
             <td><div class="score-cell"><div class="risk-bar"><div class="bar-fill" style="width:88%"></div></div><span class="score-num">88%</span></div></td>
             <td><span class="nb-fac">47</span></td>
             <td><button class="review-btn" onclick="markReviewed(this)">✓ Reviewed</button></td>
           </tr>
-<tr class="alert-row">
-            <td><span class="inv-num">ML-2026-012</span></td>
+          <tr class="alert-row">
+            <td><span class="inv-num">ML-2026-009</span></td>
             <td><div class="client-cell"><span class="client-avatar">V</span><span class="client-name">VOLVO CARS N.V.</span></div></td>
             <td class="amount-col">€1.9M</td>
             <td><div class="score-cell"><div class="risk-bar"><div class="bar-fill" style="width:88%"></div></div><span class="score-num">88%</span></div></td>
             <td><span class="nb-fac">80</span></td>
             <td><button class="review-btn" onclick="markReviewed(this)">✓ Reviewed</button></td>
           </tr>
-<tr class="alert-row">
-            <td><span class="inv-num">ML-2026-013</span></td>
-            <td><div class="client-cell"><span class="client-avatar">F</span><span class="client-name">FAURECIA - VITORIA-GASTEIZ (</span></div></td>
-            <td class="amount-col">€148,138</td>
-            <td><div class="score-cell"><div class="risk-bar"><div class="bar-fill" style="width:86%"></div></div><span class="score-num">86%</span></div></td>
-            <td><span class="nb-fac">59</span></td>
-            <td><button class="review-btn" onclick="markReviewed(this)">✓ Reviewed</button></td>
-          </tr>
-<tr class="alert-row">
-            <td><span class="inv-num">ML-2026-014</span></td>
-            <td><div class="client-cell"><span class="client-avatar">R</span><span class="client-name">RENAULT TECHNOLOGIE BUCUREST</span></div></td>
-            <td class="amount-col">€112,515</td>
-            <td><div class="score-cell"><div class="risk-bar"><div class="bar-fill" style="width:86%"></div></div><span class="score-num">86%</span></div></td>
-            <td><span class="nb-fac">14</span></td>
-            <td><button class="review-btn" onclick="markReviewed(this)">✓ Reviewed</button></td>
-          </tr>
-<tr class="alert-row">
-            <td><span class="inv-num">ML-2026-015</span></td>
+          <tr class="alert-row">
+            <td><span class="inv-num">ML-2026-010</span></td>
             <td><div class="client-cell"><span class="client-avatar">V</span><span class="client-name">VOLVO CAR CORPORATION</span></div></td>
             <td class="amount-col">€18,237</td>
             <td><div class="score-cell"><div class="risk-bar"><div class="bar-fill" style="width:85%"></div></div><span class="score-num">85%</span></div></td>
             <td><span class="nb-fac">44</span></td>
             <td><button class="review-btn" onclick="markReviewed(this)">✓ Reviewed</button></td>
           </tr>
-
         </tbody>
       </table>
     </div>
@@ -286,8 +293,8 @@ th{font-size:9px;color:rgba(255,255,255,0.3);text-transform:uppercase;letter-spa
         <div class="donut-wrap">
           <svg width="130" height="130" viewBox="0 0 130 130" style="transform:rotate(-90deg)">
             <circle cx="65" cy="65" r="48" fill="none" stroke="rgba(255,255,255,0.05)" stroke-width="16"/>
-            <circle id="donut-low" cx="65" cy="65" r="48" fill="none" stroke="#22c55e" stroke-width="16" stroke-dasharray="89 213" stroke-dashoffset="0" opacity="0.85"/>
-            <circle id="donut-med" cx="65" cy="65" r="48" fill="none" stroke="#f97316" stroke-width="16" stroke-dasharray="61 213" stroke-dashoffset="-89" opacity="0.85"/>
+            <circle id="donut-low"  cx="65" cy="65" r="48" fill="none" stroke="#22c55e" stroke-width="16" stroke-dasharray="89 213"  stroke-dashoffset="0"    opacity="0.85"/>
+            <circle id="donut-med"  cx="65" cy="65" r="48" fill="none" stroke="#f97316" stroke-width="16" stroke-dasharray="61 213"  stroke-dashoffset="-89"  opacity="0.85"/>
             <circle id="donut-high" cx="65" cy="65" r="48" fill="none" stroke="#ef4444" stroke-width="16" stroke-dasharray="168 213" stroke-dashoffset="-150" opacity="0.85"/>
           </svg>
           <div class="legend">
@@ -312,9 +319,18 @@ th{font-size:9px;color:rgba(255,255,255,0.3);text-transform:uppercase;letter-spa
 
       <div class="panel-card">
         <div class="card-title" style="margin-bottom:12px;">📋 Actions</div>
-        <div class="action-item red"><div class="action-title" id="action-high">🔴 ÉLEVÉ — 55 clients</div><div class="action-desc">Contacter immédiatement. Relance formelle. Alerter direction commerciale.</div></div>
-        <div class="action-item orange"><div class="action-title" id="action-med">🟠 MOYEN — 20 clients</div><div class="action-desc">Surveiller. Relance préventive douce.</div></div>
-        <div class="action-item green"><div class="action-title" id="action-low">🟢 FAIBLE — 29 clients</div><div class="action-desc">Comportement normal. Aucune action requise.</div></div>
+        <div class="action-item red">
+          <div class="action-title" id="action-high">🔴 ÉLEVÉ — 55 clients</div>
+          <div class="action-desc">Contacter immédiatement. Relance formelle. Alerter direction commerciale.</div>
+        </div>
+        <div class="action-item orange">
+          <div class="action-title" id="action-med">🟠 MOYEN — 20 clients</div>
+          <div class="action-desc">Surveiller. Relance préventive douce.</div>
+        </div>
+        <div class="action-item green">
+          <div class="action-title" id="action-low">🟢 FAIBLE — 29 clients</div>
+          <div class="action-desc">Comportement normal. Aucune action requise.</div>
+        </div>
       </div>
     </div>
   </div>
@@ -328,8 +344,20 @@ th{font-size:9px;color:rgba(255,255,255,0.3);text-transform:uppercase;letter-spa
 <div class="toast" id="toast"></div>
 
 <script>
-const API = 'http://localhost:8080/api';
+// ── State ──────────────────────────────────────────────────────────────────
+let allData       = [];      // full clients array from Flask (never mutated)
+let currentFilter = 'all';   // 'all' | 510 | 520 | 440 | 630
+let currentSearch = '';
 
+// BU definitions: id → { label, branche }
+const BU_MAP = {
+  510: 'Stellantis',
+  520: 'Renault',
+  440: 'OEM',
+  630: 'Volvo'
+};
+
+// ── Helpers ────────────────────────────────────────────────────────────────
 function markReviewed(btn) {
   btn.textContent = '✓ Done';
   btn.style.color = '#86efac';
@@ -341,7 +369,7 @@ function showToast(msg) {
   const t = document.getElementById('toast');
   t.textContent = msg;
   t.classList.add('show');
-  setTimeout(() => t.classList.remove('show'), 4000);
+  setTimeout(() => t.classList.remove('show'), 5000);
 }
 
 function fmtAmount(val) {
@@ -351,8 +379,9 @@ function fmtAmount(val) {
   return '€' + n.toFixed(0);
 }
 
+// ── Donut chart ────────────────────────────────────────────────────────────
 function updateDonut(high, med, low) {
-  const total = high + med + low || 1;
+  const total = (high + med + low) || 1;
   const C = 2 * Math.PI * 48;
   const lowLen  = (low  / total) * C;
   const medLen  = (med  / total) * C;
@@ -361,7 +390,7 @@ function updateDonut(high, med, low) {
   const setCircle = (id, len, offset) => {
     const el = document.getElementById(id);
     if (!el) return;
-    el.setAttribute('stroke-dasharray', `${len.toFixed(2)} ${C.toFixed(2)}`);
+    el.setAttribute('stroke-dasharray', len.toFixed(2) + ' ' + C.toFixed(2));
     el.setAttribute('stroke-dashoffset', offset.toFixed(2));
   };
 
@@ -374,6 +403,124 @@ function updateDonut(high, med, low) {
   document.getElementById('legend-low').textContent  = low;
 }
 
+// ── BU button counts (always computed from full allData) ───────────────────
+function updateBuCounts() {
+  const total = allData.length;
+  document.getElementById('cnt-all').textContent = total ? '· ' + total : '';
+
+  [510, 520, 440, 630].forEach(branche => {
+    const count = allData.filter(c => +c.Branche === branche).length;
+    const el = document.getElementById('cnt-' + branche);
+    if (el) el.textContent = count ? '· ' + count : '';
+  });
+}
+
+// ── Filter state setters ───────────────────────────────────────────────────
+function setBuFilter(filter) {
+  currentFilter = filter;
+
+  // Toggle active class on buttons
+  ['all', 510, 520, 440, 630].forEach(key => {
+    const btn = document.getElementById('btn-' + key);
+    if (btn) btn.classList.toggle('active', key === filter);
+  });
+
+  applyFilter();
+}
+
+function setSearch(val) {
+  currentSearch = val.trim().toLowerCase();
+  applyFilter();
+}
+
+// ── Core: filter allData then render ──────────────────────────────────────
+function applyFilter() {
+  let filtered = allData;
+
+  // BU filter
+  if (currentFilter !== 'all') {
+    filtered = filtered.filter(c => +c.Branche === currentFilter);
+  }
+
+  // Search filter
+  if (currentSearch) {
+    filtered = filtered.filter(c =>
+      (c.Nom_client || '').toLowerCase().includes(currentSearch)
+    );
+  }
+
+  renderView(filtered);
+}
+
+// ── Render all dashboard sections from a clients array ────────────────────
+function renderView(clients) {
+  const high   = clients.filter(c => c.risque === 'ELEVE')
+                         .sort((a, b) => b.prob_retard - a.prob_retard);
+  const moyen  = clients.filter(c => c.risque === 'MOYEN');
+  const faible = clients.filter(c => c.risque === 'FAIBLE');
+
+  const highCount   = high.length;
+  const moyenCount  = moyen.length;
+  const faibleCount = faible.length;
+
+  const totalAmount = high.reduce((s, c) => s + (parseFloat(c.montant_total_mois) || 0), 0);
+  const avgProb     = highCount > 0
+    ? (high.reduce((s, c) => s + (parseFloat(c.prob_retard) || 0), 0) / highCount) * 100
+    : 0;
+
+  // KPI cards
+  document.getElementById('kpi-high').textContent    = highCount;
+  document.getElementById('kpi-amount').textContent  = fmtAmount(totalAmount);
+  document.getElementById('kpi-prob').textContent    = avgProb.toFixed(1) + '%';
+  document.getElementById('kpi-clients').textContent = clients.length;
+  document.getElementById('kpi-clients-sub').textContent =
+    '🟢 ' + faibleCount + ' Faible · 🟠 ' + moyenCount + ' Moyen';
+
+  // Badge
+  document.getElementById('badge-count').textContent = highCount + ' clients';
+
+  // Table — top 20 ELEVE from filtered set
+  const tbody = document.getElementById('alerts-tbody');
+  if (high.length === 0) {
+    tbody.innerHTML =
+      '<tr class="alert-row"><td colspan="6" style="text-align:center;' +
+      'color:rgba(255,255,255,0.3);padding:28px 0;">Aucun client à risque élevé</td></tr>';
+  } else {
+    tbody.innerHTML = high.slice(0, 20).map((c, i) => {
+      const idx    = String(i + 1).padStart(3, '0');
+      const letter = (c.Nom_client[0] || '?').toUpperCase();
+      const pct    = Math.round((parseFloat(c.prob_retard) || 0) * 100);
+      const amt    = fmtAmount(c.montant_total_mois || 0);
+      return (
+        '<tr class="alert-row">' +
+        '<td><span class="inv-num">ML-2026-' + idx + '</span></td>' +
+        '<td><div class="client-cell">' +
+          '<span class="client-avatar">' + letter + '</span>' +
+          '<span class="client-name" title="' + c.Nom_client + '">' +
+            c.Nom_client.substring(0, 28) +
+          '</span></div></td>' +
+        '<td class="amount-col">' + amt + '</td>' +
+        '<td><div class="score-cell">' +
+          '<div class="risk-bar"><div class="bar-fill" style="width:' + pct + '%"></div></div>' +
+          '<span class="score-num">' + pct + '%</span>' +
+        '</div></td>' +
+        '<td><span class="nb-fac">' + (c.nb_factures_mois || '—') + '</span></td>' +
+        '<td><button class="review-btn" onclick="markReviewed(this)">✓ Reviewed</button></td>' +
+        '</tr>'
+      );
+    }).join('');
+  }
+
+  // Donut
+  updateDonut(highCount, moyenCount, faibleCount);
+
+  // Action items
+  document.getElementById('action-high').textContent = '🔴 ÉLEVÉ — '  + highCount   + ' clients';
+  document.getElementById('action-med').textContent  = '🟠 MOYEN — '  + moyenCount  + ' clients';
+  document.getElementById('action-low').textContent  = '🟢 FAIBLE — ' + faibleCount + ' clients';
+}
+
+// ── Refresh: fetch Flask, store allData, apply current filter ─────────────
 async function refreshAlerts() {
   const btn     = document.getElementById('refresh-btn');
   const loading = document.getElementById('loading');
@@ -381,72 +528,42 @@ async function refreshAlerts() {
 
   btn.disabled = true;
   loading.classList.add('show');
-  loadTxt.textContent = 'Chargement des alertes ML...';
+  loadTxt.textContent = 'Lecture alertes_2026_05.csv...';
 
   try {
-    loadTxt.textContent = 'Lecture alertes_2026_05.csv...';
     const resp = await fetch('http://localhost:5000/api/alertes');
     if (!resp.ok) throw new Error('Flask API ' + resp.status);
     const data = await resp.json();
 
-    const high   = data.clients.filter(c => c.risque === 'ELEVE');
-    const moyen  = data.clients.filter(c => c.risque === 'MOYEN');
-    const faible = data.clients.filter(c => c.risque === 'FAIBLE');
-    const now    = new Date().toLocaleDateString('fr-FR');
+    if (data.status === 'error') throw new Error(data.message);
 
-    // Update KPIs
-    document.getElementById('kpi-high').textContent    = data.high_count;
-    document.getElementById('kpi-amount').textContent  = fmtAmount(data.total_amount_high);
-    document.getElementById('kpi-prob').textContent    = data.avg_prob_high + '%';
-    document.getElementById('kpi-clients').textContent = data.total_clients;
-    document.getElementById('kpi-clients-sub').textContent =
-      '🟢 ' + data.faible_count + ' Faible · 🟠 ' + data.moyen_count + ' Moyen';
+    // Store full dataset
+    allData = data.clients || [];
+
+    // Update header subtitle
+    const now = new Date().toLocaleDateString('fr-FR');
     document.getElementById('header-subtitle').textContent =
-      data.total_clients + ' clients analysés · Seuil 0.35 · Rafraîchi le ' + now;
+      allData.length + ' clients analysés · Seuil 0.35 · Rafraîchi le ' + now;
 
-    // Update table (top 20 ELEVE)
-    document.getElementById('badge-count').textContent = data.high_count + ' clients';
-    const tbody = document.getElementById('alerts-tbody');
-    tbody.innerHTML = high.slice(0, 20).map((c, i) => {
-      const idx    = String(i + 1).padStart(3, '0');
-      const letter = (c.Nom_client[0] || '?').toUpperCase();
-      const pct    = Math.round(c.prob_retard * 100);
-      const montant = c.montant_total_mois || 0;
-      const bu_label = c.Branche == 510 ? 'Stellantis'
-                     : c.Branche == 520 ? 'Renault'
-                     : c.Branche == 630 ? 'Volvo' : 'OEM';
-      return '<tr class="alert-row">' +
-        '<td><span class="inv-num">ML-2026-' + idx + '</span></td>' +
-        '<td><div class="client-cell">' +
-          '<span class="client-avatar">' + letter + '</span>' +
-          '<span class="client-name" title="' + c.Nom_client + '">' +
-            c.Nom_client.substring(0, 28) + '</span></div></td>' +
-        '<td class="amount-col">' + fmtAmount(montant) + '</td>' +
-        '<td><div class="score-cell">' +
-          '<div class="risk-bar"><div class="bar-fill" style="width:' + pct + '%"></div></div>' +
-          '<span class="score-num">' + pct + '%</span></div></td>' +
-        '<td><span class="nb-fac">' + (c.nb_factures_mois || '-') + '</span></td>' +
-        '<td><button class="review-btn" onclick="markReviewed(this)">✓ Reviewed</button></td>' +
-      '</tr>';
-    }).join('');
+    // Update BU button counts from full data
+    updateBuCounts();
 
-    // Update donut + legend
-    updateDonut(data.high_count, data.moyen_count, data.faible_count);
-
-    // Update action items
-    document.getElementById('action-high').textContent = '🔴 ÉLEVÉ — ' + data.high_count + ' clients';
-    document.getElementById('action-med').textContent  = '🟠 MOYEN — ' + data.moyen_count + ' clients';
-    document.getElementById('action-low').textContent  = '🟢 FAIBLE — ' + data.faible_count + ' clients';
+    // Apply current filter (preserves active BU + search after refresh)
+    applyFilter();
 
   } catch (err) {
     console.error('Refresh error:', err);
     showToast('Erreur Flask : ' + err.message +
-              ' — Vérifier que Flask tourne sur localhost:5000');
+              ' — Vérifiez que Flask tourne sur localhost:5000');
   } finally {
     loading.classList.remove('show');
     btn.disabled = false;
   }
 }
+
+window.addEventListener('load', function() {
+  refreshAlerts();
+});
 </script>
 </body>
 </html>

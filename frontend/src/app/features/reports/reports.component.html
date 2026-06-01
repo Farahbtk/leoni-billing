@@ -23,10 +23,10 @@
       <mat-select [(ngModel)]="selectedPeriod" class="period-select">
         <mat-option *ngFor="let p of periods" [value]="p">{{ p }}</mat-option>
       </mat-select>
-      <button mat-stroked-button>
+      <button mat-stroked-button (click)="exportExcel()">
         <mat-icon>download</mat-icon> Export Excel
       </button>
-      <button mat-raised-button color="primary">
+      <button mat-raised-button color="primary" (click)="exportPdf()">
         <mat-icon>picture_as_pdf</mat-icon> Export PDF
       </button>
     </div>

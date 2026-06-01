@@ -107,7 +107,7 @@
     <ng-container matColumnDef="amount">
       <mat-header-cell *matHeaderCellDef mat-sort-header>Amount</mat-header-cell>
       <mat-cell *matCellDef="let row" class="fw-600">
-        {{ row.amount | currency:'EUR':'symbol':'1.0-0' }}
+        {{ row.amount | currency:locale.currency:'symbol':'1.0-0' }}
       </mat-cell>
     </ng-container>
 

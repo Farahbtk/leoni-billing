@@ -8,6 +8,7 @@ import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { InvoiceService } from '../../../core/services/invoice.service';
+import { LocaleService } from '../../../core/services/locale.service';
 import { Invoice } from '../../../models/invoice.model';
 
 @Component({
@@ -30,6 +31,7 @@ export class InvoiceDetailComponent implements OnInit {
   constructor(
     private route: ActivatedRoute,
     private invoiceService: InvoiceService,
+    public  locale: LocaleService,
     private snack: MatSnackBar
   ) {}
 

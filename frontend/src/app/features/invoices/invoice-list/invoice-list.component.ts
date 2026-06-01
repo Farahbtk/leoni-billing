@@ -19,6 +19,7 @@ import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { SelectionModel } from '@angular/cdk/collections';
 import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
 import { InvoiceService } from '../../../core/services/invoice.service';
+import { LocaleService } from '../../../core/services/locale.service';
 import { Invoice, InvoiceStatus } from '../../../models/invoice.model';
 import { InvoiceFormDialogComponent } from '../invoice-form-dialog/invoice-form-dialog.component';
 import { InvoiceDeleteDialogComponent } from '../invoice-delete-dialog/invoice-delete-dialog.component';
@@ -51,6 +52,7 @@ export class InvoiceListComponent implements OnInit, AfterViewInit {
 
   constructor(
     private invoiceService: InvoiceService,
+    public  locale: LocaleService,
     private fb: FormBuilder,
     private snack: MatSnackBar,
     private dialog: MatDialog

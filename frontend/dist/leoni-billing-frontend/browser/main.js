@@ -1,9 +1,12 @@
 import {
   ThemeService
-} from "./chunk-5RQKEHXG.js";
+} from "./chunk-QP6YUEZL.js";
 import {
   AuthService
-} from "./chunk-PADCB2SJ.js";
+} from "./chunk-NJQ44HMA.js";
+import {
+  LocaleService
+} from "./chunk-MTNULHT6.js";
 import {
   Router,
   RouterLink,
@@ -11,12 +14,11 @@ import {
   RouterModule,
   RouterOutlet,
   provideRouter
-} from "./chunk-KFYCFTGM.js";
+} from "./chunk-DNC5WKMM.js";
 import {
   MatTooltip,
   MatTooltipModule
-} from "./chunk-NVH64VTL.js";
-import "./chunk-WJ3XFFVQ.js";
+} from "./chunk-SH5P3J3Y.js";
 import {
   MatButtonModule,
   MatIcon,
@@ -24,20 +26,20 @@ import {
   MatIconModule,
   MatRipple,
   MatRippleModule
-} from "./chunk-GP3DPIH4.js";
-import "./chunk-GZT44RQ4.js";
+} from "./chunk-4RHBT3UD.js";
+import "./chunk-S46D2GSL.js";
 import {
   DomRendererFactory2,
   bootstrapApplication,
   provideHttpClient,
   withInterceptors
-} from "./chunk-IT5HHABJ.js";
+} from "./chunk-FUMIJFC4.js";
 import {
   CommonModule,
   DOCUMENT,
   NgForOf,
   NgIf
-} from "./chunk-Q6QAO5LM.js";
+} from "./chunk-AQDHREHX.js";
 import {
   ANIMATION_MODULE_TYPE,
   ChangeDetectionScheduler,
@@ -68,7 +70,7 @@ import {
   ɵɵtemplate,
   ɵɵtext,
   ɵɵtextInterpolate
-} from "./chunk-5P2RJQ5K.js";
+} from "./chunk-427CRICV.js";
 
 // node_modules/@angular/platform-browser/fesm2022/animations/async.mjs
 var ANIMATION_PREFIX = "@";
@@ -96,7 +98,7 @@ var AsyncAnimationRendererFactory = class _AsyncAnimationRendererFactory {
    * @internal
    */
   loadImpl() {
-    const moduleImpl = this.moduleImpl ?? import("./chunk-INYQ7SKC.js");
+    const moduleImpl = this.moduleImpl ?? import("./chunk-GAIOFM4M.js");
     return moduleImpl.catch((e) => {
       throw new RuntimeError(5300, (typeof ngDevMode === "undefined" || ngDevMode) && "Async loading for animations package was enabled, but loading failed. Angular falls back to using regular rendering. No animations will be displayed and their styles won't be applied.");
     }).then(({
@@ -393,8 +395,13 @@ function SidebarComponent_mat_icon_18_Template(rf, ctx) {
 function SidebarComponent_span_23_Template(rf, ctx) {
   if (rf & 1) {
     \u0275\u0275elementStart(0, "span", 26);
-    \u0275\u0275text(1, "Settings");
+    \u0275\u0275text(1);
     \u0275\u0275elementEnd();
+  }
+  if (rf & 2) {
+    const ctx_r1 = \u0275\u0275nextContext();
+    \u0275\u0275advance();
+    \u0275\u0275textInterpolate(ctx_r1.locale.t("settings"));
   }
 }
 function SidebarComponent_div_25_Template(rf, ctx) {
@@ -419,7 +426,7 @@ function SidebarComponent_div_26_Template(rf, ctx) {
   if (rf & 2) {
     const ctx_r1 = \u0275\u0275nextContext();
     \u0275\u0275advance(2);
-    \u0275\u0275textInterpolate(ctx_r1.displayName[0] == null ? null : ctx_r1.displayName[0].toUpperCase());
+    \u0275\u0275textInterpolate(ctx_r1.displayName.charAt(0).toUpperCase());
     \u0275\u0275advance(3);
     \u0275\u0275textInterpolate(ctx_r1.displayName);
     \u0275\u0275advance(2);
@@ -434,28 +441,32 @@ function SidebarComponent_span_30_Template(rf, ctx) {
   }
 }
 var SidebarComponent = class _SidebarComponent {
-  constructor(auth) {
+  constructor(auth, locale) {
     this.auth = auth;
+    this.locale = locale;
     this.collapsed = false;
     this.collapseToggle = new EventEmitter();
-    this.allNavItems = [
-      { label: "Dashboard", icon: "dashboard", route: "/dashboard" },
-      { label: "Invoices", icon: "receipt_long", route: "/invoices" },
-      { label: "Clients", icon: "business", route: "/clients" },
-      { label: "Alerts", icon: "notifications", route: "/alerts", badge: 3 },
-      { label: "Reports", icon: "bar_chart", route: "/reports" },
-      { label: "User Management", icon: "manage_accounts", route: "/user-management", adminOnly: true }
-    ];
+    this.navItems = [];
     this.POWERAPPS_URL = `https://apps.powerapps.com/play/e/default-b7bd4715-4217-48c7-919e-2ea97f592fa7/a/a5c4e5ec-949b-4f0e-aa13-7b8f94289025?tenantId=b7bd4715-4217-48c7-919e-2ea97f592fa7&hint=87fb8e82-8f3d-49d0-b844-222202695999&sourcetime=${Date.now()}`;
   }
-  get navItems() {
-    return this.allNavItems.filter((item) => !item.adminOnly || this.auth.isAdmin());
+  ngOnInit() {
+    const isAdmin = this.auth.isAdmin();
+    const all = [
+      { label: this.locale.t("dashboard"), icon: "dashboard", route: "/dashboard" },
+      { label: this.locale.t("invoices"), icon: "receipt_long", route: "/invoices" },
+      { label: this.locale.t("clients"), icon: "business", route: "/clients" },
+      { label: this.locale.t("alerts"), icon: "notifications", route: "/alerts", badge: 3 },
+      { label: this.locale.t("reports"), icon: "bar_chart", route: "/reports" },
+      { label: this.locale.t("userManagement"), icon: "manage_accounts", route: "/user-management", adminOnly: true }
+    ];
+    this.navItems = all.filter((item) => !item.adminOnly || isAdmin);
   }
   get displayName() {
     return this.auth.getDisplayName();
   }
   get roleLabel() {
-    return this.auth.getCurrentUser()?.role === "ADMIN" ? "Administrator" : "Billing Manager";
+    const role = this.auth.getCurrentUser()?.role;
+    return role === "ADMIN" ? this.locale.t("administrator") : this.locale.t("billingManager");
   }
   openPowerApps() {
     window.open(this.POWERAPPS_URL, "_blank", "width=950,height=700,noopener,noreferrer");
@@ -465,7 +476,7 @@ var SidebarComponent = class _SidebarComponent {
   }
   static {
     this.\u0275fac = function SidebarComponent_Factory(t) {
-      return new (t || _SidebarComponent)(\u0275\u0275directiveInject(AuthService));
+      return new (t || _SidebarComponent)(\u0275\u0275directiveInject(AuthService), \u0275\u0275directiveInject(LocaleService));
     };
   }
   static {
@@ -500,7 +511,7 @@ var SidebarComponent = class _SidebarComponent {
         \u0275\u0275elementStart(19, "div", 14)(20, "a", 15)(21, "mat-icon", 11);
         \u0275\u0275text(22, "settings");
         \u0275\u0275elementEnd();
-        \u0275\u0275template(23, SidebarComponent_span_23_Template, 2, 0, "span", 12);
+        \u0275\u0275template(23, SidebarComponent_span_23_Template, 2, 1, "span", 12);
         \u0275\u0275elementEnd();
         \u0275\u0275element(24, "div", 16);
         \u0275\u0275template(25, SidebarComponent_div_25_Template, 2, 0, "div", 5)(26, SidebarComponent_div_26_Template, 8, 3, "div", 17);
@@ -535,7 +546,7 @@ var SidebarComponent = class _SidebarComponent {
         \u0275\u0275advance();
         \u0275\u0275property("ngIf", !ctx.collapsed);
         \u0275\u0275advance(2);
-        \u0275\u0275property("routerLink", "/settings")("matRippleColor", "rgba(255,255,255,0.08)")("matTooltip", ctx.collapsed ? "Settings" : "");
+        \u0275\u0275property("routerLink", "/settings")("matRippleColor", "rgba(255,255,255,0.08)")("matTooltip", ctx.collapsed ? ctx.locale.t("settings") : "");
         \u0275\u0275advance(3);
         \u0275\u0275property("ngIf", !ctx.collapsed);
         \u0275\u0275advance(2);
@@ -551,7 +562,7 @@ var SidebarComponent = class _SidebarComponent {
   }
 };
 (() => {
-  (typeof ngDevMode === "undefined" || ngDevMode) && \u0275setClassDebugInfo(SidebarComponent, { className: "SidebarComponent", filePath: "src\\app\\shared\\sidebar\\sidebar.component.ts", lineNumber: 24 });
+  (typeof ngDevMode === "undefined" || ngDevMode) && \u0275setClassDebugInfo(SidebarComponent, { className: "SidebarComponent", filePath: "src\\app\\shared\\sidebar\\sidebar.component.ts", lineNumber: 25 });
 })();
 
 // src/app/shared/layout/layout.component.ts
@@ -607,7 +618,7 @@ var LayoutComponent = class _LayoutComponent {
 
 // src/app/app.routes.ts
 var routes = [
-  { path: "login", loadComponent: () => import("./chunk-HR75IRAL.js").then((m) => m.LoginComponent) },
+  { path: "login", loadComponent: () => import("./chunk-VHVLSPLU.js").then((m) => m.LoginComponent) },
   {
     path: "",
     component: LayoutComponent,
@@ -616,36 +627,36 @@ var routes = [
       { path: "", redirectTo: "dashboard", pathMatch: "full" },
       {
         path: "dashboard",
-        loadComponent: () => import("./chunk-6E5OB2BE.js").then((m) => m.DashboardComponent)
+        loadComponent: () => import("./chunk-GNS6B2AL.js").then((m) => m.DashboardComponent)
       },
       {
         path: "invoices",
-        loadComponent: () => import("./chunk-JOXBWQ67.js").then((m) => m.InvoiceListComponent)
+        loadComponent: () => import("./chunk-QYPKTWPF.js").then((m) => m.InvoiceListComponent)
       },
       {
         path: "invoices/:id",
-        loadComponent: () => import("./chunk-V5OMTLPO.js").then((m) => m.InvoiceDetailComponent)
+        loadComponent: () => import("./chunk-F7DZJIY4.js").then((m) => m.InvoiceDetailComponent)
       },
       {
         path: "clients",
-        loadComponent: () => import("./chunk-64MANCVU.js").then((m) => m.ClientsComponent)
+        loadComponent: () => import("./chunk-O7RUNTO5.js").then((m) => m.ClientsComponent)
       },
       {
         path: "alerts",
-        loadComponent: () => import("./chunk-ISLQXI6O.js").then((m) => m.AlertsComponent)
+        loadComponent: () => import("./chunk-VCDKIIKY.js").then((m) => m.AlertsComponent)
       },
       {
         path: "reports",
-        loadComponent: () => import("./chunk-XDOR75AV.js").then((m) => m.ReportsComponent)
+        loadComponent: () => import("./chunk-F2HONUOH.js").then((m) => m.ReportsComponent)
       },
       {
         path: "user-management",
         canActivate: [adminGuard],
-        loadComponent: () => import("./chunk-MCYSOTJK.js").then((m) => m.UserManagementComponent)
+        loadComponent: () => import("./chunk-XQURCG35.js").then((m) => m.UserManagementComponent)
       },
       {
         path: "settings",
-        loadComponent: () => import("./chunk-PHDVZKI6.js").then((m) => m.SettingsComponent)
+        loadComponent: () => import("./chunk-HK66DQTQ.js").then((m) => m.SettingsComponent)
       }
     ]
   },

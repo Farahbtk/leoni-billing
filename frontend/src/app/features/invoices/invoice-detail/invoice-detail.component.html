@@ -51,7 +51,7 @@
         <div class="info-item">
           <span class="info-label">Amount</span>
           <span class="info-value fw-600 amount">
-            {{ inv.amount | currency:'EUR':'symbol':'1.0-0' }}
+            {{ inv.amount | currency:locale.currency:'symbol':'1.0-0' }}
           </span>
         </div>
         <div class="info-item">

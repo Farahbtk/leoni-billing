@@ -1,7 +1,0 @@
-{
-  "version": 3,
-  "sources": ["src/app/features/alerts/alerts.component.ts", "src/app/features/alerts/alerts.component.html"],
-  "sourcesContent": ["import { Component } from '@angular/core';\r\n\r\n@Component({\r\n  selector: 'app-alerts',\r\n  standalone: true,\r\n  imports: [],\r\n  templateUrl: './alerts.component.html',\r\n  styleUrls: ['./alerts.component.scss']\r\n})\r\nexport class AlertsComponent {}\r\n", "<iframe\r\n  src=\"assets/leoni_ml_dashboard_v2.html\"\r\n  style=\"width:100%; height:100vh; border:none; display:block;\">\r\n</iframe>\r\n"],
-  "mappings": ";;;;;;;;;AASM,IAAO,kBAAP,MAAO,iBAAe;;;uBAAf,kBAAe;IAAA;EAAA;;yEAAf,kBAAe,WAAA,CAAA,CAAA,YAAA,CAAA,GAAA,YAAA,MAAA,UAAA,CAAA,6BAAA,GAAA,OAAA,GAAA,MAAA,GAAA,QAAA,CAAA,CAAA,OAAA,yEAAA,GAAA,SAAA,QAAA,UAAA,SAAA,UAAA,QAAA,WAAA,OAAA,CAAA,GAAA,UAAA,SAAA,yBAAA,IAAA,KAAA;AAAA,UAAA,KAAA,GAAA;ACT5B,QAAA,oBAAA,GAAA,UAAA,CAAA;;;;;;6EDSa,iBAAe,EAAA,WAAA,mBAAA,UAAA,mDAAA,YAAA,GAAA,CAAA;AAAA,GAAA;",
-  "names": []
-}
