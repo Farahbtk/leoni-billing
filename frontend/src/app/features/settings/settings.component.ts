@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule, FormsModule, FormBuilder, FormGroup, Validators, AbstractControl, ValidationErrors } from '@angular/forms';
 import { MatTabsModule } from '@angular/material/tabs';
@@ -40,10 +40,14 @@ function passwordMatchValidator(group: AbstractControl): ValidationErrors | null
   styleUrls: ['./settings.component.scss']
 })
 export class SettingsComponent implements OnInit {
+  @ViewChild('photoInput') photoInput!: ElementRef<HTMLInputElement>;
+
   isAdmin = false;
   profile: UserProfile | null = null;
   loadingProfile = true;
   savingProfile = false;
+
+  profilePhoto: string | null = null;
 
   healthStatus: HealthStatus | null = null;
   loadingHealth = false;
@@ -94,6 +98,7 @@ export class SettingsComponent implements OnInit {
   ngOnInit(): void {
     this.isAdmin = this.auth.isAdmin();
     this.buildForms();
+    try { this.profilePhoto = localStorage.getItem('userProfilePhoto'); } catch {}
     this.loadProfile();
     this.loadNotificationPrefs();
     this.loadAppearancePrefs();
@@ -155,6 +160,30 @@ export class SettingsComponent implements OnInit {
         this.snack.open(err.error?.message ?? 'Failed to update profile', 'Close', { duration: 4000 });
       }
     });
+  }
+
+  pickPhoto(): void {
+    this.photoInput.nativeElement.click();
+  }
+
+  onPhotoSelected(event: Event): void {
+    const file = (event.target as HTMLInputElement).files?.[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      const base64 = e.target?.result as string;
+      this.profilePhoto = base64;
+      try { localStorage.setItem('userProfilePhoto', base64); } catch {}
+      window.dispatchEvent(new CustomEvent('profilePhotoChanged', { detail: base64 }));
+    };
+    reader.readAsDataURL(file);
+  }
+
+  removePhoto(): void {
+    this.profilePhoto = null;
+    try { localStorage.removeItem('userProfilePhoto'); } catch {}
+    if (this.photoInput) this.photoInput.nativeElement.value = '';
+    window.dispatchEvent(new CustomEvent('profilePhotoChanged', { detail: null }));
   }
 
   get initials(): string {

@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import { Component, EventEmitter, Input, OnDestroy, OnInit, Output } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule, RouterLinkActive } from '@angular/router';
 import { MatIconModule } from '@angular/material/icon';
@@ -22,15 +22,23 @@ interface NavItem {
   templateUrl: './sidebar.component.html',
   styleUrls: ['./sidebar.component.scss']
 })
-export class SidebarComponent implements OnInit {
+export class SidebarComponent implements OnInit, OnDestroy {
   @Input()  collapsed = false;
   @Output() collapseToggle = new EventEmitter<void>();
 
   navItems: NavItem[] = [];
+  profilePhoto: string | null = null;
+
+  private readonly photoListener = (e: Event) => {
+    this.profilePhoto = (e as CustomEvent).detail as string | null;
+  };
 
   constructor(public auth: AuthService, public locale: LocaleService) {}
 
   ngOnInit(): void {
+    try { this.profilePhoto = localStorage.getItem('userProfilePhoto'); } catch {}
+    window.addEventListener('profilePhotoChanged', this.photoListener);
+
     const isAdmin = this.auth.isAdmin();
 
     const all: NavItem[] = [
@@ -43,6 +51,10 @@ export class SidebarComponent implements OnInit {
     ];
 
     this.navItems = all.filter(item => !item.adminOnly || isAdmin);
+  }
+
+  ngOnDestroy(): void {
+    window.removeEventListener('profilePhotoChanged', this.photoListener);
   }
 
   get displayName(): string {

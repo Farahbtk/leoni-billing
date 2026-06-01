@@ -224,6 +224,11 @@
     font-weight: 700;
     color: #fff;
     flex-shrink: 0;
+
+    &.avatar-img {
+      object-fit: cover;
+      background: none;
+    }
   }
 
   .user-details {

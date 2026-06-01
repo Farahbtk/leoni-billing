@@ -28,7 +28,17 @@
           <!-- Avatar + form -->
           <div class="profile-layout">
             <div class="avatar-section">
-              <div class="profile-avatar">{{ initials }}</div>
+              <div class="avatar-wrapper" (click)="pickPhoto()">
+                <img *ngIf="profilePhoto" [src]="profilePhoto" class="avatar-photo" alt="Profile photo">
+                <div *ngIf="!profilePhoto" class="profile-avatar">{{ initials }}</div>
+                <div class="avatar-overlay">
+                  <mat-icon>photo_camera</mat-icon>
+                </div>
+              </div>
+              <button *ngIf="profilePhoto" mat-button class="avatar-remove" (click)="$event.stopPropagation(); removePhoto()">
+                <mat-icon>close</mat-icon> Remove
+              </button>
+              <input #photoInput type="file" accept="image/*" style="display:none" (change)="onPhotoSelected($event)">
               <div class="avatar-name" *ngIf="profile">{{ profile.firstName }} {{ profile.lastName }}</div>
               <div class="avatar-role" *ngIf="profile">{{ profile.role === 'ADMIN' ? 'Administrator' : 'Billing Manager' }}</div>
             </div>
