@@ -1,0 +1,723 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>LEONI ML Risk Alerts</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Barlow:wght@300;400;500;600;700&family=Barlow+Condensed:wght@600;700&display=swap');
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:'Barlow',sans-serif;background:#0a1628;min-height:100vh;overflow-x:hidden;}
+
+.app{position:relative;z-index:2;padding:24px 32px;}
+
+/* HEADER */
+.header{display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;padding-bottom:16px;border-bottom:1px solid rgba(255,255,255,0.08);}
+.header-left h1{font-family:'Barlow Condensed',sans-serif;font-size:28px;font-weight:700;color:white;text-transform:uppercase;letter-spacing:0.5px;}
+.header-left p{font-size:12px;color:rgba(255,255,255,0.4);margin-top:3px;}
+.run-btn{background:#e53e3e;color:white;border:none;padding:10px 20px;border-radius:8px;font-family:'Barlow',sans-serif;font-size:13px;font-weight:600;cursor:pointer;display:flex;align-items:center;gap:8px;box-shadow:0 4px 16px rgba(229,62,62,0.4);transition:all 0.2s;}
+.run-btn:hover{background:#c53030;transform:translateY(-1px);}
+.run-btn:disabled{opacity:0.5;cursor:not-allowed;transform:none;}
+
+/* FILTER BAR */
+.filter-bar{display:flex;align-items:center;gap:8px;margin-bottom:18px;flex-wrap:wrap;overflow:visible;}
+.bu-btn{display:flex;align-items:center;gap:6px;background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.1);border-radius:20px;padding:6px 14px 6px 8px;cursor:pointer;transition:all 0.2s;color:rgba(255,255,255,0.6);font-family:'Barlow',sans-serif;font-size:12px;font-weight:500;white-space:nowrap;overflow:visible !important;}
+.bu-btn:hover{background:rgba(255,255,255,0.09);border-color:rgba(255,255,255,0.22);color:rgba(255,255,255,0.85);}
+.bu-btn.active{background:rgba(59,130,246,0.14);border-color:#3b82f6;color:white;}
+.bu-count{font-size:10px;color:rgba(255,255,255,0.35);font-weight:400;margin-left:1px;}
+.bu-btn.active .bu-count{color:rgba(147,197,253,0.65);}
+.filter-sep{width:1px;height:20px;background:rgba(255,255,255,0.08);flex-shrink:0;}
+.search-wrap{margin-left:auto;position:relative;display:flex;align-items:center;}
+.search-icon{position:absolute;left:11px;pointer-events:none;opacity:0.35;}
+.search-input{background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.1);border-radius:20px;padding:6px 14px 6px 32px;color:white;font-family:'Barlow',sans-serif;font-size:12px;outline:none;width:210px;transition:border-color 0.2s;}
+.search-input:focus{border-color:rgba(59,130,246,0.5);background:rgba(255,255,255,0.07);}
+.search-input::placeholder{color:rgba(255,255,255,0.22);}
+
+/* KPI CARDS */
+.kpi-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:22px;}
+.kpi-card{background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.1);border-radius:12px;padding:18px 20px;position:relative;overflow:hidden;transition:transform 0.2s;backdrop-filter:blur(8px);}
+.kpi-card:hover{transform:translateY(-2px);}
+.kpi-card::after{content:'';position:absolute;bottom:0;left:0;right:0;height:3px;border-radius:0 0 12px 12px;}
+.kpi-card.red::after{background:#ef4444;}.kpi-card.orange::after{background:#f97316;}.kpi-card.gold::after{background:#f59e0b;}.kpi-card.blue::after{background:#3b82f6;}
+.kpi-label{font-size:10px;color:rgba(255,255,255,0.4);text-transform:uppercase;letter-spacing:1.2px;margin-bottom:8px;}
+.kpi-value{font-family:'Barlow Condensed',sans-serif;font-size:38px;font-weight:700;line-height:1;}
+.kpi-card.red .kpi-value{color:#fca5a5;}.kpi-card.orange .kpi-value{color:#fdba74;}.kpi-card.gold .kpi-value{color:#fcd34d;}.kpi-card.blue .kpi-value{color:#93c5fd;}
+.kpi-sub{font-size:11px;margin-top:5px;}
+.kpi-card.red .kpi-sub{color:#fca5a5;}.kpi-card.orange .kpi-sub{color:#fdba74;}.kpi-card.gold .kpi-sub{color:#fcd34d;}.kpi-card.blue .kpi-sub{color:#93c5fd;}
+
+/* MAIN GRID */
+.main-grid{display:grid;grid-template-columns:1fr 280px;gap:16px;}
+
+/* TABLE CARD */
+.table-card{background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.09);border-radius:12px;padding:20px;backdrop-filter:blur(8px);}
+.card-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;}
+.card-title{font-family:'Barlow Condensed',sans-serif;font-size:14px;font-weight:600;color:rgba(255,255,255,0.85);text-transform:uppercase;letter-spacing:1px;}
+.badge-count{background:rgba(239,68,68,0.2);color:#fca5a5;border:1px solid rgba(239,68,68,0.3);padding:3px 10px;border-radius:20px;font-size:11px;font-weight:700;}
+table{width:100%;border-collapse:collapse;}
+th{font-size:9px;color:rgba(255,255,255,0.3);text-transform:uppercase;letter-spacing:1px;padding:0 8px 10px 0;text-align:left;border-bottom:1px solid rgba(255,255,255,0.07);}
+.alert-row td{padding:11px 8px 11px 0;font-size:12px;color:rgba(255,255,255,0.75);border-bottom:1px solid rgba(255,255,255,0.04);vertical-align:middle;}
+.alert-row:last-child td{border-bottom:none;}
+.alert-row:hover td{background:rgba(255,255,255,0.02);}
+.inv-num{font-size:11px;color:rgba(255,255,255,0.4);font-family:monospace;}
+.client-cell{display:flex;align-items:center;gap:8px;}
+.client-avatar{width:28px;height:28px;border-radius:50%;background:linear-gradient(135deg,#ef4444,#7c3aed);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:white;flex-shrink:0;}
+.client-name{font-weight:600;color:white;max-width:160px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.amount-col{font-weight:600;color:rgba(255,255,255,0.9);}
+.score-cell{display:flex;align-items:center;gap:8px;}
+.risk-bar{width:60px;height:5px;background:rgba(255,255,255,0.1);border-radius:3px;overflow:hidden;flex-shrink:0;}
+.bar-fill{height:100%;background:linear-gradient(90deg,#f97316,#ef4444);border-radius:3px;}
+.score-num{font-size:12px;font-weight:700;color:#fca5a5;min-width:32px;}
+.nb-fac{font-size:12px;color:rgba(255,255,255,0.5);}
+.review-btn{font-size:10px;color:rgba(255,255,255,0.4);background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.1);padding:4px 10px;border-radius:5px;cursor:pointer;transition:all 0.2s;white-space:nowrap;}
+.review-btn:hover{border-color:#22c55e;color:#86efac;}
+
+/* PAYMENT BADGE */
+.pay-badge{display:inline-flex;align-items:center;gap:4px;padding:3px 9px;border-radius:12px;font-size:10px;font-weight:600;white-space:nowrap;}
+.pay-badge.non{background:#4a1414;color:#f87171;}
+.pay-badge.surveiller{background:#4a3814;color:#fbbf24;}
+.pay-badge.oui{background:#1a3a24;color:#4ade80;}
+
+/* ACTION CELL */
+.action-cell{display:flex;align-items:center;gap:6px;flex-wrap:nowrap;}
+
+/* SHAP BUTTON */
+.shap-btn{font-size:10px;color:#60a5fa;background:#1e3a5f;border:1px solid #2d5a8e;padding:4px 10px;border-radius:5px;cursor:pointer;transition:all 0.2s;white-space:nowrap;}
+.shap-btn:hover{border-color:#60a5fa;color:white;}
+
+/* RISK FILTER BAR — Correction 1 */
+.risk-filter-bar{display:flex;align-items:center;gap:8px;margin-bottom:14px;flex-wrap:wrap;}
+.risk-btn{background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.12);border-radius:16px;padding:5px 13px;cursor:pointer;transition:all 0.2s;color:rgba(255,255,255,0.55);font-family:'Barlow',sans-serif;font-size:11px;font-weight:500;white-space:nowrap;}
+.risk-btn:hover{background:rgba(255,255,255,0.09);border-color:rgba(255,255,255,0.22);color:rgba(255,255,255,0.85);}
+.risk-btn.active{background:rgba(255,255,255,0.1);border-color:rgba(255,255,255,0.3);color:white;}
+.risk-btn.risk-red.active{background:rgba(239,68,68,0.15);border-color:rgba(239,68,68,0.6);color:#fca5a5;}
+.risk-btn.risk-amber.active{background:rgba(251,191,36,0.12);border-color:rgba(251,191,36,0.55);color:#fbbf24;}
+.risk-btn.risk-green.active{background:rgba(34,197,94,0.14);border-color:rgba(34,197,94,0.55);color:#86efac;}
+
+/* SHAP MODAL */
+.modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.72);z-index:3000;align-items:center;justify-content:center;}
+.modal-overlay.show{display:flex;}
+.modal-container{background:#1a1f33;border:1px solid rgba(255,255,255,0.1);border-radius:12px;max-width:550px;width:90%;padding:24px;box-shadow:0 24px 60px rgba(0,0,0,0.5);}
+.modal-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:18px;}
+.modal-title{font-family:'Barlow Condensed',sans-serif;font-size:16px;font-weight:700;color:white;letter-spacing:0.5px;}
+.modal-close{background:none;border:none;color:rgba(255,255,255,0.4);cursor:pointer;font-size:20px;line-height:1;padding:2px 6px;border-radius:4px;transition:color 0.15s;}
+.modal-close:hover{color:white;}
+.shap-chart-wrap{background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.07);border-radius:8px;padding:16px 10px;overflow-x:auto;}
+.shap-explanation{font-size:11px;color:rgba(255,255,255,0.4);margin-top:14px;line-height:1.6;border-top:1px solid rgba(255,255,255,0.06);padding-top:12px;}
+
+/* RIGHT PANEL */
+.right-panel{display:flex;flex-direction:column;gap:14px;}
+.panel-card{background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.09);border-radius:12px;padding:18px;backdrop-filter:blur(8px);}
+
+/* DONUT */
+.donut-wrap{display:flex;flex-direction:column;align-items:center;gap:14px;}
+.legend{width:100%;}
+.legend-item{display:flex;align-items:center;justify-content:space-between;padding:8px 0;border-bottom:1px solid rgba(255,255,255,0.05);}
+.legend-item:last-child{border-bottom:none;}
+.legend-left{display:flex;align-items:center;gap:8px;font-size:13px;color:rgba(255,255,255,0.65);}
+.legend-dot{width:9px;height:9px;border-radius:50%;}
+.legend-val{font-family:'Barlow Condensed',sans-serif;font-size:20px;font-weight:700;}
+
+/* MODEL STATS */
+.model-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;}
+.model-stat{background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.07);border-radius:8px;padding:10px;text-align:center;}
+.model-val{font-family:'Barlow Condensed',sans-serif;font-size:20px;font-weight:700;color:#93c5fd;}
+.model-lbl{font-size:9px;color:rgba(255,255,255,0.3);text-transform:uppercase;letter-spacing:0.8px;margin-top:2px;}
+
+/* ACTIONS */
+.action-item{border-radius:8px;padding:11px;margin-bottom:8px;}
+.action-item:last-child{margin-bottom:0;}
+.action-item.red{background:rgba(239,68,68,0.08);border:1px solid rgba(239,68,68,0.2);}
+.action-item.orange{background:rgba(249,115,22,0.08);border:1px solid rgba(249,115,22,0.2);}
+.action-item.green{background:rgba(34,197,94,0.08);border:1px solid rgba(34,197,94,0.2);}
+.action-title{font-size:12px;font-weight:600;margin-bottom:3px;}
+.action-item.red .action-title{color:#fca5a5;}.action-item.orange .action-title{color:#fdba74;}.action-item.green .action-title{color:#86efac;}
+.action-desc{font-size:10px;color:rgba(255,255,255,0.4);line-height:1.5;}
+
+/* LOADING */
+.loading{display:none;position:fixed;inset:0;background:rgba(5,15,40,0.92);z-index:1000;align-items:center;justify-content:center;flex-direction:column;gap:16px;}
+.loading.show{display:flex;}
+.spinner{width:42px;height:42px;border:3px solid rgba(255,255,255,0.08);border-top-color:#e53e3e;border-radius:50%;animation:spin 0.8s linear infinite;}
+@keyframes spin{to{transform:rotate(360deg);}}
+.loading-text{font-size:14px;color:rgba(255,255,255,0.45);}
+
+/* TOAST */
+.toast{position:fixed;bottom:24px;right:24px;background:#1e293b;border:1px solid rgba(239,68,68,0.4);color:#fca5a5;padding:12px 18px;border-radius:8px;font-size:13px;z-index:2000;display:none;max-width:340px;line-height:1.5;}
+.toast.show{display:block;}
+</style>
+</head>
+<body>
+
+<div class="app">
+
+  <!-- HEADER -->
+  <div class="header">
+    <div class="header-left">
+      <h1>🚨 ML Risk Alerts <span style="font-size:13px;font-weight:400;color:rgba(255,255,255,0.35);margin-left:12px;text-transform:none;">LightGBM v1 · AUC 0.796 · Avril 2026</span></h1>
+      <p id="header-subtitle">104 clients analysés · Seuil d'alerte : 0.35 · Généré le 19/05/2026</p>
+    </div>
+    <button class="run-btn" id="refresh-btn" onclick="refreshAlerts()">
+      ⟳ Refresh Alerts
+    </button>
+  </div>
+
+  <!-- FILTER BAR — BU (Correction 3: onclick passes string names, not numeric IDs) -->
+  <div class="filter-bar">
+    <button class="bu-btn active" id="btn-all" onclick="setBuFilter('all')">
+      Tous <span class="bu-count" id="cnt-all"></span>
+    </button>
+    <div class="filter-sep"></div>
+    <button class="bu-btn" id="btn-510" onclick="setBuFilter('Stellantis')">
+      <div style="width:24px;height:24px;border-radius:50%;background:#1e3a8a;display:flex;align-items:center;justify-content:center;font-size:9px;font-weight:700;color:white;flex-shrink:0;">ST</div>
+      Stellantis <span class="bu-count" id="cnt-510"></span>
+    </button>
+    <button class="bu-btn" id="btn-520" onclick="setBuFilter('Renault')">
+      <div style="width:24px;height:24px;border-radius:50%;background:#ef4444;display:flex;align-items:center;justify-content:center;font-size:9px;font-weight:700;color:white;flex-shrink:0;">RN</div>
+      Renault <span class="bu-count" id="cnt-520"></span>
+    </button>
+    <button class="bu-btn" id="btn-440" onclick="setBuFilter('OEM')">
+      <div style="width:24px;height:24px;border-radius:50%;background:#6d28d9;display:flex;align-items:center;justify-content:center;font-size:9px;font-weight:700;color:white;flex-shrink:0;">OE</div>
+      OEM <span class="bu-count" id="cnt-440"></span>
+    </button>
+    <button class="bu-btn" id="btn-630" onclick="setBuFilter('Volvo')">
+      <div style="width:24px;height:24px;border-radius:50%;background:#0369a1;display:flex;align-items:center;justify-content:center;font-size:9px;font-weight:700;color:white;flex-shrink:0;">VV</div>
+      Volvo <span class="bu-count" id="cnt-630"></span>
+    </button>
+    <div class="search-wrap">
+      <svg class="search-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5">
+        <circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/>
+      </svg>
+      <input class="search-input" id="search-input" type="text"
+             placeholder="Rechercher un client..."
+             oninput="setSearch(this.value)">
+    </div>
+  </div>
+
+  <!-- KPI CARDS -->
+  <div class="kpi-grid">
+    <div class="kpi-card red">
+      <div class="kpi-label">Risque Élevé</div>
+      <div class="kpi-value" id="kpi-high">—</div>
+      <div class="kpi-sub">⚠️ Action immédiate requise</div>
+    </div>
+    <div class="kpi-card orange">
+      <div class="kpi-label">Montant à Risque</div>
+      <div class="kpi-value" id="kpi-amount">—</div>
+      <div class="kpi-sub">💰 Clients ÉLEVÉ uniquement</div>
+    </div>
+    <div class="kpi-card gold">
+      <div class="kpi-label">Prob. Moyenne</div>
+      <div class="kpi-value" id="kpi-prob">—</div>
+      <div class="kpi-sub">📊 Clients ÉLEVÉ</div>
+    </div>
+    <div class="kpi-card blue">
+      <div class="kpi-label">Total Clients</div>
+      <div class="kpi-value" id="kpi-clients">—</div>
+      <div class="kpi-sub" id="kpi-clients-sub">🟢 — Faible · 🟠 — Moyen</div>
+    </div>
+  </div>
+
+  <!-- MAIN GRID -->
+  <div class="main-grid">
+    <div class="table-card">
+      <div class="card-header">
+        <!-- Correction 1: new title -->
+        <div class="card-title">📋 TOUS LES CLIENTS ANALYSÉS</div>
+        <span class="badge-count" id="badge-count">— clients</span>
+      </div>
+
+      <!-- Correction 1: risk-level filter buttons above the table -->
+      <div class="risk-filter-bar">
+        <button class="risk-btn active" id="rbtn-all" onclick="setRiskFilter('all')">📋 Tous</button>
+        <button class="risk-btn risk-red" id="rbtn-ELEVE" onclick="setRiskFilter('ELEVE')">🔴 Risque Élevé</button>
+        <button class="risk-btn risk-amber" id="rbtn-SURVEILLER" onclick="setRiskFilter('SURVEILLER')">🟡 À Surveiller</button>
+        <button class="risk-btn risk-green" id="rbtn-FAIBLE" onclick="setRiskFilter('FAIBLE')">🟢 Faible Risque</button>
+      </div>
+
+      <table>
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>CLIENT</th>
+            <th style="color:#f4c97a">PAIEMENT À TEMPS</th>
+            <th>MONTANT</th>
+            <th>RISK SCORE</th>
+            <th>NB FACTURES</th>
+            <th>ACTION</th>
+          </tr>
+        </thead>
+        <!-- Correction 3: tbody is fully JS-driven — no static rows -->
+        <tbody id="alerts-tbody"></tbody>
+      </table>
+    </div>
+
+    <div class="right-panel">
+      <div class="panel-card">
+        <div class="card-title" style="margin-bottom:14px;">📈 Répartition</div>
+        <div class="donut-wrap">
+          <svg width="130" height="130" viewBox="0 0 130 130" style="transform:rotate(-90deg)">
+            <circle cx="65" cy="65" r="48" fill="none" stroke="rgba(255,255,255,0.05)" stroke-width="16"/>
+            <circle id="donut-low"  cx="65" cy="65" r="48" fill="none" stroke="#22c55e" stroke-width="16" stroke-dasharray="89 213"  stroke-dashoffset="0"    opacity="0.85"/>
+            <circle id="donut-med"  cx="65" cy="65" r="48" fill="none" stroke="#f97316" stroke-width="16" stroke-dasharray="61 213"  stroke-dashoffset="-89"  opacity="0.85"/>
+            <circle id="donut-high" cx="65" cy="65" r="48" fill="none" stroke="#ef4444" stroke-width="16" stroke-dasharray="168 213" stroke-dashoffset="-150" opacity="0.85"/>
+          </svg>
+          <div class="legend">
+            <div class="legend-item"><div class="legend-left"><div class="legend-dot" style="background:#ef4444"></div>Élevé</div><div class="legend-val" style="color:#fca5a5" id="legend-high">—</div></div>
+            <div class="legend-item"><div class="legend-left"><div class="legend-dot" style="background:#f97316"></div>Moyen</div><div class="legend-val" style="color:#fdba74" id="legend-med">—</div></div>
+            <div class="legend-item"><div class="legend-left"><div class="legend-dot" style="background:#22c55e"></div>Faible</div><div class="legend-val" style="color:#86efac" id="legend-low">—</div></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="panel-card">
+        <div class="card-title" style="margin-bottom:14px;">🤖 Modèle ML</div>
+        <div class="model-grid">
+          <div class="model-stat"><div class="model-val">0.796</div><div class="model-lbl">AUC-ROC</div></div>
+          <div class="model-stat"><div class="model-val">0.835</div><div class="model-lbl">F1-Score</div></div>
+          <div class="model-stat"><div class="model-val">87.3%</div><div class="model-lbl">Précision</div></div>
+          <div class="model-stat"><div class="model-val">80%</div><div class="model-lbl">Recall</div></div>
+          <div class="model-stat"><div class="model-val">436</div><div class="model-lbl">Arbres</div></div>
+          <div class="model-stat"><div class="model-val">19</div><div class="model-lbl">Features</div></div>
+        </div>
+      </div>
+
+      <div class="panel-card">
+        <div class="card-title" style="margin-bottom:12px;">📋 Actions</div>
+        <div class="action-item red">
+          <div class="action-title" id="action-high">🔴 ÉLEVÉ — — clients</div>
+          <div class="action-desc">Contacter immédiatement. Relance formelle. Alerter direction commerciale.</div>
+        </div>
+        <div class="action-item orange">
+          <div class="action-title" id="action-med">🟠 MOYEN — — clients</div>
+          <div class="action-desc">Surveiller. Relance préventive douce.</div>
+        </div>
+        <div class="action-item green">
+          <div class="action-title" id="action-low">🟢 FAIBLE — — clients</div>
+          <div class="action-desc">Comportement normal. Aucune action requise.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="loading" id="loading">
+  <div class="spinner"></div>
+  <div class="loading-text" id="loading-text">Exécution LightGBM v1...</div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<!-- SHAP MODAL -->
+<div class="modal-overlay" id="shapModal" onclick="handleOverlayClick(event)">
+  <div class="modal-container" id="modal-container">
+    <div class="modal-header">
+      <div class="modal-title" id="modal-title">🔍 Interprétation SHAP</div>
+      <button class="modal-close" onclick="closeShap()">✕</button>
+    </div>
+    <div class="shap-chart-wrap">
+      <div id="shapChartArea"></div>
+    </div>
+    <p class="shap-explanation" id="shapExplanation"></p>
+  </div>
+</div>
+
+<script>
+// ── State ──────────────────────────────────────────────────────────────────
+let allData          = [];
+let currentBuFilter  = 'all';   // 'all' | 'Stellantis' | 'Renault' | 'OEM' | 'Volvo'
+let currentRiskFilter = 'all';  // 'all' | 'ELEVE' | 'SURVEILLER' | 'FAIBLE'
+let currentSearch    = '';
+
+// ── Static demo data (Correction 1 + 3) ───────────────────────────────────
+// Each client: { id, name, score (0-1 float), amount (raw €), nbFac, bu, risque }
+// BU strings must match the setBuFilter() argument and updateBuCounts() keys exactly.
+const staticData = [
+  // ── ÉLEVÉ (score >= 0.60) — badge ❌ NON ──────────────────────────────
+  { id:1,  name:'AMPERE ELECTRICITY',           score:0.95, amount:12900000, nbFac:148,  bu:'OEM',        risque:'ELEVE'  },
+  { id:2,  name:'PCA SLOVAQUIA',                score:0.94, amount:21900000, nbFac:316,  bu:'Stellantis', risque:'ELEVE'  },
+  { id:3,  name:'OPEL AUTOMOBILE GMBH',         score:0.94, amount:2900000,  nbFac:9316, bu:'Stellantis', risque:'ELEVE'  },
+  { id:4,  name:'DACIA AUTOMOBILE',             score:0.91, amount:19000000, nbFac:110,  bu:'Renault',    risque:'ELEVE'  },
+  { id:5,  name:'NISSAN MOTOR MANUFACTURING U', score:0.91, amount:4400000,  nbFac:92,   bu:'OEM',        risque:'ELEVE'  },
+  { id:6,  name:'STELLANTIS ESPAÑA, S.L.',      score:0.90, amount:8000000,  nbFac:1611, bu:'Stellantis', risque:'ELEVE'  },
+  { id:7,  name:'STELLANTIS AUTO SAS',          score:0.90, amount:5900000,  nbFac:514,  bu:'Stellantis', risque:'ELEVE'  },
+  { id:8,  name:'RENAULT - 4 44 (PROTO)',       score:0.88, amount:1500000,  nbFac:47,   bu:'Renault',    risque:'ELEVE'  },
+  { id:9,  name:'VOLVO CARS N.V.',              score:0.88, amount:1900000,  nbFac:80,   bu:'Volvo',      risque:'ELEVE'  },
+  { id:10, name:'VOLVO CAR CORPORATION',        score:0.85, amount:18237,    nbFac:44,   bu:'Volvo',      risque:'ELEVE'  },
+  // ── MOYEN (0.35 ≤ score < 0.60) — badge ⚠️ SURVEILLER ────────────────
+  { id:11, name:'PCA AUTOMOBILES',              score:0.48, amount:6200000,  nbFac:89,   bu:'Stellantis', risque:'MOYEN'  },
+  { id:12, name:'FAURECIA SE',                  score:0.52, amount:3800000,  nbFac:156,  bu:'OEM',        risque:'MOYEN'  },
+  { id:13, name:'FORD WERKE GMBH',              score:0.45, amount:9100000,  nbFac:201,  bu:'OEM',        risque:'MOYEN'  },
+  // ── FAIBLE (score < 0.35) — badge ✅ OUI ─────────────────────────────
+  { id:14, name:'VOLVO CARS NV',                score:0.22, amount:2100000,  nbFac:63,   bu:'Volvo',      risque:'FAIBLE' },
+  { id:15, name:'DACIA AUTOMOBILE SA',          score:0.18, amount:4500000,  nbFac:88,   bu:'Renault',    risque:'FAIBLE' },
+  { id:16, name:'RENAULT GROUP SA',             score:0.28, amount:7300000,  nbFac:142,  bu:'Renault',    risque:'FAIBLE' },
+];
+
+// ── SHAP Data ──────────────────────────────────────────────────────────────
+const FEATURES = ['DSO moyen', 'Retards antérieurs', 'Montant impayé', 'Nb factures', 'Délai paiement'];
+
+const shapDB = {
+  1:  { name:'AMPERE ELECTRICITY',           score:95, vals:[ 0.72,  0.54,  0.38,  0.21, -0.14] },
+  2:  { name:'PCA SLOVAQUIA',                score:94, vals:[ 0.68,  0.61,  0.42,  0.18, -0.10] },
+  3:  { name:'OPEL AUTOMOBILE GMBH',         score:94, vals:[ 0.65,  0.58,  0.35,  0.28, -0.08] },
+  4:  { name:'DACIA AUTOMOBILE',             score:91, vals:[ 0.70,  0.49,  0.30,  0.15, -0.19] },
+  5:  { name:'NISSAN MOTOR MANUFACTURING U', score:91, vals:[ 0.63,  0.55,  0.44,  0.22, -0.12] },
+  6:  { name:'STELLANTIS ESPAÑA, S.L.',      score:90, vals:[ 0.58,  0.62,  0.41,  0.25, -0.09] },
+  7:  { name:'STELLANTIS AUTO SAS',          score:90, vals:[ 0.61,  0.57,  0.38,  0.19, -0.16] },
+  8:  { name:'RENAULT - 4 44 (PROTO)',       score:88, vals:[ 0.55,  0.48,  0.36,  0.23, -0.21] },
+  9:  { name:'VOLVO CARS N.V.',              score:88, vals:[ 0.60,  0.52,  0.39,  0.17, -0.11] },
+  10: { name:'VOLVO CAR CORPORATION',        score:85, vals:[ 0.52,  0.45,  0.33,  0.20, -0.18] },
+  11: { name:'PCA AUTOMOBILES',              score:48, vals:[ 0.32,  0.28,  0.18,  0.12, -0.24] },
+  12: { name:'FAURECIA SE',                  score:52, vals:[ 0.35,  0.31,  0.20,  0.14, -0.22] },
+  13: { name:'FORD WERKE GMBH',              score:45, vals:[ 0.29,  0.25,  0.16,  0.10, -0.28] },
+  14: { name:'VOLVO CARS NV',               score:22, vals:[ 0.10,  0.08,  0.06,  0.04, -0.42] },
+  15: { name:'DACIA AUTOMOBILE SA',          score:18, vals:[ 0.08,  0.06,  0.05,  0.03, -0.48] },
+  16: { name:'RENAULT GROUP SA',             score:28, vals:[ 0.14,  0.10,  0.08,  0.05, -0.38] },
+};
+
+// ── SHAP Modal (Correction 2: fixed SVG layout) ────────────────────────────
+function openShap(id) {
+  // Look up pre-computed entry or fall back to score-based approximation
+  let d = shapDB[id];
+  if (!d) {
+    var client = allData.find(function(c){ return c.id === id; }) || {};
+    var s = client.score || 0.5;
+    d = {
+      name:  client.name  || 'Client ' + id,
+      score: Math.round(s * 100),
+      vals:  [
+        parseFloat((s * 0.80).toFixed(2)),
+        parseFloat((s * 0.62).toFixed(2)),
+        parseFloat((s * 0.40).toFixed(2)),
+        parseFloat((s * 0.24).toFixed(2)),
+        parseFloat((-s * 0.20).toFixed(2))
+      ]
+    };
+  }
+  document.getElementById('modal-title').textContent =
+    '🔍 SHAP — ' + d.name + ' (' + d.score + '%)';
+  document.getElementById('shapChartArea').innerHTML = buildShapSvg(d.vals);
+  document.getElementById('shapExplanation').textContent =
+    'Les barres rouges augmentent le risque de retard de paiement. ' +
+    'Les barres vertes le réduisent. ' +
+    'La largeur de chaque barre représente l\'importance relative de la feature dans la prédiction.';
+  document.getElementById('shapModal').classList.add('show');
+}
+
+function closeShap() {
+  document.getElementById('shapModal').classList.remove('show');
+}
+
+function handleOverlayClick(e) {
+  if (e.target === document.getElementById('shapModal')) closeShap();
+}
+
+// Correction 2: fixed layout — labels always LEFT of center, no overlap.
+// Layout per row:
+//   [label right-aligned at 138] | [cx=275] bars extend right(+) or left(-)
+//   Positive value: right of bar end → text-anchor="start" at cx+barW+7
+//   Negative value: right of center → text-anchor="start" at cx+7
+//   This ensures negative values never enter the label zone.
+function buildShapSvg(vals) {
+  var W = 460, rowH = 36, padT = 8, padB = 8;
+  var H = vals.length * rowH + padT + padB;
+  var cx = 275;        // center line x — must be > labelX + maxBarW
+  var maxBarW = 120;   // max bar width in px; cx - maxBarW = 155 > labelX(138)+gap ✓
+  var maxAbs = 0.01;
+  for (var k = 0; k < vals.length; k++) {
+    if (Math.abs(vals[k]) > maxAbs) maxAbs = Math.abs(vals[k]);
+  }
+  var scale = maxBarW / maxAbs;
+
+  var rows = '';
+  for (var i = 0; i < vals.length; i++) {
+    var v     = vals[i];
+    var y     = padT + i * rowH;
+    var barW  = Math.abs(v) * scale;
+    var barX  = v >= 0 ? cx : cx - barW;
+    var barY  = y + 10;
+    var textY = y + 23;
+    var color = v >= 0 ? '#ef4444' : '#22c55e';
+    var valTxt = (v > 0 ? '+' : '') + v.toFixed(2);
+    // Positive value → right of bar end; Negative value → right of center line
+    var valX  = v >= 0 ? (cx + barW + 7) : (cx + 7);
+
+    rows += '<text x="138" y="' + textY + '" text-anchor="end"' +
+      ' font-size="11" fill="rgba(255,255,255,0.6)" font-family="Barlow,sans-serif">' +
+      FEATURES[i] + '</text>';
+
+    rows += '<rect x="' + barX.toFixed(1) + '" y="' + barY + '"' +
+      ' width="' + Math.max(barW, 2).toFixed(1) + '" height="14"' +
+      ' rx="3" fill="' + color + '" opacity="0.85"/>';
+
+    rows += '<text x="' + valX.toFixed(1) + '" y="' + textY + '"' +
+      ' text-anchor="start" font-size="10" font-weight="600"' +
+      ' fill="' + color + '" font-family="Barlow,sans-serif">' + valTxt + '</text>';
+  }
+
+  return '<svg width="' + W + '" height="' + H + '"' +
+    ' viewBox="0 0 ' + W + ' ' + H + '"' +
+    ' style="overflow:visible;display:block;max-width:100%">' +
+    '<line x1="' + cx + '" y1="' + padT + '" x2="' + cx + '" y2="' + (H - padB) + '"' +
+    ' stroke="#6b7280" stroke-width="1" stroke-dasharray="4,4"/>' +
+    rows + '</svg>';
+}
+
+// ── Helpers ────────────────────────────────────────────────────────────────
+function markReviewed(btn) {
+  btn.textContent = '✓ Done';
+  btn.style.color = '#86efac';
+  btn.style.borderColor = 'rgba(34,197,94,0.3)';
+  btn.disabled = true;
+}
+
+function showToast(msg) {
+  var t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(function(){ t.classList.remove('show'); }, 5000);
+}
+
+function fmtAmount(val) {
+  var n = parseFloat(val) || 0;
+  if (n >= 1e6) return '€' + (n / 1e6).toFixed(1) + 'M';
+  if (n >= 1e3) return '€' + Math.round(n).toLocaleString('fr-FR');
+  return '€' + n.toFixed(0);
+}
+
+// Correction 1: badge based on score (0-1 float)
+function payBadge(score) {
+  if (score >= 0.60) return '<span class="pay-badge non">❌ NON</span>';
+  if (score >= 0.35) return '<span class="pay-badge surveiller">⚠️ SURVEILLER</span>';
+  return '<span class="pay-badge oui">✅ OUI</span>';
+}
+
+// ── Donut chart ────────────────────────────────────────────────────────────
+function updateDonut(high, med, low) {
+  var total = (high + med + low) || 1;
+  var C = 2 * Math.PI * 48;
+  var lowLen  = (low  / total) * C;
+  var medLen  = (med  / total) * C;
+  var highLen = (high / total) * C;
+
+  function setCircle(id, len, offset) {
+    var el = document.getElementById(id);
+    if (!el) return;
+    el.setAttribute('stroke-dasharray', len.toFixed(2) + ' ' + C.toFixed(2));
+    el.setAttribute('stroke-dashoffset', offset.toFixed(2));
+  }
+  setCircle('donut-low',  lowLen,  0);
+  setCircle('donut-med',  medLen,  -lowLen);
+  setCircle('donut-high', highLen, -(lowLen + medLen));
+
+  document.getElementById('legend-high').textContent = high;
+  document.getElementById('legend-med').textContent  = med;
+  document.getElementById('legend-low').textContent  = low;
+}
+
+// ── BU button counts — uses c.bu string (Correction 3) ────────────────────
+function updateBuCounts() {
+  document.getElementById('cnt-all').textContent = allData.length ? '· ' + allData.length : '';
+
+  var buMap = [['Stellantis','cnt-510'],['Renault','cnt-520'],['OEM','cnt-440'],['Volvo','cnt-630']];
+  buMap.forEach(function(pair) {
+    var bu = pair[0], elId = pair[1];
+    var count = allData.filter(function(c){ return c.bu === bu; }).length;
+    var el = document.getElementById(elId);
+    if (el) el.textContent = count ? '· ' + count : '';
+  });
+}
+
+// ── Filter setters ─────────────────────────────────────────────────────────
+// Correction 3: accepts BU name string, updates correct button IDs
+function setBuFilter(buName) {
+  currentBuFilter = buName;
+  var btnIds = {all:'btn-all', Stellantis:'btn-510', Renault:'btn-520', OEM:'btn-440', Volvo:'btn-630'};
+  Object.keys(btnIds).forEach(function(key) {
+    var btn = document.getElementById(btnIds[key]);
+    if (btn) btn.classList.toggle('active', key === buName);
+  });
+  applyFilter();
+}
+
+// Correction 1: risk-level filter
+function setRiskFilter(level) {
+  currentRiskFilter = level;
+  ['all','ELEVE','SURVEILLER','FAIBLE'].forEach(function(key) {
+    var btn = document.getElementById('rbtn-' + key);
+    if (btn) btn.classList.toggle('active', key === level);
+  });
+  applyFilter();
+}
+
+function setSearch(val) {
+  currentSearch = val.trim().toLowerCase();
+  applyFilter();
+}
+
+// ── Core: apply BU + risk + search then render (Correction 3) ─────────────
+function applyFilter() {
+  var filtered = allData;
+
+  // BU filter — string comparison (Correction 3)
+  if (currentBuFilter !== 'all') {
+    filtered = filtered.filter(function(c){ return c.bu === currentBuFilter; });
+  }
+
+  // Risk-level filter (Correction 1)
+  if (currentRiskFilter !== 'all') {
+    filtered = filtered.filter(function(c) {
+      if (currentRiskFilter === 'ELEVE')      return c.score >= 0.60;
+      if (currentRiskFilter === 'SURVEILLER') return c.score >= 0.35 && c.score < 0.60;
+      if (currentRiskFilter === 'FAIBLE')     return c.score < 0.35;
+      return true;
+    });
+  }
+
+  // Search filter
+  if (currentSearch) {
+    filtered = filtered.filter(function(c) {
+      return c.name.toLowerCase().indexOf(currentSearch) !== -1 ||
+             c.bu.toLowerCase().indexOf(currentSearch) !== -1;
+    });
+  }
+
+  renderView(filtered);
+}
+
+// ── Render: shows ALL risk levels sorted by score desc (Correction 1) ──────
+function renderView(clients) {
+  var sorted = clients.slice().sort(function(a, b){ return b.score - a.score; });
+
+  // KPI stats — computed from the currently filtered set
+  var totalAmount = clients.reduce(function(s, c){ return s + (c.amount || 0); }, 0);
+  var avgProb = clients.length > 0
+    ? (clients.reduce(function(s, c){ return s + c.score; }, 0) / clients.length) * 100
+    : 0;
+  // Breakdown of filtered set (used for kpi-clients-sub label)
+  var highCount   = clients.filter(function(c){ return c.score >= 0.60; }).length;
+  var moyenCount  = clients.filter(function(c){ return c.score >= 0.35 && c.score < 0.60; }).length;
+  var faibleCount = clients.filter(function(c){ return c.score < 0.35; }).length;
+
+  document.getElementById('kpi-high').textContent    = clients.length;
+  document.getElementById('kpi-amount').textContent  = fmtAmount(totalAmount);
+  document.getElementById('kpi-prob').textContent    = avgProb.toFixed(1) + '%';
+  document.getElementById('kpi-clients').textContent = clients.length;
+  document.getElementById('kpi-clients-sub').textContent =
+    '🟢 ' + faibleCount + ' Faible · 🟠 ' + moyenCount + ' Moyen';
+
+  // Badge count reflects total visible rows (Correction 1)
+  document.getElementById('badge-count').textContent = clients.length + ' clients';
+
+  // Table (Correction 1: all risk levels, Correction 3: empty-state message updated)
+  var tbody = document.getElementById('alerts-tbody');
+  if (sorted.length === 0) {
+    tbody.innerHTML =
+      '<tr class="alert-row"><td colspan="7" style="text-align:center;' +
+      'color:rgba(255,255,255,0.3);padding:28px 0;">' +
+      'Aucun client ne correspond aux filtres sélectionnés</td></tr>';
+  } else {
+    tbody.innerHTML = sorted.slice(0, 20).map(function(c, i) {
+      var idx    = String(i + 1).padStart(3, '0');
+      var letter = (c.name.charAt(0) || '?').toUpperCase();
+      var pct    = Math.round(c.score * 100);
+      var amt    = fmtAmount(c.amount);
+      return (
+        '<tr class="alert-row">' +
+        '<td><span class="inv-num">ML-2026-' + idx + '</span></td>' +
+        '<td><div class="client-cell">' +
+          '<span class="client-avatar">' + letter + '</span>' +
+          '<span class="client-name" title="' + c.name + '">' +
+            c.name.substring(0, 28) +
+          '</span></div></td>' +
+        '<td>' + payBadge(c.score) + '</td>' +
+        '<td class="amount-col">' + amt + '</td>' +
+        '<td><div class="score-cell">' +
+          '<div class="risk-bar"><div class="bar-fill" style="width:' + pct + '%"></div></div>' +
+          '<span class="score-num">' + pct + '%</span>' +
+        '</div></td>' +
+        '<td><span class="nb-fac">' + c.nbFac + '</span></td>' +
+        '<td><div class="action-cell">' +
+          '<button class="review-btn" onclick="markReviewed(this)">✓ Reviewed</button>' +
+          '<button class="shap-btn" onclick="openShap(' + c.id + ')">🔍 SHAP</button>' +
+        '</div></td>' +
+        '</tr>'
+      );
+    }).join('');
+  }
+
+  // Donut + action panel: always reflects full allData distribution, not the active filter
+  var allHighCount   = allData.filter(function(c){ return c.score >= 0.60; }).length;
+  var allMoyenCount  = allData.filter(function(c){ return c.score >= 0.35 && c.score < 0.60; }).length;
+  var allFaibleCount = allData.filter(function(c){ return c.score < 0.35; }).length;
+  updateDonut(allHighCount, allMoyenCount, allFaibleCount);
+
+  document.getElementById('action-high').textContent = '🔴 ÉLEVÉ — '  + allHighCount   + ' clients';
+  document.getElementById('action-med').textContent  = '🟠 MOYEN — '  + allMoyenCount  + ' clients';
+  document.getElementById('action-low').textContent  = '🟢 FAIBLE — ' + allFaibleCount + ' clients';
+}
+
+// ── Refresh: try Flask; on failure keep static data (Correction 3) ─────────
+async function refreshAlerts() {
+  var btn     = document.getElementById('refresh-btn');
+  var loading = document.getElementById('loading');
+  var loadTxt = document.getElementById('loading-text');
+
+  btn.disabled = true;
+  loading.classList.add('show');
+  loadTxt.textContent = 'Lecture alertes_2026_05.csv...';
+
+  try {
+    var resp = await fetch('http://localhost:5000/api/alertes');
+    if (!resp.ok) throw new Error('Flask API ' + resp.status);
+    var data = await resp.json();
+
+    if (data.status === 'error') throw new Error(data.message);
+
+    // Correction 3: convert Flask data to unified format with string bu field
+    var BU_NAMES = {510:'Stellantis', 520:'Renault', 440:'OEM', 630:'Volvo'};
+    allData = (data.clients || []).map(function(c, i) {
+      var score = parseFloat(c.prob_retard) || 0;
+      var buNum  = +c.Branche;
+      return {
+        id:     i + 1,
+        name:   c.Nom_client || '',
+        score:  score,
+        amount: parseFloat(c.montant_total_mois) || 0,
+        nbFac:  c.nb_factures_mois || '—',
+        bu:     BU_NAMES[buNum] || 'Autre',
+        risque: c.risque || (score >= 0.60 ? 'ELEVE' : score >= 0.35 ? 'MOYEN' : 'FAIBLE')
+      };
+    });
+
+    var now = new Date().toLocaleDateString('fr-FR');
+    document.getElementById('header-subtitle').textContent =
+      allData.length + ' clients analysés · Seuil 0.35 · Rafraîchi le ' + now;
+
+    updateBuCounts();
+    applyFilter();
+
+  } catch (err) {
+    console.error('Refresh error:', err);
+    showToast('Erreur Flask : ' + err.message +
+              ' — Données de démonstration affichées.');
+  } finally {
+    loading.classList.remove('show');
+    btn.disabled = false;
+  }
+}
+
+// Escape closes modal
+document.addEventListener('keydown', function(e) {
+  if (e.key === 'Escape') closeShap();
+});
+
+// Init: load static demo data first, then try Flask
+window.addEventListener('load', function() {
+  allData = staticData.slice();
+  updateBuCounts();
+  applyFilter();
+  refreshAlerts();
+});
+</script>
+</body>
+</html>

@@ -1,0 +1,701 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>LEONI ML Risk Alerts</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Barlow:wght@300;400;500;600;700&family=Barlow+Condensed:wght@600;700&display=swap');
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:'Barlow',sans-serif;background:#0a1628;min-height:100vh;overflow-x:hidden;}
+
+.app{position:relative;z-index:2;padding:24px 32px;}
+
+/* HEADER */
+.header{display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;padding-bottom:16px;border-bottom:1px solid rgba(255,255,255,0.08);}
+.header-left h1{font-family:'Barlow Condensed',sans-serif;font-size:28px;font-weight:700;color:white;text-transform:uppercase;letter-spacing:0.5px;}
+.header-left p{font-size:12px;color:rgba(255,255,255,0.4);margin-top:3px;}
+.run-btn{background:#e53e3e;color:white;border:none;padding:10px 20px;border-radius:8px;font-family:'Barlow',sans-serif;font-size:13px;font-weight:600;cursor:pointer;display:flex;align-items:center;gap:8px;box-shadow:0 4px 16px rgba(229,62,62,0.4);transition:all 0.2s;}
+.run-btn:hover{background:#c53030;transform:translateY(-1px);}
+.run-btn:disabled{opacity:0.5;cursor:not-allowed;transform:none;}
+
+/* FILTER BAR */
+.filter-bar{display:flex;align-items:center;gap:8px;margin-bottom:18px;flex-wrap:wrap;overflow:visible;}
+.bu-btn{display:flex;align-items:center;gap:6px;background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.1);border-radius:20px;padding:6px 14px 6px 8px;cursor:pointer;transition:all 0.2s;color:rgba(255,255,255,0.6);font-family:'Barlow',sans-serif;font-size:12px;font-weight:500;white-space:nowrap;overflow:visible !important;}
+.bu-btn:hover{background:rgba(255,255,255,0.09);border-color:rgba(255,255,255,0.22);color:rgba(255,255,255,0.85);}
+.bu-btn.active{background:rgba(59,130,246,0.14);border-color:#3b82f6;color:white;}
+.bu-logo{width:24px;height:24px;min-width:24px;min-height:24px;border-radius:50%;object-fit:cover;object-position:center;overflow:hidden;flex-shrink:0;flex-shrink:0;background:rgba(255,255,255,0.08);}
+.bu-count{font-size:10px;color:rgba(255,255,255,0.35);font-weight:400;margin-left:1px;}
+.bu-btn.active .bu-count{color:rgba(147,197,253,0.65);}
+.filter-sep{width:1px;height:20px;background:rgba(255,255,255,0.08);flex-shrink:0;}
+.search-wrap{margin-left:auto;position:relative;display:flex;align-items:center;}
+.search-icon{position:absolute;left:11px;pointer-events:none;opacity:0.35;}
+.search-input{background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.1);border-radius:20px;padding:6px 14px 6px 32px;color:white;font-family:'Barlow',sans-serif;font-size:12px;outline:none;width:210px;transition:border-color 0.2s;}
+.search-input:focus{border-color:rgba(59,130,246,0.5);background:rgba(255,255,255,0.07);}
+.search-input::placeholder{color:rgba(255,255,255,0.22);}
+
+/* KPI CARDS */
+.kpi-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:22px;}
+.kpi-card{background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.1);border-radius:12px;padding:18px 20px;position:relative;overflow:hidden;transition:transform 0.2s;backdrop-filter:blur(8px);}
+.kpi-card:hover{transform:translateY(-2px);}
+.kpi-card::after{content:'';position:absolute;bottom:0;left:0;right:0;height:3px;border-radius:0 0 12px 12px;}
+.kpi-card.red::after{background:#ef4444;}.kpi-card.orange::after{background:#f97316;}.kpi-card.gold::after{background:#f59e0b;}.kpi-card.blue::after{background:#3b82f6;}
+.kpi-label{font-size:10px;color:rgba(255,255,255,0.4);text-transform:uppercase;letter-spacing:1.2px;margin-bottom:8px;}
+.kpi-value{font-family:'Barlow Condensed',sans-serif;font-size:38px;font-weight:700;line-height:1;}
+.kpi-card.red .kpi-value{color:#fca5a5;}.kpi-card.orange .kpi-value{color:#fdba74;}.kpi-card.gold .kpi-value{color:#fcd34d;}.kpi-card.blue .kpi-value{color:#93c5fd;}
+.kpi-sub{font-size:11px;margin-top:5px;}
+.kpi-card.red .kpi-sub{color:#fca5a5;}.kpi-card.orange .kpi-sub{color:#fdba74;}.kpi-card.gold .kpi-sub{color:#fcd34d;}.kpi-card.blue .kpi-sub{color:#93c5fd;}
+
+/* MAIN GRID */
+.main-grid{display:grid;grid-template-columns:1fr 280px;gap:16px;}
+
+/* TABLE CARD */
+.table-card{background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.09);border-radius:12px;padding:20px;backdrop-filter:blur(8px);}
+.card-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;}
+.card-title{font-family:'Barlow Condensed',sans-serif;font-size:14px;font-weight:600;color:rgba(255,255,255,0.85);text-transform:uppercase;letter-spacing:1px;}
+.badge-count{background:rgba(239,68,68,0.2);color:#fca5a5;border:1px solid rgba(239,68,68,0.3);padding:3px 10px;border-radius:20px;font-size:11px;font-weight:700;}
+table{width:100%;border-collapse:collapse;}
+th{font-size:9px;color:rgba(255,255,255,0.3);text-transform:uppercase;letter-spacing:1px;padding:0 8px 10px 0;text-align:left;border-bottom:1px solid rgba(255,255,255,0.07);}
+.alert-row td{padding:11px 8px 11px 0;font-size:12px;color:rgba(255,255,255,0.75);border-bottom:1px solid rgba(255,255,255,0.04);vertical-align:middle;}
+.alert-row:last-child td{border-bottom:none;}
+.alert-row:hover td{background:rgba(255,255,255,0.02);}
+.inv-num{font-size:11px;color:rgba(255,255,255,0.4);font-family:monospace;}
+.client-cell{display:flex;align-items:center;gap:8px;}
+.client-avatar{width:28px;height:28px;border-radius:50%;background:linear-gradient(135deg,#ef4444,#7c3aed);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:white;flex-shrink:0;}
+.client-name{font-weight:600;color:white;max-width:160px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.amount-col{font-weight:600;color:rgba(255,255,255,0.9);}
+.score-cell{display:flex;align-items:center;gap:8px;}
+.risk-bar{width:60px;height:5px;background:rgba(255,255,255,0.1);border-radius:3px;overflow:hidden;flex-shrink:0;}
+.bar-fill{height:100%;background:linear-gradient(90deg,#f97316,#ef4444);border-radius:3px;}
+.score-num{font-size:12px;font-weight:700;color:#fca5a5;min-width:32px;}
+.nb-fac{font-size:12px;color:rgba(255,255,255,0.5);}
+.review-btn{font-size:10px;color:rgba(255,255,255,0.4);background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.1);padding:4px 10px;border-radius:5px;cursor:pointer;transition:all 0.2s;white-space:nowrap;}
+.review-btn:hover{border-color:#22c55e;color:#86efac;}
+
+/* PAYMENT BADGE — Modification 1 */
+.pay-badge{display:inline-flex;align-items:center;gap:4px;padding:3px 9px;border-radius:12px;font-size:10px;font-weight:600;white-space:nowrap;}
+.pay-badge.non{background:#4a1414;color:#f87171;}
+.pay-badge.surveiller{background:#4a3814;color:#fbbf24;}
+.pay-badge.oui{background:#1a3a24;color:#4ade80;}
+
+/* ACTION CELL — for review + SHAP button */
+.action-cell{display:flex;align-items:center;gap:6px;flex-wrap:nowrap;}
+
+/* SHAP BUTTON — Modification 2 */
+.shap-btn{font-size:10px;color:#60a5fa;background:#1e3a5f;border:1px solid #2d5a8e;padding:4px 10px;border-radius:5px;cursor:pointer;transition:all 0.2s;white-space:nowrap;}
+.shap-btn:hover{border-color:#60a5fa;color:white;}
+
+/* SHAP MODAL */
+.modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.72);z-index:3000;align-items:center;justify-content:center;}
+.modal-overlay.show{display:flex;}
+.modal-container{background:#1a1f33;border:1px solid rgba(255,255,255,0.1);border-radius:12px;max-width:550px;width:90%;padding:24px;box-shadow:0 24px 60px rgba(0,0,0,0.5);}
+.modal-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:18px;}
+.modal-title{font-family:'Barlow Condensed',sans-serif;font-size:16px;font-weight:700;color:white;letter-spacing:0.5px;}
+.modal-close{background:none;border:none;color:rgba(255,255,255,0.4);cursor:pointer;font-size:20px;line-height:1;padding:2px 6px;border-radius:4px;transition:color 0.15s;}
+.modal-close:hover{color:white;}
+.shap-chart-wrap{background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.07);border-radius:8px;padding:16px 10px;overflow-x:auto;}
+.shap-explanation{font-size:11px;color:rgba(255,255,255,0.4);margin-top:14px;line-height:1.6;border-top:1px solid rgba(255,255,255,0.06);padding-top:12px;}
+
+/* RIGHT PANEL */
+.right-panel{display:flex;flex-direction:column;gap:14px;}
+.panel-card{background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.09);border-radius:12px;padding:18px;backdrop-filter:blur(8px);}
+
+/* DONUT */
+.donut-wrap{display:flex;flex-direction:column;align-items:center;gap:14px;}
+.legend{width:100%;}
+.legend-item{display:flex;align-items:center;justify-content:space-between;padding:8px 0;border-bottom:1px solid rgba(255,255,255,0.05);}
+.legend-item:last-child{border-bottom:none;}
+.legend-left{display:flex;align-items:center;gap:8px;font-size:13px;color:rgba(255,255,255,0.65);}
+.legend-dot{width:9px;height:9px;border-radius:50%;}
+.legend-val{font-family:'Barlow Condensed',sans-serif;font-size:20px;font-weight:700;}
+
+/* MODEL STATS */
+.model-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;}
+.model-stat{background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.07);border-radius:8px;padding:10px;text-align:center;}
+.model-val{font-family:'Barlow Condensed',sans-serif;font-size:20px;font-weight:700;color:#93c5fd;}
+.model-lbl{font-size:9px;color:rgba(255,255,255,0.3);text-transform:uppercase;letter-spacing:0.8px;margin-top:2px;}
+
+/* ACTIONS */
+.action-item{border-radius:8px;padding:11px;margin-bottom:8px;}
+.action-item:last-child{margin-bottom:0;}
+.action-item.red{background:rgba(239,68,68,0.08);border:1px solid rgba(239,68,68,0.2);}
+.action-item.orange{background:rgba(249,115,22,0.08);border:1px solid rgba(249,115,22,0.2);}
+.action-item.green{background:rgba(34,197,94,0.08);border:1px solid rgba(34,197,94,0.2);}
+.action-title{font-size:12px;font-weight:600;margin-bottom:3px;}
+.action-item.red .action-title{color:#fca5a5;}.action-item.orange .action-title{color:#fdba74;}.action-item.green .action-title{color:#86efac;}
+.action-desc{font-size:10px;color:rgba(255,255,255,0.4);line-height:1.5;}
+
+/* LOADING */
+.loading{display:none;position:fixed;inset:0;background:rgba(5,15,40,0.92);z-index:1000;align-items:center;justify-content:center;flex-direction:column;gap:16px;}
+.loading.show{display:flex;}
+.spinner{width:42px;height:42px;border:3px solid rgba(255,255,255,0.08);border-top-color:#e53e3e;border-radius:50%;animation:spin 0.8s linear infinite;}
+@keyframes spin{to{transform:rotate(360deg);}}
+.loading-text{font-size:14px;color:rgba(255,255,255,0.45);}
+
+/* TOAST */
+.toast{position:fixed;bottom:24px;right:24px;background:#1e293b;border:1px solid rgba(239,68,68,0.4);color:#fca5a5;padding:12px 18px;border-radius:8px;font-size:13px;z-index:2000;display:none;max-width:340px;line-height:1.5;}
+.toast.show{display:block;}
+</style>
+</head>
+<body>
+
+<div class="app">
+
+  <!-- HEADER -->
+  <div class="header">
+    <div class="header-left">
+      <h1>🚨 ML Risk Alerts <span style="font-size:13px;font-weight:400;color:rgba(255,255,255,0.35);margin-left:12px;text-transform:none;">LightGBM v1 · AUC 0.796 · Avril 2026</span></h1>
+      <p id="header-subtitle">104 clients analysés · Seuil d'alerte : 0.35 · Généré le 19/05/2026</p>
+    </div>
+    <button class="run-btn" id="refresh-btn" onclick="refreshAlerts()">
+      ⟳ Refresh Alerts
+    </button>
+  </div>
+
+  <!-- FILTER BAR -->
+  <div class="filter-bar">
+    <button class="bu-btn active" id="btn-all" onclick="setBuFilter('all')">
+      Tous <span class="bu-count" id="cnt-all"></span>
+    </button>
+    <div class="filter-sep"></div>
+    <button class="bu-btn" id="btn-510" onclick="setBuFilter(510)">
+      <div style="width:24px;height:24px;border-radius:50%;background:#1e3a8a;display:flex;align-items:center;justify-content:center;font-size:9px;font-weight:700;color:white;flex-shrink:0;">ST</div>
+      Stellantis <span class="bu-count" id="cnt-510"></span>
+    </button>
+    <button class="bu-btn" id="btn-520" onclick="setBuFilter(520)">
+      <div style="width:24px;height:24px;border-radius:50%;background:#ef4444;display:flex;align-items:center;justify-content:center;font-size:9px;font-weight:700;color:white;flex-shrink:0;">RN</div>
+      Renault <span class="bu-count" id="cnt-520"></span>
+    </button>
+    <button class="bu-btn" id="btn-440" onclick="setBuFilter(440)">
+      <div style="width:24px;height:24px;border-radius:50%;background:#6d28d9;display:flex;align-items:center;justify-content:center;font-size:9px;font-weight:700;color:white;flex-shrink:0;">OE</div>
+      OEM <span class="bu-count" id="cnt-440"></span>
+    </button>
+    <button class="bu-btn" id="btn-630" onclick="setBuFilter(630)">
+      <div style="width:24px;height:24px;border-radius:50%;background:#0369a1;display:flex;align-items:center;justify-content:center;font-size:9px;font-weight:700;color:white;flex-shrink:0;">VV</div>
+      Volvo <span class="bu-count" id="cnt-630"></span>
+    </button>
+    <div class="search-wrap">
+      <svg class="search-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5">
+        <circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/>
+      </svg>
+      <input class="search-input" id="search-input" type="text"
+             placeholder="Rechercher un client..."
+             oninput="setSearch(this.value)">
+    </div>
+  </div>
+
+  <!-- KPI CARDS -->
+  <div class="kpi-grid">
+    <div class="kpi-card red">
+      <div class="kpi-label">Risque Élevé</div>
+      <div class="kpi-value" id="kpi-high">55</div>
+      <div class="kpi-sub">⚠️ Action immédiate requise</div>
+    </div>
+    <div class="kpi-card orange">
+      <div class="kpi-label">Montant à Risque</div>
+      <div class="kpi-value" id="kpi-amount">109M€</div>
+      <div class="kpi-sub">💰 Clients ÉLEVÉ uniquement</div>
+    </div>
+    <div class="kpi-card gold">
+      <div class="kpi-label">Prob. Moyenne</div>
+      <div class="kpi-value" id="kpi-prob">76.1%</div>
+      <div class="kpi-sub">📊 Clients ÉLEVÉ</div>
+    </div>
+    <div class="kpi-card blue">
+      <div class="kpi-label">Total Clients</div>
+      <div class="kpi-value" id="kpi-clients">104</div>
+      <div class="kpi-sub" id="kpi-clients-sub">🟢 29 Faible · 🟠 20 Moyen</div>
+    </div>
+  </div>
+
+  <!-- MAIN GRID -->
+  <div class="main-grid">
+    <div class="table-card">
+      <div class="card-header">
+        <div class="card-title">⚠️ High Risk Clients (score &gt; 70%)</div>
+        <span class="badge-count" id="badge-count">55 clients</span>
+      </div>
+      <table>
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>CLIENT</th>
+            <th style="color:#f4c97a">PAIEMENT À TEMPS</th>
+            <th>MONTANT</th>
+            <th>RISK SCORE</th>
+            <th>NB FACTURES</th>
+            <th>ACTION</th>
+          </tr>
+        </thead>
+        <tbody id="alerts-tbody">
+          <tr class="alert-row">
+            <td><span class="inv-num">ML-2026-001</span></td>
+            <td><div class="client-cell"><span class="client-avatar">A</span><span class="client-name">AMPERE ELECTRICITY</span></div></td>
+            <td><span class="pay-badge non">❌ NON</span></td>
+            <td class="amount-col">€12.9M</td>
+            <td><div class="score-cell"><div class="risk-bar"><div class="bar-fill" style="width:95%"></div></div><span class="score-num">95%</span></div></td>
+            <td><span class="nb-fac">148</span></td>
+            <td><div class="action-cell"><button class="review-btn" onclick="markReviewed(this)">✓ Reviewed</button><button class="shap-btn" onclick="openShap(1)">🔍 SHAP</button></div></td>
+          </tr>
+          <tr class="alert-row">
+            <td><span class="inv-num">ML-2026-002</span></td>
+            <td><div class="client-cell"><span class="client-avatar">P</span><span class="client-name">PCA SLOVAQUIA</span></div></td>
+            <td><span class="pay-badge non">❌ NON</span></td>
+            <td class="amount-col">€21.9M</td>
+            <td><div class="score-cell"><div class="risk-bar"><div class="bar-fill" style="width:94%"></div></div><span class="score-num">94%</span></div></td>
+            <td><span class="nb-fac">316</span></td>
+            <td><div class="action-cell"><button class="review-btn" onclick="markReviewed(this)">✓ Reviewed</button><button class="shap-btn" onclick="openShap(2)">🔍 SHAP</button></div></td>
+          </tr>
+          <tr class="alert-row">
+            <td><span class="inv-num">ML-2026-003</span></td>
+            <td><div class="client-cell"><span class="client-avatar">O</span><span class="client-name">OPEL AUTOMOBILE GMBH</span></div></td>
+            <td><span class="pay-badge non">❌ NON</span></td>
+            <td class="amount-col">€2.9M</td>
+            <td><div class="score-cell"><div class="risk-bar"><div class="bar-fill" style="width:94%"></div></div><span class="score-num">94%</span></div></td>
+            <td><span class="nb-fac">9316</span></td>
+            <td><div class="action-cell"><button class="review-btn" onclick="markReviewed(this)">✓ Reviewed</button><button class="shap-btn" onclick="openShap(3)">🔍 SHAP</button></div></td>
+          </tr>
+          <tr class="alert-row">
+            <td><span class="inv-num">ML-2026-004</span></td>
+            <td><div class="client-cell"><span class="client-avatar">D</span><span class="client-name">DACIA AUTOMOBILE</span></div></td>
+            <td><span class="pay-badge non">❌ NON</span></td>
+            <td class="amount-col">€19.0M</td>
+            <td><div class="score-cell"><div class="risk-bar"><div class="bar-fill" style="width:91%"></div></div><span class="score-num">91%</span></div></td>
+            <td><span class="nb-fac">110</span></td>
+            <td><div class="action-cell"><button class="review-btn" onclick="markReviewed(this)">✓ Reviewed</button><button class="shap-btn" onclick="openShap(4)">🔍 SHAP</button></div></td>
+          </tr>
+          <tr class="alert-row">
+            <td><span class="inv-num">ML-2026-005</span></td>
+            <td><div class="client-cell"><span class="client-avatar">N</span><span class="client-name">NISSAN MOTOR MANUFACTURING U</span></div></td>
+            <td><span class="pay-badge non">❌ NON</span></td>
+            <td class="amount-col">€4.4M</td>
+            <td><div class="score-cell"><div class="risk-bar"><div class="bar-fill" style="width:91%"></div></div><span class="score-num">91%</span></div></td>
+            <td><span class="nb-fac">92</span></td>
+            <td><div class="action-cell"><button class="review-btn" onclick="markReviewed(this)">✓ Reviewed</button><button class="shap-btn" onclick="openShap(5)">🔍 SHAP</button></div></td>
+          </tr>
+          <tr class="alert-row">
+            <td><span class="inv-num">ML-2026-006</span></td>
+            <td><div class="client-cell"><span class="client-avatar">S</span><span class="client-name">STELLANTIS ESPAÑA, S.L.</span></div></td>
+            <td><span class="pay-badge non">❌ NON</span></td>
+            <td class="amount-col">€8.0M</td>
+            <td><div class="score-cell"><div class="risk-bar"><div class="bar-fill" style="width:90%"></div></div><span class="score-num">90%</span></div></td>
+            <td><span class="nb-fac">1611</span></td>
+            <td><div class="action-cell"><button class="review-btn" onclick="markReviewed(this)">✓ Reviewed</button><button class="shap-btn" onclick="openShap(6)">🔍 SHAP</button></div></td>
+          </tr>
+          <tr class="alert-row">
+            <td><span class="inv-num">ML-2026-007</span></td>
+            <td><div class="client-cell"><span class="client-avatar">S</span><span class="client-name">STELLANTIS AUTO SAS</span></div></td>
+            <td><span class="pay-badge non">❌ NON</span></td>
+            <td class="amount-col">€5.9M</td>
+            <td><div class="score-cell"><div class="risk-bar"><div class="bar-fill" style="width:90%"></div></div><span class="score-num">90%</span></div></td>
+            <td><span class="nb-fac">514</span></td>
+            <td><div class="action-cell"><button class="review-btn" onclick="markReviewed(this)">✓ Reviewed</button><button class="shap-btn" onclick="openShap(7)">🔍 SHAP</button></div></td>
+          </tr>
+          <tr class="alert-row">
+            <td><span class="inv-num">ML-2026-008</span></td>
+            <td><div class="client-cell"><span class="client-avatar">R</span><span class="client-name">RENAULT - 4 44 (PROTO)</span></div></td>
+            <td><span class="pay-badge non">❌ NON</span></td>
+            <td class="amount-col">€1.5M</td>
+            <td><div class="score-cell"><div class="risk-bar"><div class="bar-fill" style="width:88%"></div></div><span class="score-num">88%</span></div></td>
+            <td><span class="nb-fac">47</span></td>
+            <td><div class="action-cell"><button class="review-btn" onclick="markReviewed(this)">✓ Reviewed</button><button class="shap-btn" onclick="openShap(8)">🔍 SHAP</button></div></td>
+          </tr>
+          <tr class="alert-row">
+            <td><span class="inv-num">ML-2026-009</span></td>
+            <td><div class="client-cell"><span class="client-avatar">V</span><span class="client-name">VOLVO CARS N.V.</span></div></td>
+            <td><span class="pay-badge non">❌ NON</span></td>
+            <td class="amount-col">€1.9M</td>
+            <td><div class="score-cell"><div class="risk-bar"><div class="bar-fill" style="width:88%"></div></div><span class="score-num">88%</span></div></td>
+            <td><span class="nb-fac">80</span></td>
+            <td><div class="action-cell"><button class="review-btn" onclick="markReviewed(this)">✓ Reviewed</button><button class="shap-btn" onclick="openShap(9)">🔍 SHAP</button></div></td>
+          </tr>
+          <tr class="alert-row">
+            <td><span class="inv-num">ML-2026-010</span></td>
+            <td><div class="client-cell"><span class="client-avatar">V</span><span class="client-name">VOLVO CAR CORPORATION</span></div></td>
+            <td><span class="pay-badge non">❌ NON</span></td>
+            <td class="amount-col">€18,237</td>
+            <td><div class="score-cell"><div class="risk-bar"><div class="bar-fill" style="width:85%"></div></div><span class="score-num">85%</span></div></td>
+            <td><span class="nb-fac">44</span></td>
+            <td><div class="action-cell"><button class="review-btn" onclick="markReviewed(this)">✓ Reviewed</button><button class="shap-btn" onclick="openShap(10)">🔍 SHAP</button></div></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="right-panel">
+      <div class="panel-card">
+        <div class="card-title" style="margin-bottom:14px;">📈 Répartition</div>
+        <div class="donut-wrap">
+          <svg width="130" height="130" viewBox="0 0 130 130" style="transform:rotate(-90deg)">
+            <circle cx="65" cy="65" r="48" fill="none" stroke="rgba(255,255,255,0.05)" stroke-width="16"/>
+            <circle id="donut-low"  cx="65" cy="65" r="48" fill="none" stroke="#22c55e" stroke-width="16" stroke-dasharray="89 213"  stroke-dashoffset="0"    opacity="0.85"/>
+            <circle id="donut-med"  cx="65" cy="65" r="48" fill="none" stroke="#f97316" stroke-width="16" stroke-dasharray="61 213"  stroke-dashoffset="-89"  opacity="0.85"/>
+            <circle id="donut-high" cx="65" cy="65" r="48" fill="none" stroke="#ef4444" stroke-width="16" stroke-dasharray="168 213" stroke-dashoffset="-150" opacity="0.85"/>
+          </svg>
+          <div class="legend">
+            <div class="legend-item"><div class="legend-left"><div class="legend-dot" style="background:#ef4444"></div>Élevé</div><div class="legend-val" style="color:#fca5a5" id="legend-high">55</div></div>
+            <div class="legend-item"><div class="legend-left"><div class="legend-dot" style="background:#f97316"></div>Moyen</div><div class="legend-val" style="color:#fdba74" id="legend-med">20</div></div>
+            <div class="legend-item"><div class="legend-left"><div class="legend-dot" style="background:#22c55e"></div>Faible</div><div class="legend-val" style="color:#86efac" id="legend-low">29</div></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="panel-card">
+        <div class="card-title" style="margin-bottom:14px;">🤖 Modèle ML</div>
+        <div class="model-grid">
+          <div class="model-stat"><div class="model-val">0.796</div><div class="model-lbl">AUC-ROC</div></div>
+          <div class="model-stat"><div class="model-val">0.835</div><div class="model-lbl">F1-Score</div></div>
+          <div class="model-stat"><div class="model-val">87.3%</div><div class="model-lbl">Précision</div></div>
+          <div class="model-stat"><div class="model-val">80%</div><div class="model-lbl">Recall</div></div>
+          <div class="model-stat"><div class="model-val">436</div><div class="model-lbl">Arbres</div></div>
+          <div class="model-stat"><div class="model-val">19</div><div class="model-lbl">Features</div></div>
+        </div>
+      </div>
+
+      <div class="panel-card">
+        <div class="card-title" style="margin-bottom:12px;">📋 Actions</div>
+        <div class="action-item red">
+          <div class="action-title" id="action-high">🔴 ÉLEVÉ — 55 clients</div>
+          <div class="action-desc">Contacter immédiatement. Relance formelle. Alerter direction commerciale.</div>
+        </div>
+        <div class="action-item orange">
+          <div class="action-title" id="action-med">🟠 MOYEN — 20 clients</div>
+          <div class="action-desc">Surveiller. Relance préventive douce.</div>
+        </div>
+        <div class="action-item green">
+          <div class="action-title" id="action-low">🟢 FAIBLE — 29 clients</div>
+          <div class="action-desc">Comportement normal. Aucune action requise.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="loading" id="loading">
+  <div class="spinner"></div>
+  <div class="loading-text" id="loading-text">Exécution LightGBM v1...</div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<!-- SHAP MODAL -->
+<div class="modal-overlay" id="shapModal" onclick="handleOverlayClick(event)">
+  <div class="modal-container" id="modal-container">
+    <div class="modal-header">
+      <div class="modal-title" id="modal-title">🔍 Interprétation SHAP</div>
+      <button class="modal-close" onclick="closeShap()">✕</button>
+    </div>
+    <div class="shap-chart-wrap">
+      <div id="shapChartArea"></div>
+    </div>
+    <p class="shap-explanation" id="shapExplanation"></p>
+  </div>
+</div>
+
+<script>
+// ── State ──────────────────────────────────────────────────────────────────
+let allData       = [];
+let currentFilter = 'all';
+let currentSearch = '';
+
+const BU_MAP = {
+  510: 'Stellantis',
+  520: 'Renault',
+  440: 'OEM',
+  630: 'Volvo'
+};
+
+// ── SHAP Data (Modification 2) ─────────────────────────────────────────────
+const FEATURES = ['DSO moyen', 'Retards antérieurs', 'Montant impayé', 'Nb factures', 'Délai paiement'];
+
+const shapDB = {
+  1:  { name: 'AMPERE ELECTRICITY',         score: 95, vals: [ 0.72,  0.54,  0.38,  0.21, -0.14] },
+  2:  { name: 'PCA SLOVAQUIA',              score: 94, vals: [ 0.68,  0.61,  0.42,  0.18, -0.10] },
+  3:  { name: 'OPEL AUTOMOBILE GMBH',       score: 94, vals: [ 0.65,  0.58,  0.35,  0.28, -0.08] },
+  4:  { name: 'DACIA AUTOMOBILE',           score: 91, vals: [ 0.70,  0.49,  0.30,  0.15, -0.19] },
+  5:  { name: 'NISSAN MOTOR MANUFACTURING', score: 91, vals: [ 0.63,  0.55,  0.44,  0.22, -0.12] },
+  6:  { name: 'STELLANTIS ESPAÑA, S.L.',    score: 90, vals: [ 0.58,  0.62,  0.41,  0.25, -0.09] },
+  7:  { name: 'STELLANTIS AUTO SAS',        score: 90, vals: [ 0.61,  0.57,  0.38,  0.19, -0.16] },
+  8:  { name: 'RENAULT - 4 44 (PROTO)',     score: 88, vals: [ 0.55,  0.48,  0.36,  0.23, -0.21] },
+  9:  { name: 'VOLVO CARS N.V.',            score: 88, vals: [ 0.60,  0.52,  0.39,  0.17, -0.11] },
+  10: { name: 'VOLVO CAR CORPORATION',      score: 85, vals: [ 0.52,  0.45,  0.33,  0.20, -0.18] },
+  11: { name: 'CLIENT ÉLEVÉ 11',            score: 84, vals: [ 0.49,  0.43,  0.31,  0.24, -0.22] },
+  12: { name: 'CLIENT ÉLEVÉ 12',            score: 82, vals: [ 0.46,  0.51,  0.28,  0.16, -0.25] },
+  13: { name: 'CLIENT ÉLEVÉ 13',            score: 81, vals: [ 0.53,  0.40,  0.34,  0.19, -0.17] },
+  14: { name: 'CLIENT ÉLEVÉ 14',            score: 79, vals: [ 0.44,  0.47,  0.29,  0.22, -0.20] },
+  15: { name: 'CLIENT ÉLEVÉ 15',            score: 77, vals: [ 0.41,  0.38,  0.36,  0.27, -0.15] },
+};
+
+// ── SHAP Modal functions ───────────────────────────────────────────────────
+function openShap(id) {
+  const d = shapDB[id];
+  if (!d) return;
+  document.getElementById('modal-title').textContent =
+    '🔍 SHAP — ' + d.name + ' (' + d.score + '%)';
+  document.getElementById('shapChartArea').innerHTML = buildShapSvg(d.vals);
+  document.getElementById('shapExplanation').textContent =
+    'Les barres rouges augmentent le risque de retard de paiement. ' +
+    'Les barres vertes le réduisent. ' +
+    'La largeur de chaque barre représente l\'importance relative de la feature dans la prédiction.';
+  document.getElementById('shapModal').classList.add('show');
+}
+
+function closeShap() {
+  document.getElementById('shapModal').classList.remove('show');
+}
+
+function handleOverlayClick(e) {
+  if (e.target === document.getElementById('shapModal')) closeShap();
+}
+
+function buildShapSvg(vals) {
+  const W = 480, rowH = 30, padT = 8, padB = 8;
+  const H = vals.length * rowH + padT + padB;
+  // cx: position of center line; labels occupy [0, cx-10], bars go left/right from cx
+  const cx = 175;
+  const maxBarW = 230; // max pixels for a bar at maxAbs value
+  const maxAbs = Math.max(...vals.map(Math.abs), 0.01);
+  const scale = maxBarW / maxAbs;
+
+  let rows = '';
+  vals.forEach(function(v, i) {
+    const y = padT + i * rowH;
+    const barW = Math.abs(v) * scale;
+    const barX = v >= 0 ? cx : cx - barW;
+    const color = v >= 0 ? '#ef4444' : '#22c55e';
+    const valLabel = (v > 0 ? '+' : '') + v.toFixed(2);
+    const valX = v >= 0 ? cx + barW + 6 : cx - barW - 6;
+    const valAnchor = v >= 0 ? 'start' : 'end';
+    rows += [
+      '<text x="' + (cx - 10) + '" y="' + (y + 19) + '"',
+        ' text-anchor="end" font-size="11" fill="rgba(255,255,255,0.55)"',
+        ' font-family="Barlow,sans-serif">' + FEATURES[i] + '</text>',
+      '<rect x="' + barX + '" y="' + (y + 8) + '" width="' + Math.max(barW, 2) + '" height="14"',
+        ' rx="3" fill="' + color + '" opacity="0.85"/>',
+      '<text x="' + valX + '" y="' + (y + 19) + '"',
+        ' text-anchor="' + valAnchor + '" font-size="10" font-weight="600"',
+        ' fill="' + color + '" font-family="Barlow,sans-serif">' + valLabel + '</text>',
+    ].join('');
+  });
+
+  return [
+    '<svg width="' + W + '" height="' + H + '" viewBox="0 0 ' + W + ' ' + H + '"',
+      ' style="overflow:visible;display:block;max-width:100%">',
+    '<line x1="' + cx + '" y1="' + padT + '" x2="' + cx + '" y2="' + (H - padB) + '"',
+      ' stroke="rgba(255,255,255,0.18)" stroke-width="1" stroke-dasharray="3,2"/>',
+    rows,
+    '</svg>',
+  ].join('');
+}
+
+// ── Helpers ────────────────────────────────────────────────────────────────
+function markReviewed(btn) {
+  btn.textContent = '✓ Done';
+  btn.style.color = '#86efac';
+  btn.style.borderColor = 'rgba(34,197,94,0.3)';
+  btn.disabled = true;
+}
+
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(function() { t.classList.remove('show'); }, 5000);
+}
+
+function fmtAmount(val) {
+  const n = parseFloat(val) || 0;
+  if (n >= 1e6) return '€' + (n / 1e6).toFixed(1) + 'M';
+  if (n >= 1e3) return '€' + Math.round(n).toLocaleString('fr-FR');
+  return '€' + n.toFixed(0);
+}
+
+function payBadge(pct) {
+  if (pct >= 70) return '<span class="pay-badge non">❌ NON</span>';
+  if (pct >= 40) return '<span class="pay-badge surveiller">👁 SURVEILLER</span>';
+  return '<span class="pay-badge oui">✅ OUI</span>';
+}
+
+// ── Donut chart ────────────────────────────────────────────────────────────
+function updateDonut(high, med, low) {
+  const total = (high + med + low) || 1;
+  const C = 2 * Math.PI * 48;
+  const lowLen  = (low  / total) * C;
+  const medLen  = (med  / total) * C;
+  const highLen = (high / total) * C;
+
+  const setCircle = function(id, len, offset) {
+    const el = document.getElementById(id);
+    if (!el) return;
+    el.setAttribute('stroke-dasharray', len.toFixed(2) + ' ' + C.toFixed(2));
+    el.setAttribute('stroke-dashoffset', offset.toFixed(2));
+  };
+
+  setCircle('donut-low',  lowLen,  0);
+  setCircle('donut-med',  medLen,  -lowLen);
+  setCircle('donut-high', highLen, -(lowLen + medLen));
+
+  document.getElementById('legend-high').textContent = high;
+  document.getElementById('legend-med').textContent  = med;
+  document.getElementById('legend-low').textContent  = low;
+}
+
+// ── BU button counts ───────────────────────────────────────────────────────
+function updateBuCounts() {
+  const total = allData.length;
+  document.getElementById('cnt-all').textContent = total ? '· ' + total : '';
+
+  [510, 520, 440, 630].forEach(function(branche) {
+    const count = allData.filter(function(c) { return +c.Branche === branche; }).length;
+    const el = document.getElementById('cnt-' + branche);
+    if (el) el.textContent = count ? '· ' + count : '';
+  });
+}
+
+// ── Filter state setters ───────────────────────────────────────────────────
+function setBuFilter(filter) {
+  currentFilter = filter;
+  ['all', 510, 520, 440, 630].forEach(function(key) {
+    const btn = document.getElementById('btn-' + key);
+    if (btn) btn.classList.toggle('active', key === filter);
+  });
+  applyFilter();
+}
+
+function setSearch(val) {
+  currentSearch = val.trim().toLowerCase();
+  applyFilter();
+}
+
+// ── Core: filter allData then render ──────────────────────────────────────
+function applyFilter() {
+  let filtered = allData;
+
+  if (currentFilter !== 'all') {
+    filtered = filtered.filter(function(c) { return +c.Branche === currentFilter; });
+  }
+
+  if (currentSearch) {
+    filtered = filtered.filter(function(c) {
+      return (c.Nom_client || '').toLowerCase().includes(currentSearch);
+    });
+  }
+
+  renderView(filtered);
+}
+
+// ── Render all dashboard sections from a clients array ────────────────────
+function renderView(clients) {
+  const high   = clients.filter(function(c) { return c.risque === 'ELEVE'; })
+                         .sort(function(a, b) { return b.prob_retard - a.prob_retard; });
+  const moyen  = clients.filter(function(c) { return c.risque === 'MOYEN'; });
+  const faible = clients.filter(function(c) { return c.risque === 'FAIBLE'; });
+
+  const highCount   = high.length;
+  const moyenCount  = moyen.length;
+  const faibleCount = faible.length;
+
+  const totalAmount = high.reduce(function(s, c) { return s + (parseFloat(c.montant_total_mois) || 0); }, 0);
+  const avgProb     = highCount > 0
+    ? (high.reduce(function(s, c) { return s + (parseFloat(c.prob_retard) || 0); }, 0) / highCount) * 100
+    : 0;
+
+  document.getElementById('kpi-high').textContent    = highCount;
+  document.getElementById('kpi-amount').textContent  = fmtAmount(totalAmount);
+  document.getElementById('kpi-prob').textContent    = avgProb.toFixed(1) + '%';
+  document.getElementById('kpi-clients').textContent = clients.length;
+  document.getElementById('kpi-clients-sub').textContent =
+    '🟢 ' + faibleCount + ' Faible · 🟠 ' + moyenCount + ' Moyen';
+
+  document.getElementById('badge-count').textContent = highCount + ' clients';
+
+  const tbody = document.getElementById('alerts-tbody');
+  if (high.length === 0) {
+    tbody.innerHTML =
+      '<tr class="alert-row"><td colspan="7" style="text-align:center;' +
+      'color:rgba(255,255,255,0.3);padding:28px 0;">Aucun client à risque élevé</td></tr>';
+  } else {
+    tbody.innerHTML = high.slice(0, 20).map(function(c, i) {
+      const idx    = String(i + 1).padStart(3, '0');
+      const letter = (c.Nom_client[0] || '?').toUpperCase();
+      const pct    = Math.round((parseFloat(c.prob_retard) || 0) * 100);
+      const amt    = fmtAmount(c.montant_total_mois || 0);
+      const shapId = i + 1;
+      return (
+        '<tr class="alert-row">' +
+        '<td><span class="inv-num">ML-2026-' + idx + '</span></td>' +
+        '<td><div class="client-cell">' +
+          '<span class="client-avatar">' + letter + '</span>' +
+          '<span class="client-name" title="' + c.Nom_client + '">' +
+            c.Nom_client.substring(0, 28) +
+          '</span></div></td>' +
+        '<td>' + payBadge(pct) + '</td>' +
+        '<td class="amount-col">' + amt + '</td>' +
+        '<td><div class="score-cell">' +
+          '<div class="risk-bar"><div class="bar-fill" style="width:' + pct + '%"></div></div>' +
+          '<span class="score-num">' + pct + '%</span>' +
+        '</div></td>' +
+        '<td><span class="nb-fac">' + (c.nb_factures_mois || '—') + '</span></td>' +
+        '<td><div class="action-cell">' +
+          '<button class="review-btn" onclick="markReviewed(this)">✓ Reviewed</button>' +
+          '<button class="shap-btn" onclick="openShap(' + shapId + ')">🔍 SHAP</button>' +
+        '</div></td>' +
+        '</tr>'
+      );
+    }).join('');
+  }
+
+  updateDonut(highCount, moyenCount, faibleCount);
+
+  document.getElementById('action-high').textContent = '🔴 ÉLEVÉ — '  + highCount   + ' clients';
+  document.getElementById('action-med').textContent  = '🟠 MOYEN — '  + moyenCount  + ' clients';
+  document.getElementById('action-low').textContent  = '🟢 FAIBLE — ' + faibleCount + ' clients';
+}
+
+// ── Refresh: fetch Flask, store allData, apply current filter ─────────────
+async function refreshAlerts() {
+  const btn     = document.getElementById('refresh-btn');
+  const loading = document.getElementById('loading');
+  const loadTxt = document.getElementById('loading-text');
+
+  btn.disabled = true;
+  loading.classList.add('show');
+  loadTxt.textContent = 'Lecture alertes_2026_05.csv...';
+
+  try {
+    const resp = await fetch('http://localhost:5000/api/alertes');
+    if (!resp.ok) throw new Error('Flask API ' + resp.status);
+    const data = await resp.json();
+
+    if (data.status === 'error') throw new Error(data.message);
+
+    allData = data.clients || [];
+
+    const now = new Date().toLocaleDateString('fr-FR');
+    document.getElementById('header-subtitle').textContent =
+      allData.length + ' clients analysés · Seuil 0.35 · Rafraîchi le ' + now;
+
+    updateBuCounts();
+    applyFilter();
+
+  } catch (err) {
+    console.error('Refresh error:', err);
+    showToast('Erreur Flask : ' + err.message +
+              ' — Vérifiez que Flask tourne sur localhost:5000');
+  } finally {
+    loading.classList.remove('show');
+    btn.disabled = false;
+  }
+}
+
+// Keyboard: Escape closes modal
+document.addEventListener('keydown', function(e) {
+  if (e.key === 'Escape') closeShap();
+});
+
+window.addEventListener('load', function() {
+  refreshAlerts();
+});
+</script>
+</body>
+</html>

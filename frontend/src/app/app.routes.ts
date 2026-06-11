@@ -43,6 +43,10 @@ export const routes: Routes = [
       {
         path: 'settings',
         loadComponent: () => import('./features/settings/settings.component').then(m => m.SettingsComponent)
+      },
+      {
+        path: 'ml-alerts',
+        loadComponent: () => import('./features/ml-dashboard/ml-dashboard.component').then(m => m.MlDashboardComponent)
       }
     ]
   },

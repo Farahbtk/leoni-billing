@@ -45,7 +45,7 @@ export class SidebarComponent implements OnInit, OnDestroy {
       { label: this.locale.t('dashboard'),      icon: 'dashboard',       route: '/dashboard'                         },
       { label: this.locale.t('invoices'),       icon: 'receipt_long',    route: '/invoices'                          },
       { label: this.locale.t('clients'),        icon: 'business',        route: '/clients'                           },
-      { label: this.locale.t('alerts'),         icon: 'notifications',   route: '/alerts',          badge: 3         },
+      { label: this.locale.t('mlAlerts'),       icon: 'insights',        route: '/ml-alerts'                         },
       { label: this.locale.t('reports'),        icon: 'bar_chart',       route: '/reports'                           },
       { label: this.locale.t('userManagement'), icon: 'manage_accounts', route: '/user-management', adminOnly: true  },
     ];
